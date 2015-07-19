@@ -1,0 +1,4 @@
+# HRP FILE
+
+#Supported MCUs
+MCU=AVR_1E9205;AVR_1E920A

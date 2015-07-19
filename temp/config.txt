@@ -1,0 +1,19 @@
+# DO NOT MODIFY!
+# PROG_ID	DIR_NAME	FILE
+ID_34A6FF005566	SIREN01.HM
+R2_G42
+R1_E
+MN_B1C4		SMART_MO.USE	V0_10.HRP
+
+
+
+
+
+
+
+# If DIR_NAME missed, PROG_ID DIR NAME is used instead!
+# Same if no record found in config.txt
+
+# If File name is missing, MAIN.HRP is used by default
+
+# Backups are stored in BACKUPS folder. So no DIR_NAME should be named with this name!
