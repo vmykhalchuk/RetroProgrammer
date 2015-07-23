@@ -1,0 +1,14 @@
+	   
+# comment without no spaces first
+  # now comment
+
+# PROG_ID	DIR_NAME
+MN_A1C3  	BHJGJKG.TTT
+  MN_A2C3	HHJ	kjlkjk
+
+ MN_A1C4 BHJGJKG.TTT	 
+
+MN_A1C3  	d
+
+#sdfsdfds
+

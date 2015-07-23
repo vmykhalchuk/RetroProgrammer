@@ -1,0 +1,48 @@
+# DO NOT MODIFY!
+# PROG_ID	MCU_MODEL	FILE_PATH
+# -------   	---------	---------
+
+# Bootloaders for easy programming
+MN_A1C3		AVR@001		BOOTLOAD.ERS/AVR_001.HRP
+MN_A1C3		AVR@002		BOOTLOAD.ERS/AVR_002.HRP
+MN_A1C3		AVR@003		BOOTLOAD.ERS/AVR_003.HRP
+# we use same boot loader for 328 and 328P
+MN_A1C3		AVR-ATmega328	BOOTLOAD.ERS/AVR_008.HRP
+MN_A1C3		AVR-ATmega328P	BOOTLOAD.ERS/AVR_008.HRP
+
+ID_34A6FF005566	AVR@008		SIREN01.HRP
+R2_G42		AVR@008		R2G42.HRP
+R1_E   		AVR[1E930F]	R1_E.HRP
+MN_B1C4		PIC@023		SMART_MO.HRP
+
+
+# MCU_MODEL
+# AVR models:
+# AVR@001 - AVR-ATmega48A	- AVR[1E9205]
+# AVR@002 - AVR-ATmega48PA	- AVR[1E920A]
+# AVR@003 - AVR-ATmega88A	- AVR[1E930A]
+# AVR@004 - AVR-ATmega88PA	- AVR[1E930F]
+# AVR@005 - AVR-ATmega168A	- AVR[1E9406]
+# AVR@006 - AVR-ATmega168PA	- AVR[1E940B]
+# AVR@007 - AVR-ATmega328	- AVR[1E9514]
+# AVR@008 - AVR-ATmega328P	- AVR[1E950F]
+# AVR@009 - AVR-ATtiny25	- AVR[1E9108]
+# AVR@010 - AVR-ATtiny45	- AVR[1E9206]
+# AVR@011 - AVR-ATtiny85	- AVR[1E930B]
+
+
+
+
+# If DIR_NAME missed, PROG_ID DIR NAME is used instead!
+# Same if no record found in config.txt
+
+# If File name is missing, MAIN.HRP is used by default
+
+# Backups are stored in BACKUPS folder. So no DIR_NAME should be named with this name!
+
+#>>> Autogeneration of directory name by PROG_ID
+# If no record found for given PROG_ID, then file path will be auto-generated
+# for MN_XXXX, R1_X, R2_XXX directory will be named exactly as PROG_ID
+# for ID_XXXXYYYYYYYY - directory will be composed of two directories (main dir and sub dir), where
+#	main dir = ID_XXXX.___
+#	sub dir  = YYYYYYYY

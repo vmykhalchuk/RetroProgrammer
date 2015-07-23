@@ -1,0 +1,26 @@
+# DO NOT MODIFY!
+# PROG_ID	DIR_NAME
+MN_A1C3		BOOTLOAD.ERS  
+ID_34A6FF005566	SIREN01.HM
+R2_G42	
+R1_E   
+MN_B1C4		SMART_MO.USE
+
+
+
+
+
+
+# If DIR_NAME missed, PROG_ID DIR NAME is used instead!
+# Same if no record found in config.txt
+
+# If File name is missing, MAIN.HRP is used by default
+
+# Backups are stored in BACKUPS folder. So no DIR_NAME should be named with this name!
+
+#>>> Autogeneration of directory name by PROG_ID
+# If no record found for given PROG_ID, then directory name will be auto-generated
+# for MN_XXXX, R1_X, R2_XXX directory will be named exactly as PROG_ID
+# for ID_XXXXYYYYYYYY - directory will be composed of two directories (main dir and sub dir), where
+#	main dir = ID_XXXX.___
+#	sub dir  = YYYYYYYY

@@ -1,0 +1,13 @@
+	   
+# comment without no spaces first
+  # now comment
+
+R1_E	AVR@002		HJKHJH
+MN_A1C3  	BHJGJKG.TTT
+  MN_A2C3	HHJ	kjlkjk
+
+ MN_A1C4 BHJGJKG.TTT	 
+
+
+#sdfsdfds
+
