@@ -8,6 +8,7 @@ MN_A1C3  	BHJGJKG.TTT
 
  MN_A1C4 BHJGJKG.TTT	 
 
+ R1_E	AVR[1e34f4]		2
 
 #sdfsdfds
 
