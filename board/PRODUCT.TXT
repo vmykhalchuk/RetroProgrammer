@@ -1,5 +1,5 @@
-Author of schematics and board: Volodymyr Mykhalchuk (vmykhalchuk<a_>gmail.com)
-Designer of board: Manikandan G (https://www.elance.com/s/mani_designer/)
+Author of schematics and board layout idea: Volodymyr Mykhalchuk (vmykhalchuk<a_>gmail.com)
+Created by: Manikandan G (https://www.elance.com/s/mani_designer/)
 
 Full ownership belongs to: Volodymyr Mykhalchuk (vmykhalchuk<a_>gmail.com)
 
