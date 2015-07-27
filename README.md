@@ -1,6 +1,10 @@
 # RetroProgrammer
 Board for Arduino Nano to convert Arduino into handheld programmer (SD card support, Auto Target detection)
 
+#Steps
+* You can order board from here: http://dirtypcbs.com/view.php?share=9566&accesskey=096bf07bd5bc00aa1c8b3e8581d80cb4
+* Firmware - pending...
+
 # Main features
 * Fully automated, no PC required to operate
 * Autodetection of target MCU (ID of target MCU can be autodetected by using extra pin(s) on ICSP). This lets you UPLOAD programm automatically and in one button press.
