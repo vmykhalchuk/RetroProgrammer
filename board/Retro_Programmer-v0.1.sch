@@ -8317,7 +8317,7 @@ Created 2014-05-29, Karrer Zheng&lt;br&gt;
 <part name="GND6" library="supply1" deviceset="GND" device=""/>
 <part name="ICSP+TD" library="Wuerth_Elektronik_Board_to_Board" deviceset="61301021821" device=""/>
 <part name="GND7" library="supply1" deviceset="GND" device=""/>
-<part name="C2" library="rcl" deviceset="C-EU" device="C1206" value="100n"/>
+<part name="C2" library="rcl" deviceset="C-EU" device="C1206" value="100nF"/>
 <part name="C3" library="rcl" deviceset="C-EU" device="C1206" value="10uF"/>
 <part name="GND8" library="supply1" deviceset="GND" device=""/>
 <part name="GND9" library="supply1" deviceset="GND" device=""/>
@@ -8352,7 +8352,7 @@ Created 2014-05-29, Karrer Zheng&lt;br&gt;
 <part name="+3V3" library="supply1" deviceset="+3V3" device=""/>
 <part name="GND14" library="supply1" deviceset="GND" device=""/>
 <part name="+3V4" library="supply1" deviceset="+3V3" device=""/>
-<part name="C5" library="rcl" deviceset="C-EU" device="C1206" value="10uF"/>
+<part name="C5" library="rcl" deviceset="C-EU" device="C1206" value="100nF"/>
 <part name="C6" library="rcl" deviceset="C-EU" device="C1206" value="10uF"/>
 <part name="GND15" library="supply1" deviceset="GND" device=""/>
 <part name="R17" library="rcl" deviceset="R-US_" device="R1206" value="3.3K"/>

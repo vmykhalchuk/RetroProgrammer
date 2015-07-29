@@ -14,11 +14,11 @@
 <layer number="18" name="Vias" color="2" fill="1" visible="yes" active="yes"/>
 <layer number="19" name="Unrouted" color="6" fill="1" visible="yes" active="yes"/>
 <layer number="20" name="Dimension" color="15" fill="1" visible="yes" active="yes"/>
-<layer number="21" name="tPlace" color="7" fill="1" visible="no" active="yes"/>
+<layer number="21" name="tPlace" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="22" name="bPlace" color="7" fill="1" visible="yes" active="yes"/>
-<layer number="23" name="tOrigins" color="15" fill="1" visible="no" active="yes"/>
+<layer number="23" name="tOrigins" color="15" fill="1" visible="yes" active="yes"/>
 <layer number="24" name="bOrigins" color="15" fill="1" visible="yes" active="yes"/>
-<layer number="25" name="tNames" color="7" fill="1" visible="no" active="yes"/>
+<layer number="25" name="tNames" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="26" name="bNames" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="27" name="tValues" color="7" fill="1" visible="no" active="yes"/>
 <layer number="28" name="bValues" color="7" fill="1" visible="no" active="yes"/>
@@ -16710,7 +16710,7 @@ Copyright: Würth Elektronik</description>
 <attribute name="NAME" x="34.3392" y="40.8126" size="0.8128" layer="26" rot="MR90"/>
 <attribute name="VALUE" x="34.2884" y="40.3554" size="1.27" layer="28" rot="MR90"/>
 </element>
-<element name="C2" library="rcl" package="C1206" value="100n" x="40.0204" y="41.6508" smashed="yes" rot="MR90">
+<element name="C2" library="rcl" package="C1206" value="100nF" x="40.0204" y="41.6508" smashed="yes" rot="MR90">
 <attribute name="NAME" x="41.6714" y="38.8568" size="0.8128" layer="26" rot="MR90"/>
 <attribute name="VALUE" x="37.4804" y="40.3808" size="1.27" layer="28" rot="MR90"/>
 </element>
@@ -16722,7 +16722,7 @@ Copyright: Würth Elektronik</description>
 <attribute name="NAME" x="25.762" y="1.7744" size="0.6096" layer="25" rot="R180"/>
 <attribute name="VALUE" x="26.27" y="5.94" size="1.27" layer="27" rot="R180"/>
 </element>
-<element name="C5" library="rcl" package="C1206" value="10uF" x="37.9158" y="9.392" smashed="yes">
+<element name="C5" library="rcl" package="C1206" value="100nF" x="37.9158" y="9.392" smashed="yes">
 <attribute name="NAME" x="40.6844" y="7.995" size="0.6096" layer="25"/>
 <attribute name="VALUE" x="36.6458" y="6.852" size="1.27" layer="27"/>
 </element>
