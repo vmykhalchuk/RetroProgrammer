@@ -48,17 +48,16 @@ As a solution, I have designed and developed this Handheld programmer shield for
 * Autodetection of target MCU (ID of target MCU can be autodetected by using extra pin(s) on ICSP). This lets you UPLOAD programm automatically and in one button press.
 * Supports AVR microcontrollers (...TBD...)
 
+# Difference between Board v0.1 and v0.2
+v0.2 board has support for Arduino Micro (A4 and A6 are swapped comparing to v0.1 board) which gives possibility to support arduino micro for a sake of lost manual programs choices (not possible to select C,D,3,4), only A,B,1,2 will be active.
+
 # To be implemented
 * CRC every HRP file before programming/verifying it!
 ** CRC every conf file
-* Support for Arduino Micro
-** software has to be modified slightly
-** pin A4 must be swapped with A6 (Arduino Micro has no A6 nor A7, so we will have limited Manual programs selection)
-** alternative we can swap A2 with A6, so we will have limited set of target programs when using Arduino Micro
-** second approach might cause target detection error because ICSP pin 10 cannot be floating if pin 9 is set to certain value, so if target device is using resistive target program selection and uses pin9 - then error will occur
-** so first approach is better, however to increase amount of program selection - we can have resistive program selector on place of target resistive selector!
 * Auto detection of programming speed
+* Auto detection of power present on Target device - to avoid turning programming voltage ON
 * Support of 3.3v target MCU
+** How to autodetect if this is 3.3v or 5v device?
 * Extend AVR supported list
 * Support PDI interface (http://www.atmel.com/images/doc8282.pdf)
 * PIC support
@@ -67,6 +66,17 @@ As a solution, I have designed and developed this Handheld programmer shield for
 ** can be implemented as a standalone board connected to ICSP+TD socket
 ** there can be also additional DIP switches to select program
 ** alternatively mcu with 7segment digits and roller to select program, mcu will have to emulate 1wire interface
+* Add two 7segment displays, to monitor status and program selected
+* Or add LCD display for this
+* Add rotary decoder to select quickly programm
+
+# To be implemented (DONE)
+* Support for Arduino Micro - DONE!!!
+** software has to be modified slightly
+** pin A4 must be swapped with A6 (Arduino Micro has no A6 nor A7, so we will have limited Manual programs selection)
+** alternative we can swap A2 with A6, so we will have limited set of target programs when using Arduino Micro
+** second approach might cause target detection error because ICSP pin 10 cannot be floating if pin 9 is set to certain value, so if target device is using resistive target program selection and uses pin9 - then error will occur
+** so first approach is better, however to increase amount of program selection - we can have resistive program selector on place of target resistive selector!
 
 # Board improvements
 * Add LED to show that power supply to target MCU is ON

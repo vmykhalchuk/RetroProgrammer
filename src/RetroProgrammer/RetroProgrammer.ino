@@ -9,6 +9,7 @@
 #include <SPI.h>
 #include <SD.h>
 
+#define ONEWIRE_CRC8_TABLE 0
 #include <OneWire.h>
 
 const byte BUTTON_UPLOAD__LED_READY__LED_SUCCESS = A5;
