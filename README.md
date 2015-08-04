@@ -33,6 +33,16 @@ All you need is:
 * Firmware - pending... feel free to contact me (vmykhalchuk<at>gmail<d>com) for status
 * Manual - describes how to use Retro Programmer and how to prepare your project to be supported by Retro Programmer - pending...
 
+# History
+When I was developing smart house solution, main concept that I wanted to build into it was - maintainability.
+Maintainability is critical factor of having successful system.
+It must be easily repairable without special skills needed.
+And since Smart House says by itself - it is smart - so it must use a bunch of different microcontroller units.
+The problem with MCUs is that to replace such a component on broken board - you need to have a firmware, pc, knowledge on how to upload new firmware.
+This dramatically limits a number of electricians who can service your system.
+
+As a solution, I have designed and developed this Handheld programmer shield for Arduino Nano/Micro.
+
 # Main features
 * Fully automated, no PC required to operate
 * Autodetection of target MCU (ID of target MCU can be autodetected by using extra pin(s) on ICSP). This lets you UPLOAD programm automatically and in one button press.
