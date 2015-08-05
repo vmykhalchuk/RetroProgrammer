@@ -16,6 +16,29 @@
   #include <SPI.h>
   #include <SD.h>
 
+
+  ////////////////////////////////////////////////
+  // File related procedures!!!
+  ////////////////////////////////////////////////
+
+  // SD Card Module pins:
+  // Arduino | Target
+  //   Nano  |  MCU
+  //------------------
+  //    11   | MOSI
+  //    12   | MISO
+  //    13   | CLK
+  //    4    | CS
+  //    10   | is not used but always set to OUTPUT (read more in SD method implementation)
+  boolean initConfFileSD();
+  boolean openConfFile();
+  boolean openConfFile(const char* fname);
+  void closeConfFile();
+
+  ////////////////////////////////////////////////
+  // MAIN/PUBLIC FUNCTIONS
+  ////////////////////////////////////////////////
+
   /*
    * mcuModelId - see AVRConstants.h
    * char mcuModelBuf[MCU_MODEL_BUFFER_SIZE]; - buffer to store MCU Model (note - it will be actively used while method is being called!
@@ -45,24 +68,10 @@
   void readRootConfFile(const char* progId, char* mcuModel, char* filePath, byte& statusRes);
 
   ////////////////////////////////////////////////
-  // File related procedures!!!
+  // PRIVATE FUNCTIONS
   ////////////////////////////////////////////////
 
-  // SD Card Module pins:
-  // Arduino | Target
-  //   Nano  |  MCU
-  //------------------
-  //    11   | MOSI
-  //    12   | MISO
-  //    13   | CLK
-  //    4    | CS
-  //    10   | is not used but always set to OUTPUT (read more in SD method implementation)
-  boolean initConfFileSD();
-  boolean openConfFile();
-  boolean openConfFile(const char* fname);
-  void closeConfFile();
-
-  boolean confFileAvailable();
+  //boolean confFileAvailable();
 
   // skips all white spaces and comments, positions on the first valid character to read (if available)
   boolean skipToValidData(byte& statusRes);
@@ -80,7 +89,7 @@
   char readCharSafe(boolean& eol, byte& statusRes);
 
   ////////////////////////////////////////////////
-  // Test hooks
+  // Test hooks (used by Tests.h)
   ////////////////////////////////////////////////
 
   boolean __test_confFileOpen();

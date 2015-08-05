@@ -41,7 +41,7 @@ TargetProgramDetector programDetector(       A0        ,       A1         ,     
 
 byte programBuffer[1 << (AVR_MEM_PAGE_SIZE_64 + 1)];//128 bytes
 
-#define RAM_DEPOSIT_SIZE 400
+#define RAM_DEPOSIT_SIZE 550
 byte RAM_DEPOSIT[RAM_DEPOSIT_SIZE];
 
 void setup() {
@@ -185,8 +185,8 @@ void testProgramming(byte& statusRes) {
     buf[3] = 0x34;
     buf[4] = 0x45;
     buf[5] = 0x56;
-    buf[126] = 0x30;
     buf[125] = 0x20;
+    buf[126] = 0x30;
     uploadProgramMemoryPage(buf,targetPage,progMemPagesCount,progMemPageSize,statusRes);
     if (statusRes > 0) {
       logErrorB("Page upoad failed!",targetPage);
