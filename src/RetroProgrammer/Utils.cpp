@@ -14,6 +14,22 @@ int freeRam() {
   return size;
 }
 
+boolean initSDCard() {
+  logInfo("Init-g SD card...");
+  // On the Ethernet Shield, CS is pin 4. It's set as an output by default.
+  // Note that even if it's not used as the CS pin, the hardware SS pin
+  // (10 on most Arduino boards, 53 on the Mega) must be left as an output
+  // or the SD library functions will not work.
+  pinMode(10, OUTPUT);
+
+  if (!SD.begin(4)) {
+    logError("SD init failed!");
+    return false;
+  }
+  logInfo("SD init done");
+  return true;
+}
+
 char convertByteToHexChar(byte b, boolean high4bits) {
   if (high4bits) {
     b = b >> 4;
@@ -37,39 +53,6 @@ byte convertHexCharToByte(byte c, byte& statusRes) {
   if (c >= 'A' && c <= 'F') {
     return (c - 'A') + 10;
   }
-  /*if (c == '0') {
-    return 0;
-  } else if (c == '1') {
-    return 1;
-  } else if (c == '2') {
-    return 2;
-  } else if (c == '3') {
-    return 3;
-  } else if (c == '4') {
-    return 4;
-  } else if (c == '5') {
-    return 5;
-  } else if (c == '6') {
-    return 6;
-  } else if (c == '7') {
-    return 7;
-  } else if (c == '8') {
-    return 8;
-  } else if (c == '9') {
-    return 9;
-  } else if (c == 'A' || c == 'a') {
-    return 10;
-  } else if (c == 'B' || c == 'b') {
-    return 11;
-  } else if (c == 'C' || c == 'c') {
-    return 12;
-  } else if (c == 'D' || c == 'd') {
-    return 13;
-  } else if (c == 'E' || c == 'e') {
-    return 14;
-  } else if (c == 'F' || c == 'f') {
-    return 15;
-  }*/
   logDebugB("Wrong character:", c);
   returnStatusV(0x30, 0);
 };
@@ -185,5 +168,110 @@ byte getAVRModelIdByName(const char* mcuModelStr, byte& statusRes) {
     returnStatusV(0xFF, 0); // FIXME Unimplemented!!!
   }
   return 0;
+}
+
+
+  //////////////////////////
+  //   SD Files Related
+  //////////////////////////
+
+
+// Print 3 digits
+void fPrint3Dig(File& f, byte b) {
+  f.print(b / 100);
+  f.print((b / 10) % 10);
+  f.print(b % 10);
+}
+
+//  Print String + Byte + EOL
+void fPrintBln(File& f, String str, byte b) {
+  f.print(str);
+  fPrintB(f, b);
+  f.println();
+}
+
+// Print Byte
+void fPrintB(File& f, byte b) {
+  f.print(String((b & 0xF0)>>4,HEX));
+  f.print(String(b & 0x0F,HEX));
+}
+
+byte read3DigByte(File& f, byte& statusRes) {
+  byte b = readHexByte(f,statusRes);
+  if (statusRes > 0) return 0;
+  byte c1,c2,c3;
+  c1 = b >> 4;
+  c2 = b & 0x0F;
+  
+  if (!readChar(f,c3)) { statusRes = 0x30; return 0; }
+  c3 = convertHexCharToByte(c3,statusRes); if (statusRes > 0) return 0;
+  
+  if (c1 > 9 || c2 > 9 || c3 > 9) { statusRes = 0x33; return 0; }
+  int r = c1 * 100 + c2 * 10 + c3;
+  if (r > 255) { statusRes = 0x33; return 0; }
+  return r;
+}
+
+byte readHexByte(File& f, byte& statusRes) {
+  boolean isEOL;
+  byte b = readHexByteOrEOL(f,isEOL,statusRes);
+  if (isEOL) {
+    statusRes = 0x30;
+  }
+  return b;
+}
+
+// remember to check isEOL before statusRes!!! When EOL, statusRes is also an error!
+byte readHexByteOrEOL(File& f, boolean& isEOL, byte& statusRes) {
+  statusRes = 0;
+  byte c1,c2;
+  if (!readChar(f,c1)) { statusRes = 0x30; return 0; }
+    //logDebugB("readHexByte_1:", c1);
+  if (!readChar(f,c2)) { statusRes = 0x30; return 0; }
+    //logDebugB("readHexByte_2:", c2);
+  if (c1 <= 0x0D || c2 <= 0x0D) {
+    if (c1 == 0x0D && c2 == 0x0A) {
+      logDebug("readHexByte_EOL");
+      isEOL = true;
+    } else {
+      logDebug("readHexByte_EOL_corrupted");
+      statusRes = 0x30;
+    }
+    return 0;
+  }
+  c1 = convertHexCharToByte(c1,statusRes);
+    //logDebugB("_SR:", statusRes);
+  if (statusRes > 0) return 0;
+    //logDebug("readHexByte_convert1_success");
+  c2 = convertHexCharToByte(c2,statusRes);
+  if (statusRes > 0) return 0;
+  return (c1 << 4) | c2;
+}
+
+boolean readChar(File& f, byte& c) {
+  if (f.available()) {
+    c = f.read();
+    return true;
+  } else {
+    return false;// unexpected end
+  }
+}
+
+int readToTheEOL(File& f, byte& statusRes) {
+  int readChars = 0;
+  while (f.available()) {
+    byte c = f.read();
+    if (c == 0x0A) {
+      statusRes = 0x30;
+      return readChars;
+    }
+    if (c == 0x0D) {
+      if (f.available()) c = f.read();
+      statusRes = (c == 0x0A) ? 0 : 0x30;
+      return readChars;
+    }
+    readChars++;
+  }
+  statusRes = 0x30;// unexpected end
 }
 

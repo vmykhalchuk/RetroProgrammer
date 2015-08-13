@@ -2,8 +2,21 @@
 #define Utils_h
 
   #include <Arduino.h>
+  #include <SPI.h>
+  #include <SD.h>
   #include "LoggerA.h"
   #include "AVRConstants.h"
+
+  // SD Card Module pins:
+  // Arduino | Target
+  //   Nano  |  MCU
+  //------------------
+  //    11   | MOSI
+  //    12   | MISO
+  //    13   | CLK
+  //    4    | CS
+  //    10   | is not used but always set to OUTPUT (read more in SD method implementation)
+  boolean initSDCard();  
 
   //BUFFER SIZE FOR MCU MODEL CHAR STRING
   // 'TT_' + '112233445566' + '\0' - here TT is 'MN','R1', 'R2', 'ID', and 112233445566 - is a maximum length for 'ID' case; (see TargetProgramDetector#getTargetIdName)
@@ -112,5 +125,26 @@
   //
   //  char mcuModel[MCU_MODEL_BUFFER_SIZE]; - string with mcuModel
   byte getAVRModelIdByName(const char* mcuModel, byte& statusRes);
+
+
+
+  //////////////////////////
+  //   SD Files Related
+  //////////////////////////
+
+
+  // Print 3 digits
+  void fPrint3Dig(File& f, byte b);
+  //  Print String + Byte + EOL
+  void fPrintBln(File& f, String str, byte b);
+  // Print Byte
+  void fPrintB(File& f, byte b);
+
+  byte read3DigByte(File& f, byte& statusRes);
+  byte readHexByte(File& f, byte& statusRes);
+  // remember to check isEOL before statusRes!!! When EOL, statusRes is also an error!
+  byte readHexByteOrEOL(File& f, boolean& isEOL, byte& statusRes);
+  boolean readChar(File& f, byte& c);
+  int readToTheEOL(File& f, byte& statusRes);
 
 #endif

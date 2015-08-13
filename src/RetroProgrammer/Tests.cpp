@@ -433,7 +433,9 @@ void __testSkipToValidData() {
   assertStatusOKOrGoto(statusRes, "#16", _close);
 
   _close:
-  closeConfFile();
+  if (!closeConfFile()) {
+    logError("!closedFile");
+  }
   logInfo("> END");
   return;
 }
@@ -470,7 +472,9 @@ void __testReadRootConfFile() {
     logError("#09");
   }
 
-  closeConfFile();
+  if (!closeConfFile()) {
+    logError("!closedFile");
+  }
   logInfo("> END");
   return;
 }

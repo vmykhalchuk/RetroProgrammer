@@ -45,6 +45,8 @@
   byte issueByteReadCmd4(byte b1, byte b2, byte b3, byte b4, byte& statusRes);
   
   boolean isTargetMcuBusy(byte& statusRes);
+  void waitForTargetMCU(byte& statusRes);
+
 
   // byte signBytes[3];
   // readSignatureBytes(signBytes, statusRes); checkStatus();

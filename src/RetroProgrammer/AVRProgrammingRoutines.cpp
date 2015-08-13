@@ -120,6 +120,13 @@ boolean isTargetMcuBusy(byte& statusRes) {
   return (issueByteReadCmd2(0xF0,0x00,statusRes) & B00000001) != 0;
 }
 
+void waitForTargetMCU(byte& statusRes) {
+  do {
+    if (!isTargetMcuBusy(statusRes)) return;
+    delay(1);
+  } while(statusRes == 0);
+}
+
 void readSignatureBytes(byte* signBytes, byte& statusRes) {
   signBytes[0] = issueByteReadCmd3(0x30,0x00,0,statusRes);
   checkStatus();

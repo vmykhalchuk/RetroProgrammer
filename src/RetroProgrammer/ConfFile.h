@@ -1,7 +1,8 @@
 /*
  * User is responsible for SD and File lifecycle control!
  * 
- * initConfFileSD();
+ * initSDCard();
+ * 
  * boolean openConfFile();
  * boolean openConfFile(const char* fname);
  * void closeConfFile();
@@ -16,24 +17,14 @@
   #include <SPI.h>
   #include <SD.h>
 
-
   ////////////////////////////////////////////////
   // File related procedures!!!
   ////////////////////////////////////////////////
 
-  // SD Card Module pins:
-  // Arduino | Target
-  //   Nano  |  MCU
-  //------------------
-  //    11   | MOSI
-  //    12   | MISO
-  //    13   | CLK
-  //    4    | CS
-  //    10   | is not used but always set to OUTPUT (read more in SD method implementation)
-  boolean initConfFileSD();
+  // Requires SD Card to be initialized by Utils initializeSDCard() method!
   boolean openConfFile();
   boolean openConfFile(const char* fname);
-  void closeConfFile();
+  boolean closeConfFile();
 
   ////////////////////////////////////////////////
   // MAIN/PUBLIC FUNCTIONS

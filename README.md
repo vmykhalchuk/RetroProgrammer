@@ -61,27 +61,29 @@ v0.2 board has support for Arduino Micro (A4 and A6 are swapped comparing to v0.
 * Extend AVR supported list
 * Support PDI interface (http://www.atmel.com/images/doc8282.pdf)
 * PIC support
-* USB mode: Upload to Target MCU from Arduino via USB cable (no SD involved)
+* Support 1-wire EEPROM instead of ID (this will let manufacturer to write version of software required to be uploaded, without need to define every single ID).
+** This is more costly then ID device, however gives more flexibility and allows to support many devices of same type
+* USB mode 2: Upload directly from manufacturer web-site (will connect to main website where IDs are registered, and will download program specific for given device).
+** 1-wire eeprom would be beneficial here if manufacturer produced many devices which basically need single version of software. So manufacturer can register unique device prototype ID which can be stored on eeprom and uploaded to every such eeprom for every similar device. Then such ID can be used to download firmware required.
+* USB mode: Upload to Target MCU from Arduino dev environment via USB cable (no SD involved)
 * Add support of ZIF sockets
 ** can be implemented as a standalone board connected to ICSP+TD socket
 ** there can be also additional DIP switches to select program
 ** alternatively mcu with 7segment digits and roller to select program, mcu will have to emulate 1wire interface
 * Add two 7segment displays, to monitor status and program selected
 * Or add LCD display for this
-* Add rotary decoder to select quickly programm
+* Add rotary decoder to quickly select manual programm
 
 # To be implemented (DONE)
-* Support for Arduino Micro - DONE!!!
+* Support for Arduino Micro - DONE!!! Board since v0.2 supports Arduino Micro or equivalent.
 ** software has to be modified slightly
 ** pin A4 must be swapped with A6 (Arduino Micro has no A6 nor A7, so we will have limited Manual programs selection)
-** alternative we can swap A2 with A6, so we will have limited set of target programs when using Arduino Micro
-** second approach might cause target detection error because ICSP pin 10 cannot be floating if pin 9 is set to certain value, so if target device is using resistive target program selection and uses pin9 - then error will occur
-** so first approach is better, however to increase amount of program selection - we can have resistive program selector on place of target resistive selector!
 
 # Board improvements
 * Add LED to show that power supply to target MCU is ON
 * Add switch to turn-off power supply to target MCU (in case it uses own power supply)
-** also add this option into automatic target detection algorithm
+** additionally auto-sense voltage on VPP and disable VPP-on switch to prevent failures.
+** also add this option into automatic target detection algorithm - to check if it is expected to have VPP on target board or not
 
 # Optimizations
 * Move statusRes as a global variable, and don't toss around all methods!
