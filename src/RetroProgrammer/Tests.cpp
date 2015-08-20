@@ -244,23 +244,21 @@ void __testGetAVRModelIdByName() {
 
 void testTargetProgramDetector() {
   logDebug(">> TargetPD");
-  // TARGET_MCU_ID__W0, TARGET_MCU_ID__W1, TARGET_MCU_ID__W2, TARGET_MCU_ID__MANUAL0, TARGET_MCU_ID__MANUAL1
-  TargetProgramDetector* pd = new TargetProgramDetector(A0, A1, A2, A3, A4);
   logFreeRam();
   logDebug("TargetPD#01");
-  __testOneWireID(pd, 2000);
+  __testOneWireID(2000);
   logDebug("TargetPD#02");
-  __testGetProgId(pd, 2000);
+  __testGetProgId(2000);
   logDebug("-- END");
   return;
 }
 
 // requires programDetecter
-void __testOneWireID(TargetProgramDetector* pd, int d) {
+void __testOneWireID(int d) {
   logInfo(">TPD#01");
   byte statusRes;
   byte id[8];
-  boolean idPresent = pd->read1WireId(id, statusRes);
+  boolean idPresent = TargetProgramDetector::read1WireId(id, statusRes);
   if (statusRes != 0) {
     logInfo("Error detecting ID chip!");
   } else {
@@ -282,13 +280,13 @@ void __testOneWireID(TargetProgramDetector* pd, int d) {
 }
 
 // requires programDetecter
-void __testGetProgId(TargetProgramDetector* pd, int d) {
+void __testGetProgId(int d) {
   logInfo(">TPD#02");
   byte statusRes;
   boolean autoSelected;
   char progIdBuf[16];
   logFreeRam();
-  pd->getProgId(progIdBuf, autoSelected, statusRes);
+  TargetProgramDetector::getProgId(progIdBuf, autoSelected, statusRes);
   logFreeRam();
   if (statusRes != 0) {
     logErrorB("Error! ", statusRes);

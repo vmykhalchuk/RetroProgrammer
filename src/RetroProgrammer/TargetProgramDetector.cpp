@@ -1,6 +1,12 @@
 #include "TargetProgramDetector.h"
 
-TargetProgramDetector::TargetProgramDetector(byte pinW0, byte pinW1, byte pinW2, byte pinManualM0, byte pinManualM1)
+byte _pinW0;
+byte _pinW1;
+byte _pinW2;
+byte _pinManualM0;
+byte _pinManualM1;
+
+void TargetProgramDetector::setup(byte pinW0, byte pinW1, byte pinW2, byte pinManualM0, byte pinManualM1)
 {
   pinMode(pinW0, INPUT);
   pinMode(pinW1, INPUT);

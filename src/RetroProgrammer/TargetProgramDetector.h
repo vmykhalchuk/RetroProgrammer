@@ -26,9 +26,7 @@
   class TargetProgramDetector
   {
     public:
-      static void setup();
-    
-      TargetProgramDetector(byte pinW0, byte pinW1, byte pinW2, byte pinManualM0, byte pinManualM1);
+      static void setup(byte pinW0, byte pinW1, byte pinW2, byte pinManualM0, byte pinManualM1);
 
       /* 
        *  Call:
@@ -56,7 +54,7 @@
        *                        G   3   3
        *                        H   4   4
        */
-      void getProgId(char* progId, boolean& autoSelected, byte& statusRes);
+      static void getProgId(char* progId, boolean& autoSelected, byte& statusRes);
       
       /*
        * id - byte array of size 8
@@ -74,35 +72,30 @@
        * byte idType;
        * readTargetMcuId(id, idType, statusRes);
        */
-      void readTargetMcuId(byte* data, byte& idType, byte& statusRes);
+      static void readTargetMcuId(byte* data, byte& idType, byte& statusRes);
 
       /*
        * byte statusRes;
        * byte id[8]; // id[0] -family code; id[1-6] - 6 bytes of ID; id[7] - CRC of id[0-6]
        * boolean present = readOneWireId(id, statusRes);
        */
-      boolean read1WireId(byte* data, byte& statusRes);
+      static boolean read1WireId(byte* data, byte& statusRes);
 
     private:
       static const byte READ_ID_COMMAND = 0x33;
-      byte _pinW0;
-      byte _pinW1;
-      byte _pinW2;
-      byte _pinManualM0;
-      byte _pinManualM1;
 
       // returns 0 - floating - N/A; or 1 - 1Wire Device present
-      boolean reset1Wire(byte& statusRes);
+      static boolean reset1Wire(byte& statusRes);
       // will charge 1wire safely, and will switch pin to INPUT mode and turn-off pull-up resistor
-      void charge1Wire(int delay, byte& statusRes);
-      void write1Wire(byte b, byte& statusRes);
-      byte read1Wire(byte& statusRes);
+      static void charge1Wire(int delay, byte& statusRes);
+      static void write1Wire(byte b, byte& statusRes);
+      static byte read1Wire(byte& statusRes);
       
       // returns 0,1,2,3 or 127-N/A
-      byte readResistiveDividerValue(byte portW, byte& statusRes);
+      static byte readResistiveDividerValue(byte portW, byte& statusRes);
       
-      void readManualProgrammSelector(char* data, byte& statusRes);
-      void readManualProgrammSelectorPort(char* data, byte port, byte& statusRes);
+      static void readManualProgrammSelector(char* data, byte& statusRes);
+      static void readManualProgrammSelectorPort(char* data, byte port, byte& statusRes);
   };
 
 #endif

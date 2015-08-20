@@ -29,8 +29,8 @@
 
   // requires A0,A1,A2,A3 and A4 connections, depending on type of test
   void testTargetProgramDetector();
-  void __testOneWireID(TargetProgramDetector* pd, int d);
-  void __testGetProgId(TargetProgramDetector* pd, int d);
+  void __testOneWireID(int d);
+  void __testGetProgId(int d);
   
 
   // 1) requires SD Card to be connected (see ConfFile.h for more details)

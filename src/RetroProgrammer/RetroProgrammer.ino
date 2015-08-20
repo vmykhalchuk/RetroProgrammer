@@ -29,8 +29,8 @@ void setup() {
   #endif
 
   AVRProgrammer::setup();
-  //                                    TARGET_MCU_ID__W0, TARGET_MCU_ID__W1, TARGET_MCU_ID__W2, TARGET_MCU_ID__MANUAL0, TARGET_MCU_ID__MANUAL1
-  TargetProgramDetector programDetector(       A0        ,       A1         ,      A2          ,       A3              ,         A4            );
+  //                           TARGET_MCU_ID__W0, TARGET_MCU_ID__W1, TARGET_MCU_ID__W2, TARGET_MCU_ID__MANUAL0, TARGET_MCU_ID__MANUAL1
+  TargetProgramDetector::setup(       A0        ,       A1         ,      A2          ,       A3              ,         A4            );
   
   Logger_setup();
   //initTargetMcuIdReaderPins();
@@ -38,11 +38,11 @@ void setup() {
   //lcdInit();
   logInfo("Hello World!");
 
-  //setup_test(&programDetector);
-  setup_prod(&programDetector);
+  //setup_test();
+  setup_prod();
 }
 
-void setup_test(TargetProgramDetector* programDetector) {//Used for testing
+void setup_test() {//Used for testing
   logFreeRam();
 
   testUtilsGen();
@@ -65,7 +65,7 @@ void setup_test(TargetProgramDetector* programDetector) {//Used for testing
   logFreeRam();
 }
 
-void setup_prod(TargetProgramDetector* programDetector) {
+void setup_prod() {
   byte statusRes=0;
   
   delay(1000);
@@ -81,7 +81,7 @@ void setup_prod(TargetProgramDetector* programDetector) {
   // find out what program is selected
   char progIdBuf[PROG_ID_BUFFER_SIZE]; // 3 chars for type (ID_, R1_, R2_, MN_), 12 chars as a max length for ID - 6 bytes, 1 char '/0'
   boolean autoSelected;
-  programDetector->getProgId(progIdBuf, autoSelected, statusRes);
+  TargetProgramDetector::getProgId(progIdBuf, autoSelected, statusRes);
   if (statusRes > 0) {
     logError("getProgId");
     return;
