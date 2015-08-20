@@ -84,6 +84,12 @@
     private:
       static const byte READ_ID_COMMAND = 0x33;
 
+      static byte _pinW0;
+      static byte _pinW1;
+      static byte _pinW2;
+      static byte _pinManualM0;
+      static byte _pinManualM1;
+
       // returns 0 - floating - N/A; or 1 - 1Wire Device present
       static boolean reset1Wire(byte& statusRes);
       // will charge 1wire safely, and will switch pin to INPUT mode and turn-off pull-up resistor

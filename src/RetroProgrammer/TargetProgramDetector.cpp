@@ -1,10 +1,11 @@
 #include "TargetProgramDetector.h"
 
-byte _pinW0;
-byte _pinW1;
-byte _pinW2;
-byte _pinManualM0;
-byte _pinManualM1;
+
+byte TargetProgramDetector::_pinW0 = 0;
+byte TargetProgramDetector::_pinW1 = 0;
+byte TargetProgramDetector::_pinW2 = 0;
+byte TargetProgramDetector::_pinManualM0 = 0;
+byte TargetProgramDetector::_pinManualM1 = 0;
 
 void TargetProgramDetector::setup(byte pinW0, byte pinW1, byte pinW2, byte pinManualM0, byte pinManualM1)
 {
