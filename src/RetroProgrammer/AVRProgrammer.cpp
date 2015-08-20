@@ -16,6 +16,9 @@
 /////////////////////////////////////////////
 /////////////////////////////////////////////
 
+boolean AVRProgrammer::targetMcuProgMode = false; // If true - Target MCU is in Programming mode
+boolean AVRProgrammer::targetMcuOutOfSync = false; // If true - Target MCU Programming mode is out of sync due to communication error, etc
+
 void AVRProgrammer::setup() {
   pinMode(pinVccEnable, OUTPUT);
   pinMode(pinAVccEnable, OUTPUT);
@@ -31,9 +34,6 @@ void AVRProgrammer::setup() {
   digitalWrite(pinSck, LOW);
   digitalWrite(pinReset, HIGH);
 }
-
-boolean targetMcuProgMode = false; // If true - Target MCU is in Programming mode
-boolean targetMcuOutOfSync = false; // If true - Target MCU Programming mode is out of sync due to communication error, etc
 
 void AVRProgrammer::shutdownTargetMcu() {
   digitalWrite(pinReset, HIGH);

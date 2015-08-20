@@ -79,6 +79,10 @@
     inline static byte _testReadProgramMemoryByte(byte highB, byte addrHigh, byte addrLow, byte& statusRes) { return readProgramMemoryByte(highB, addrHigh, addrLow, statusRes); }
     
     private:
+
+    static boolean targetMcuProgMode; // If true - Target MCU is in Programming mode
+    static boolean targetMcuOutOfSync; // If true - Target MCU Programming mode is out of sync due to communication error, etc
+
     static void issueByteWriteCmd(byte b1, byte b2, byte b3, byte b4, byte& statusRes);
 
     inline static byte issueByteReadCmd2(byte b1, byte b2, byte& statusRes) { return issueByteReadCmd4(b1,b2,0x00,0x00,statusRes); }

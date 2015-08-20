@@ -1,8 +1,7 @@
 #include "ProgramFile.h"
 
 
-  AVRProgrammer* programmer = new AVRProgrammer();
-  byte programBuffer[1 << (AVR_MEM_PAGE_SIZE_64 + 1)];//128 bytes
+byte programBuffer[1 << (AVR_MEM_PAGE_SIZE_64 + 1)];//128 bytes
 
 
   ////////////////////////////////////////////////
@@ -82,7 +81,7 @@ void ProgramFile::backupMcuData(String filePref, byte& statusRes) {
 
   byte progMemPageSize, progMemPagesCount, eepromMemPageSize, eepromMemPagesCount;
   byte signBytes[3];
-  programmer->readSignatureBytes(signBytes, statusRes); checkStatus();
+  AVRProgrammer::readSignatureBytes(signBytes, statusRes); checkStatus();
   byte modelId = UtilsAVR::getAVRModelAndConf(signBytes, progMemPageSize, progMemPagesCount, eepromMemPageSize, eepromMemPagesCount, statusRes); checkStatus();
   backupMcuDataToFile(fileName, progMemPageSize, progMemPagesCount, eepromMemPageSize, eepromMemPagesCount, statusRes);
 }
@@ -101,7 +100,7 @@ void ProgramFile::backupMcuDataToFile(String fileName, byte progMemPageSize, byt
 
   // get device signature
   byte signBytes[3];
-  programmer->readSignatureBytes(signBytes, statusRes);
+  AVRProgrammer::readSignatureBytes(signBytes, statusRes);
   if (statusRes != 0) {
     logErrorB("Sig read failed!",statusRes);
     goto f_close;
@@ -120,7 +119,7 @@ void ProgramFile::backupMcuDataToFile(String fileName, byte progMemPageSize, byt
   f.println();
   
   // save LOCK bits
-  t = programmer->readLockBits(statusRes);
+  t = AVRProgrammer::readLockBits(statusRes);
   if (statusRes != 0) {
     logErrorB("LOCKBITS failed!",t);
     goto f_close;
@@ -128,7 +127,7 @@ void ProgramFile::backupMcuDataToFile(String fileName, byte progMemPageSize, byt
   UtilsSD::fPrintBln(f, F("LKB:"),t);
   
   // save FUSE bits
-  t = programmer->readFuseBits(statusRes);
+  t = AVRProgrammer::readFuseBits(statusRes);
   if (statusRes != 0) {
     logErrorB("FUSEBITS failed!",t);
     goto f_close;
@@ -136,7 +135,7 @@ void ProgramFile::backupMcuDataToFile(String fileName, byte progMemPageSize, byt
   UtilsSD::fPrintBln(f, F("FSB:"),t);
   
   // save FUSE HIGH bits
-  t = programmer->readFuseHighBits(statusRes);
+  t = AVRProgrammer::readFuseHighBits(statusRes);
   if (statusRes != 0) {
     logErrorB("FUSEHIGHBITS failed!",t);
     goto f_close;
@@ -144,7 +143,7 @@ void ProgramFile::backupMcuDataToFile(String fileName, byte progMemPageSize, byt
   UtilsSD::fPrintBln(f, F("FHB:"),t);
 
   // save EXTENDED FUSE bits
-  t = programmer->readExtendedFuseBits(statusRes);
+  t = AVRProgrammer::readExtendedFuseBits(statusRes);
   if (statusRes != 0) {
     logErrorB("EXTFUSEBITS failed!",t);
     goto f_close;
@@ -152,7 +151,7 @@ void ProgramFile::backupMcuDataToFile(String fileName, byte progMemPageSize, byt
   UtilsSD::fPrintBln(f, F("EFB:"),t);
 
   // save Calibration Byte
-  t = programmer->readCalibrationByte(statusRes);
+  t = AVRProgrammer::readCalibrationByte(statusRes);
   if (statusRes != 0) {
     logErrorB("CLBRTN failed!",t);
     goto f_close;
@@ -180,7 +179,7 @@ void ProgramFile::backupMcuDataToFile(String fileName, byte progMemPageSize, byt
   f.println(1 << progMemPageSize);
   for (int p = 0; p < (1 << progMemPagesCount); p++) {
     logInfoD("PMPage: ",p);
-    programmer->readProgramMemoryPage(programBuffer, p, progMemPageSize, statusRes);
+    AVRProgrammer::readProgramMemoryPage(programBuffer, p, progMemPageSize, statusRes);
     if (statusRes != 0) {
       logErrorB("Page read failed!",t);
       goto f_close;
@@ -209,7 +208,7 @@ void ProgramFile::backupMcuDataToFile(String fileName, byte progMemPageSize, byt
   byte eepromBuffer[1 << eepromMemPageSize];
   for (int p = 0; p < (1 << eepromMemPagesCount); p++) {
     logInfoD("EEPROMPage: ",p);
-    programmer->readEepromMemoryPage(eepromBuffer, p, eepromMemPageSize, statusRes);
+    AVRProgrammer::readEepromMemoryPage(eepromBuffer, p, eepromMemPageSize, statusRes);
     if (statusRes != 0) {
       logErrorB("Page read failed!",t);
       goto f_close;
@@ -396,7 +395,7 @@ void ProgramFile::uploadMcuDataFromFile_internal(boolean progMode, String fileNa
     logInfoB("LKB!",lkb);
   }
   
-  programmer->waitForTargetMCU(statusRes); // wait for last operation to finish
+  AVRProgrammer::waitForTargetMCU(statusRes); // wait for last operation to finish
   
   f_close: f.close(); return;
   f_error: statusRes = 0x30; goto f_close;
@@ -416,17 +415,17 @@ void ProgramFile::uploadProgramMemoryPage(byte* buf, int pageNo,
   if (allFF) return; // nothing to programm, all FF
   
   // load into buffer
-  programmer->waitForTargetMCU(statusRes); if (statusRes > 0) return;
+  AVRProgrammer::waitForTargetMCU(statusRes); if (statusRes > 0) return;
   for (byte i = 0; i < (1 << progMemPageSize); i++) {
   //for (byte i = (1 << progMemPageSize) - 1; i >= 0; i--) {
     //logDebug("i="+String(i)+":"+String(buf[i * 2],HEX)+":"+String(buf[i * 2 + 1],HEX));
-    programmer->loadProgramMemoryPageByte(true, i, buf[i * 2], statusRes);
+    AVRProgrammer::loadProgramMemoryPageByte(true, i, buf[i * 2], statusRes);
     if (statusRes > 0) return;
-    programmer->loadProgramMemoryPageByte(false, i, buf[i * 2 + 1], statusRes);
+    AVRProgrammer::loadProgramMemoryPageByte(false, i, buf[i * 2 + 1], statusRes);
     if (statusRes > 0) return;
   }
   // programm
-  programmer->writeProgramMemoryPage(addrMsb, addrLsb, statusRes);
+  AVRProgrammer::writeProgramMemoryPage(addrMsb, addrLsb, statusRes);
 }
 
 
@@ -592,19 +591,19 @@ void ProgramFile::_testProgramming(byte& statusRes) {
   #endif
 
   delay(100);
-  programmer->loadProgramMemoryPageByte(false, 128, 0x12, statusRes); if (statusRes > 0) { logDebug("bad L0"); return; }
-  programmer->loadProgramMemoryPageByte(true, 128, 0x01, statusRes); if (statusRes > 0) { logDebug("bad H0"); return; }
-  programmer->loadProgramMemoryPageByte(false, 129, 0x34, statusRes); if (statusRes > 0) { logDebug("bad L1"); return; }
-  programmer->loadProgramMemoryPageByte(true, 129, 0x23, statusRes); if (statusRes > 0) { logDebug("bad H1"); return; }
-  programmer->loadProgramMemoryPageByte(false, 130, 0x56, statusRes); if (statusRes > 0) { logDebug("bad L2"); return; }
-  programmer->loadProgramMemoryPageByte(true, 130, 0x45, statusRes); if (statusRes > 0) { logDebug("bad H2"); return; }
+  AVRProgrammer::loadProgramMemoryPageByte(false, 128, 0x12, statusRes); if (statusRes > 0) { logDebug("bad L0"); return; }
+  AVRProgrammer::loadProgramMemoryPageByte(true, 128, 0x01, statusRes); if (statusRes > 0) { logDebug("bad H0"); return; }
+  AVRProgrammer::loadProgramMemoryPageByte(false, 129, 0x34, statusRes); if (statusRes > 0) { logDebug("bad L1"); return; }
+  AVRProgrammer::loadProgramMemoryPageByte(true, 129, 0x23, statusRes); if (statusRes > 0) { logDebug("bad H1"); return; }
+  AVRProgrammer::loadProgramMemoryPageByte(false, 130, 0x56, statusRes); if (statusRes > 0) { logDebug("bad L2"); return; }
+  AVRProgrammer::loadProgramMemoryPageByte(true, 130, 0x45, statusRes); if (statusRes > 0) { logDebug("bad H2"); return; }
 
-  programmer->loadProgramMemoryPageByte(false, 131, 0x68, statusRes); if (statusRes > 0) { logDebug("bad L6"); return; }
-  programmer->loadProgramMemoryPageByte(true, 131, 0x67, statusRes); if (statusRes > 0) { logDebug("bad H6"); return; }
-  programmer->writeProgramMemoryPage(0, 128, statusRes); if (statusRes > 0) { logDebug("bad Page"); return; }
+  AVRProgrammer::loadProgramMemoryPageByte(false, 131, 0x68, statusRes); if (statusRes > 0) { logDebug("bad L6"); return; }
+  AVRProgrammer::loadProgramMemoryPageByte(true, 131, 0x67, statusRes); if (statusRes > 0) { logDebug("bad H6"); return; }
+  AVRProgrammer::writeProgramMemoryPage(0, 128, statusRes); if (statusRes > 0) { logDebug("bad Page"); return; }
   delay(500);
 
-  programmer->readProgramMemoryPage(programBuffer, targetPage, progMemPageSize, statusRes);
+  AVRProgrammer::readProgramMemoryPage(programBuffer, targetPage, progMemPageSize, statusRes);
   if (statusRes > 0) {
     logErrorB("Page read failed!",targetPage);
     return;
@@ -616,12 +615,12 @@ void ProgramFile::_testProgramming(byte& statusRes) {
   logDebug("Done!");
   
   // now lets try manual!
-  byte bh = programmer->_testReadProgramMemoryByte(true, 0, 128, statusRes); if (statusRes > 0) { logErrorB("read bh 128 F!",targetPage); return; }
-  byte bl = programmer->_testReadProgramMemoryByte(false, 0, 128, statusRes); if (statusRes > 0) { logErrorB("read bh 128 F!",targetPage); return; }
+  byte bh = AVRProgrammer::_testReadProgramMemoryByte(true, 0, 128, statusRes); if (statusRes > 0) { logErrorB("read bh 128 F!",targetPage); return; }
+  byte bl = AVRProgrammer::_testReadProgramMemoryByte(false, 0, 128, statusRes); if (statusRes > 0) { logErrorB("read bh 128 F!",targetPage); return; }
   logDebugB("bh128:",bh);
   logDebugB("bl128:",bl);
-  bh = programmer->_testReadProgramMemoryByte(true, 0, 129, statusRes); if (statusRes > 0) { logErrorB("read bh 129 F!",targetPage); return; }
-  bl = programmer->_testReadProgramMemoryByte(false, 0, 129, statusRes); if (statusRes > 0) { logErrorB("read bh 129 F!",targetPage); return; }
+  bh = AVRProgrammer::_testReadProgramMemoryByte(true, 0, 129, statusRes); if (statusRes > 0) { logErrorB("read bh 129 F!",targetPage); return; }
+  bl = AVRProgrammer::_testReadProgramMemoryByte(false, 0, 129, statusRes); if (statusRes > 0) { logErrorB("read bh 129 F!",targetPage); return; }
   logDebugB("bh129:",bh);
   logDebugB("bl129:",bl);
 }

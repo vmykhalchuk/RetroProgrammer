@@ -38,7 +38,7 @@ void setup() {
   //lcdInit();
   logInfo("Hello World!");
 
-  //setup_test();
+  setup_test();
   setup_prod();
 }
 
