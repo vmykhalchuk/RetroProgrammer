@@ -5,8 +5,8 @@
  *    NOTE: Make it a first call, to setup MCU ports properly
  *    
  */
-#ifndef AVRProgrammingRoutines_h
-#define AVRProgrammingRoutines_h
+#ifndef AVRProgrammer_h
+#define AVRProgrammer_h
 
   #include <Arduino.h>
   #include "LoggerA.h"

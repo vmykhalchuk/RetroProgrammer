@@ -1,7 +1,7 @@
 #include "LoggerA.h"
 #include "Utils.h"
 #include "AVRConstants.h"
-#include "AVRProgrammingRoutines.h"
+#include "AVRProgrammer.h"
 #include "ConfFile.h"
 #include "ProgramFile.h"
 #include "TargetProgramDetector.h"
