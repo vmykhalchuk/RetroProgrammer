@@ -16,7 +16,7 @@
 /////////////////////////////////////////////
 /////////////////////////////////////////////
 
-void AVRProgrammingRoutines_setup() {
+void AVRProgrammer::setup() {
   pinMode(pinVccEnable, OUTPUT);
   pinMode(pinAVccEnable, OUTPUT);
   digitalWrite(pinVccEnable, LOW);
@@ -35,7 +35,7 @@ void AVRProgrammingRoutines_setup() {
 boolean targetMcuProgMode = false; // If true - Target MCU is in Programming mode
 boolean targetMcuOutOfSync = false; // If true - Target MCU Programming mode is out of sync due to communication error, etc
 
-void shutdownTargetMcu() {
+void AVRProgrammer::shutdownTargetMcu() {
   digitalWrite(pinReset, HIGH);
   digitalWrite(pinMosi, LOW);
   digitalWrite(pinSck, LOW);
@@ -46,7 +46,7 @@ void shutdownTargetMcu() {
   targetMcuOutOfSync = false;
 }
 
-void startupTargetMcuProgramming(byte& statusRes) {
+void AVRProgrammer::startupTargetMcuProgramming(byte& statusRes) {
   initStatus();
   if (targetMcuProgMode) {
     logError("MCU In PMODE!");
@@ -75,7 +75,7 @@ void startupTargetMcuProgramming(byte& statusRes) {
   }
 }
 
-void issueByteWriteCmd(byte b1, byte b2, byte b3, byte b4, byte& statusRes) {
+void AVRProgrammer::issueByteWriteCmd(byte b1, byte b2, byte b3, byte b4, byte& statusRes) {
   byte r = issueByteReadCmd4(b1, b2, b3, b4, statusRes);
   if (r != b3) {
     targetMcuOutOfSync = true;
@@ -84,7 +84,7 @@ void issueByteWriteCmd(byte b1, byte b2, byte b3, byte b4, byte& statusRes) {
   }
 }
 
-byte issueByteReadCmd4(byte b1, byte b2, byte b3, byte b4, byte& statusRes) {
+byte AVRProgrammer::issueByteReadCmd4(byte b1, byte b2, byte b3, byte b4, byte& statusRes) {
   initStatus();
   if (!targetMcuProgMode) {
     logError("MCU !ProgMode");
@@ -116,18 +116,18 @@ byte issueByteReadCmd4(byte b1, byte b2, byte b3, byte b4, byte& statusRes) {
   return sendReadByte(b4);
 }
 
-boolean isTargetMcuBusy(byte& statusRes) {
+boolean AVRProgrammer::isTargetMcuBusy(byte& statusRes) {
   return (issueByteReadCmd2(0xF0,0x00,statusRes) & B00000001) != 0;
 }
 
-void waitForTargetMCU(byte& statusRes) {
+void AVRProgrammer::waitForTargetMCU(byte& statusRes) {
   do {
     if (!isTargetMcuBusy(statusRes)) return;
     delay(1);
   } while(statusRes == 0);
 }
 
-void readSignatureBytes(byte* signBytes, byte& statusRes) {
+void AVRProgrammer::readSignatureBytes(byte* signBytes, byte& statusRes) {
   signBytes[0] = issueByteReadCmd3(0x30,0x00,0,statusRes);
   checkStatus();
   signBytes[1] = issueByteReadCmd3(0x30,0x00,1,statusRes);
@@ -135,7 +135,7 @@ void readSignatureBytes(byte* signBytes, byte& statusRes) {
   signBytes[2] = issueByteReadCmd3(0x30,0x00,2,statusRes);
 }
 
-void readProgramMemoryPage(byte* pageBuffer, byte pageNumber, byte pageSize, byte& statusRes) {
+void AVRProgrammer::readProgramMemoryPage(byte* pageBuffer, byte pageNumber, byte pageSize, byte& statusRes) {
   if (pageSize < AVR_MEM_PAGE_SIZE_16 || pageSize > AVR_MEM_PAGE_SIZE_64) {
     returnStatus(0x19);
   }
@@ -151,7 +151,7 @@ void readProgramMemoryPage(byte* pageBuffer, byte pageNumber, byte pageSize, byt
   }
 }
 
-void readEepromMemoryPage(byte* pageBuffer, byte pageNumber, byte pageSize, byte& statusRes) {
+void AVRProgrammer::readEepromMemoryPage(byte* pageBuffer, byte pageNumber, byte pageSize, byte& statusRes) {
   if (pageSize != AVR_MEM_PAGE_SIZE_4) {
     returnStatus(0x1A);
   }
@@ -177,7 +177,7 @@ void readEepromMemoryPage(byte* pageBuffer, byte pageNumber, byte pageSize, byte
   return true;
 }*/
 
-byte sendReadByte(byte byteToSend) {
+byte AVRProgrammer::sendReadByte(byte byteToSend) {
   byte resByte = 0;
   byte mask = B10000000;
 

@@ -1,12 +1,15 @@
 #include "ProgramFile.h"
 
-byte programBuffer[1 << (AVR_MEM_PAGE_SIZE_64 + 1)];//128 bytes
+
+  AVRProgrammer* programmer = new AVRProgrammer();
+  byte programBuffer[1 << (AVR_MEM_PAGE_SIZE_64 + 1)];//128 bytes
+
 
   ////////////////////////////////////////////////
   // MAIN/PUBLIC FUNCTIONS
   ////////////////////////////////////////////////
 
-void openFile(File& f, String fileName, int mode, byte& statusRes) {
+void ProgramFile::openFile(File& f, String fileName, int mode, byte& statusRes) {
   initStatus();
   if (fileName.length() > 8) {
     logError("2long F name");// File Name too long
@@ -30,7 +33,7 @@ void openFile(File& f, String fileName, int mode, byte& statusRes) {
   }
 }
 
-void openFile2(File& f, String fileName, int mode, byte& statusRes) {
+void ProgramFile::openFile2(File& f, String fileName, int mode, byte& statusRes) {
   initStatus();
   boolean fileExists = SD.exists(fileName);//buf);
   if (mode == FILE_WRITE && fileExists) {
@@ -50,7 +53,7 @@ void openFile2(File& f, String fileName, int mode, byte& statusRes) {
   }
 }
 
-void findNextFileName(String filePref, String& resFile, byte& statusRes) {
+void ProgramFile::findNextFileName(String filePref, String& resFile, byte& statusRes) {
   initStatus();
   // Create file
   if (filePref.length() > 4) {
@@ -73,18 +76,18 @@ void findNextFileName(String filePref, String& resFile, byte& statusRes) {
   }
 }
 
-void backupMcuData(String filePref, byte& statusRes) {
+void ProgramFile::backupMcuData(String filePref, byte& statusRes) {
   String fileName;
   findNextFileName(filePref, fileName, statusRes); checkStatus();
 
   byte progMemPageSize, progMemPagesCount, eepromMemPageSize, eepromMemPagesCount;
   byte signBytes[3];
-  readSignatureBytes(signBytes, statusRes); checkStatus();
-  byte modelId = getAVRModelAndConf(signBytes, progMemPageSize, progMemPagesCount, eepromMemPageSize, eepromMemPagesCount, statusRes); checkStatus();
+  programmer->readSignatureBytes(signBytes, statusRes); checkStatus();
+  byte modelId = UtilsAVR::getAVRModelAndConf(signBytes, progMemPageSize, progMemPagesCount, eepromMemPageSize, eepromMemPagesCount, statusRes); checkStatus();
   backupMcuDataToFile(fileName, progMemPageSize, progMemPagesCount, eepromMemPageSize, eepromMemPagesCount, statusRes);
 }
 
-void backupMcuDataToFile(String fileName, byte progMemPageSize, byte progMemPagesCount, 
+void ProgramFile::backupMcuDataToFile(String fileName, byte progMemPageSize, byte progMemPagesCount, 
                         byte eepromMemPageSize, byte eepromMemPagesCount, byte& statusRes) {
   File f;
   byte t;
@@ -98,63 +101,63 @@ void backupMcuDataToFile(String fileName, byte progMemPageSize, byte progMemPage
 
   // get device signature
   byte signBytes[3];
-  readSignatureBytes(signBytes, statusRes);
+  programmer->readSignatureBytes(signBytes, statusRes);
   if (statusRes != 0) {
     logErrorB("Sig read failed!",statusRes);
     goto f_close;
   }
   // get device model ID
-  t = getAVRModelIdBySignature(signBytes, statusRes);
+  t = UtilsAVR::getAVRModelIdBySignature(signBytes, statusRes);
   if (statusRes != 0) {
     logErrorB("Model read failed!",t);
     goto f_close;
   }
-  fPrintBln(f,F("MDL:"),t); // print Model
+  UtilsSD::fPrintBln(f,F("MDL:"),t); // print Model
   f.print(F("SGN:"));       // print Signature
-  fPrintB(f,signBytes[0]);
-  fPrintB(f,signBytes[1]);
-  fPrintB(f,signBytes[2]);
+  UtilsSD::fPrintB(f,signBytes[0]);
+  UtilsSD::fPrintB(f,signBytes[1]);
+  UtilsSD::fPrintB(f,signBytes[2]);
   f.println();
   
   // save LOCK bits
-  t = readLockBits(statusRes);
+  t = programmer->readLockBits(statusRes);
   if (statusRes != 0) {
     logErrorB("LOCKBITS failed!",t);
     goto f_close;
   }
-  fPrintBln(f, F("LKB:"),t);
+  UtilsSD::fPrintBln(f, F("LKB:"),t);
   
   // save FUSE bits
-  t = readFuseBits(statusRes);
+  t = programmer->readFuseBits(statusRes);
   if (statusRes != 0) {
     logErrorB("FUSEBITS failed!",t);
     goto f_close;
   }
-  fPrintBln(f, F("FSB:"),t);
+  UtilsSD::fPrintBln(f, F("FSB:"),t);
   
   // save FUSE HIGH bits
-  t = readFuseHighBits(statusRes);
+  t = programmer->readFuseHighBits(statusRes);
   if (statusRes != 0) {
     logErrorB("FUSEHIGHBITS failed!",t);
     goto f_close;
   }
-  fPrintBln(f, F("FHB:"),t);
+  UtilsSD::fPrintBln(f, F("FHB:"),t);
 
   // save EXTENDED FUSE bits
-  t = readExtendedFuseBits(statusRes);
+  t = programmer->readExtendedFuseBits(statusRes);
   if (statusRes != 0) {
     logErrorB("EXTFUSEBITS failed!",t);
     goto f_close;
   }
-  fPrintBln(f, F("EFB:"),t);
+  UtilsSD::fPrintBln(f, F("EFB:"),t);
 
   // save Calibration Byte
-  t = readCalibrationByte(statusRes);
+  t = programmer->readCalibrationByte(statusRes);
   if (statusRes != 0) {
     logErrorB("CLBRTN failed!",t);
     goto f_close;
   }
-  fPrintBln(f, F("CLB:"),t);
+  UtilsSD::fPrintBln(f, F("CLB:"),t);
 
   // write random
   /*f.println(F("#"));
@@ -163,7 +166,7 @@ void backupMcuDataToFile(String fileName, byte progMemPageSize, byte progMemPage
   for (int r = 0; r < 10; r++) {
     f.print(F("#"));
     for (byte i = 0; i < 64; i++) {
-      fPrintB(f,analogRead(pinRandomRead));
+      UtilsSD::fPrintB(f,analogRead(pinRandomRead));
     }
     f.println();
   }*/
@@ -177,19 +180,19 @@ void backupMcuDataToFile(String fileName, byte progMemPageSize, byte progMemPage
   f.println(1 << progMemPageSize);
   for (int p = 0; p < (1 << progMemPagesCount); p++) {
     logInfoD("PMPage: ",p);
-    readProgramMemoryPage(programBuffer, p, progMemPageSize, statusRes);
+    programmer->readProgramMemoryPage(programBuffer, p, progMemPageSize, statusRes);
     if (statusRes != 0) {
       logErrorB("Page read failed!",t);
       goto f_close;
     }
     
     f.print(F("PRM:"));
-    fPrint3Dig(f, p);
+    UtilsSD::fPrint3Dig(f, p);
     f.print(F(":"));
     
     byte maxByte = 1 << (progMemPageSize + 1);
     for (byte i = 0; i < maxByte; i++) {
-      fPrintB(f, programBuffer[i]);
+      UtilsSD::fPrintB(f, programBuffer[i]);
     }
     
     f.println();
@@ -206,19 +209,19 @@ void backupMcuDataToFile(String fileName, byte progMemPageSize, byte progMemPage
   byte eepromBuffer[1 << eepromMemPageSize];
   for (int p = 0; p < (1 << eepromMemPagesCount); p++) {
     logInfoD("EEPROMPage: ",p);
-    readEepromMemoryPage(eepromBuffer, p, eepromMemPageSize, statusRes);
+    programmer->readEepromMemoryPage(eepromBuffer, p, eepromMemPageSize, statusRes);
     if (statusRes != 0) {
       logErrorB("Page read failed!",t);
       goto f_close;
     }
     
     f.print(F("ERM:"));
-    fPrint3Dig(f, p);
+    UtilsSD::fPrint3Dig(f, p);
     f.print(F(":"));
     
     byte maxByte = 1 << eepromMemPageSize;
     for (byte i = 0; i < maxByte; i++) {
-      fPrintB(f, eepromBuffer[i]);
+      UtilsSD::fPrintB(f, eepromBuffer[i]);
     }
     
     f.println();
@@ -240,16 +243,9 @@ void backupMcuDataToFile(String fileName, byte progMemPageSize, byte progMemPage
 /////////////////////////////////////////////
 /////////////////////////////////////////////
 /////////////////////////////////////////////
-void uploadMcuDataFromFile_internal(boolean progMode, String fileName, byte targetMcuModel, byte& statusRes);
-void uploadMcuDataFromFile_internal(boolean progMode, String fileName, byte* targetMcuSign,
-                        byte progMemPagesCount, byte progMemPageSize,
-                        byte eepromMemPagesCount, byte eepromMemPageSize, byte& statusRes);
-void readLine(File& f, byte& lineType, byte* buffer, int& resSize, int& pageNo, byte& statusRes);
-void uploadProgramMemoryPage(byte* buf, int pageNo, 
-      byte progMemPagesCount, byte progMemPageSize, byte& statusRes);
 
 
-void uploadMcuDataFromFile(String fileName, byte* targetMcuSign, byte progMemPagesCount, byte progMemPageSize,
+void ProgramFile::uploadMcuDataFromFile(String fileName, byte* targetMcuSign, byte progMemPagesCount, byte progMemPageSize,
                         byte eepromMemPagesCount, byte eepromMemPageSize, byte& statusRes) {
   uploadMcuDataFromFile_internal(false, fileName, targetMcuSign, 
                                   progMemPagesCount, progMemPageSize,
@@ -268,7 +264,7 @@ void uploadMcuDataFromFile(String fileName, byte* targetMcuSign, byte progMemPag
   }
 }
 
-void uploadMcuDataFromFile(String fileName, byte targetMcuModel, byte& statusRes) {
+void ProgramFile::uploadMcuDataFromFile(String fileName, byte targetMcuModel, byte& statusRes) {
   uploadMcuDataFromFile_internal(false, fileName, targetMcuModel, statusRes);
   if (statusRes > 0) {
     logError("File corrupted!");
@@ -282,7 +278,7 @@ void uploadMcuDataFromFile(String fileName, byte targetMcuModel, byte& statusRes
   }
 }
 
-void uploadMcuDataFromFile_internal(boolean progMode, String fileName, byte targetMcuModel, byte& statusRes) {
+void ProgramFile::uploadMcuDataFromFile_internal(boolean progMode, String fileName, byte targetMcuModel, byte& statusRes) {
   byte m = targetMcuModel - 1;
   byte signBytes[3];
   signBytes[0] = MCU_AVR_TYPES[m][0];
@@ -295,7 +291,7 @@ void uploadMcuDataFromFile_internal(boolean progMode, String fileName, byte targ
 }
 
 // targetMcuSign - byte[3] with sign of MCU e.g. {0x1e,0x95,0x0f}
-void uploadMcuDataFromFile_internal(boolean progMode, String fileName, byte* targetMcuSign,
+void ProgramFile::uploadMcuDataFromFile_internal(boolean progMode, String fileName, byte* targetMcuSign,
                         byte progMemPagesCount, byte progMemPageSize,
                         byte eepromMemPagesCount, byte eepromMemPageSize, byte& statusRes) {
   File f;
@@ -400,13 +396,13 @@ void uploadMcuDataFromFile_internal(boolean progMode, String fileName, byte* tar
     logInfoB("LKB!",lkb);
   }
   
-  waitForTargetMCU(statusRes); // wait for last operation to finish
+  programmer->waitForTargetMCU(statusRes); // wait for last operation to finish
   
   f_close: f.close(); return;
   f_error: statusRes = 0x30; goto f_close;
 }
 
-void uploadProgramMemoryPage(byte* buf, int pageNo, 
+void ProgramFile::uploadProgramMemoryPage(byte* buf, int pageNo, 
       byte progMemPagesCount, byte progMemPageSize, byte& statusRes) {
   if (pageNo < 0) { statusRes = 0x20; return; }
   int addr = pageNo << progMemPageSize;
@@ -420,57 +416,59 @@ void uploadProgramMemoryPage(byte* buf, int pageNo,
   if (allFF) return; // nothing to programm, all FF
   
   // load into buffer
-  waitForTargetMCU(statusRes); if (statusRes > 0) return;
+  programmer->waitForTargetMCU(statusRes); if (statusRes > 0) return;
   for (byte i = 0; i < (1 << progMemPageSize); i++) {
   //for (byte i = (1 << progMemPageSize) - 1; i >= 0; i--) {
     //logDebug("i="+String(i)+":"+String(buf[i * 2],HEX)+":"+String(buf[i * 2 + 1],HEX));
-    loadProgramMemoryPageByte(true, i, buf[i * 2], statusRes);
+    programmer->loadProgramMemoryPageByte(true, i, buf[i * 2], statusRes);
     if (statusRes > 0) return;
-    loadProgramMemoryPageByte(false, i, buf[i * 2 + 1], statusRes);
+    programmer->loadProgramMemoryPageByte(false, i, buf[i * 2 + 1], statusRes);
     if (statusRes > 0) return;
   }
   // programm
-  writeProgramMemoryPage(addrMsb, addrLsb, statusRes);
+  programmer->writeProgramMemoryPage(addrMsb, addrLsb, statusRes);
 }
 
-// lineType:
-//    0x00 - empty
-//    0x01 - comment
-//    0x10 - MCU Type - buffer will contain chars with type (resSize will contain size of result)
-//    0x12 - Signature (for AVR, buffer will contain first 3 bytes) as signature
-//    
-// #    - 0x01  Comment
-// TYP  - 0x10  Type ("AVR","PIC",...)
-// MDL  - 0x11  Model (1,2,3,4,....)
-// SGN  - 0x12  Signature (for AVR - 3 bytes)
-// LKB  - 0x20  Lock Bits
-// FSB  - 0x21  Fuse Bits
-// FHB  - 0x22  Fuse Hight Bits
-// EFB  - 0x23  Extended Fuse Bits
-// CLB  - 0x24  Calibration Byte
-// PRM  - 0x30  Flash/Program Memory Page
-// ERM  - 0x31  EEPROM Page
-const byte line_types[10][4] = {{'T','Y','P',LINE_TYPE_TYP}, {'M','D','L',LINE_TYPE_MDL}, {'S','G','N',LINE_TYPE_SGN},
-                                {'L','K','B',LINE_TYPE_LKB}, {'F','S','B',LINE_TYPE_FSB}, {'F','H','B',LINE_TYPE_FHB},
-                                {'E','F','B',LINE_TYPE_EFB}, {'C','L','B',LINE_TYPE_CLB},
-                                {'P','R','M',LINE_TYPE_PRM}, {'E','R','M',LINE_TYPE_ERM}};
 
-void readLine(File& f, byte& lineType, byte* buffer, int& resSize, int& pageNo, byte& statusRes) {
+
+      // lineType:
+      //    0x00 - empty
+      //    0x01 - comment
+      //    0x10 - MCU Type - buffer will contain chars with type (resSize will contain size of result)
+      //    0x12 - Signature (for AVR, buffer will contain first 3 bytes) as signature
+      //    
+      // #    - 0x01  Comment
+      // TYP  - 0x10  Type ("AVR","PIC",...)
+      // MDL  - 0x11  Model (1,2,3,4,....)
+      // SGN  - 0x12  Signature (for AVR - 3 bytes)
+      // LKB  - 0x20  Lock Bits
+      // FSB  - 0x21  Fuse Bits
+      // FHB  - 0x22  Fuse Hight Bits
+      // EFB  - 0x23  Extended Fuse Bits
+      // CLB  - 0x24  Calibration Byte
+      // PRM  - 0x30  Flash/Program Memory Page
+      // ERM  - 0x31  EEPROM Page
+      const byte line_types[10][4] = {{'T','Y','P',ProgramFile::LINE_TYPE_TYP}, {'M','D','L',ProgramFile::LINE_TYPE_MDL}, {'S','G','N',ProgramFile::LINE_TYPE_SGN},
+                                            {'L','K','B',ProgramFile::LINE_TYPE_LKB}, {'F','S','B',ProgramFile::LINE_TYPE_FSB}, {'F','H','B',ProgramFile::LINE_TYPE_FHB},
+                                            {'E','F','B',ProgramFile::LINE_TYPE_EFB}, {'C','L','B',ProgramFile::LINE_TYPE_CLB},
+                                            {'P','R','M',ProgramFile::LINE_TYPE_PRM}, {'E','R','M',ProgramFile::LINE_TYPE_ERM}};
+
+void ProgramFile::readLine(File& f, byte& lineType, byte* buffer, int& resSize, int& pageNo, byte& statusRes) {
   byte c[4];
   logDebug("readLine");
-  if (!readChar(f,c[0])) { statusRes = 0x30; return; }
+  if (!UtilsSD::readChar(f,c[0])) { statusRes = 0x30; return; }
   logDebugB("read c[0]:", c[0]);
   if (c[0] == '#') {
     lineType = LINE_TYPE_COMMENT;
-    int chars = readToTheEOL(f,statusRes);
+    int chars = UtilsSD::readToTheEOL(f,statusRes);
     logDebugS("readToEOL:", String(chars) + "," + String(statusRes,HEX));
     return;
   }
-  if (!readChar(f,c[1])) { statusRes = 0x30; return; }
+  if (!UtilsSD::readChar(f,c[1])) { statusRes = 0x30; return; }
   logDebugB("read c[1]:", c[1]);
-  if (!readChar(f,c[2])) { statusRes = 0x30; return; }
+  if (!UtilsSD::readChar(f,c[2])) { statusRes = 0x30; return; }
   logDebugB("read c[2]:", c[2]);
-  if (!readChar(f,c[3])) { statusRes = 0x30; return; }
+  if (!UtilsSD::readChar(f,c[3])) { statusRes = 0x30; return; }
   logDebugB("read c[3]:", c[3]);
   if (c[3] != ':') {
     statusRes = 0x32;// Not ':'
@@ -500,43 +498,43 @@ void readLine(File& f, byte& lineType, byte* buffer, int& resSize, int& pageNo, 
   }
   
   if (lineType == LINE_TYPE_TYP) {
-    readToTheEOL(f,statusRes);
+    UtilsSD::readToTheEOL(f,statusRes);
     return;
     // TODO Implement verification of string: it should be "AVR" or "PIC" for PICs
   } else if (lineType == LINE_TYPE_MDL) {
-    readToTheEOL(f,statusRes);
+    UtilsSD::readToTheEOL(f,statusRes);
     return;
     // TODO Implement verification of string: it should be "AVR" or "PIC" for PICs
   } else if (lineType == LINE_TYPE_SGN) {
     resSize = 3;
-    buffer[0] = readHexByte(f,statusRes); if (statusRes > 0) return;
+    buffer[0] = UtilsSD::readHexByte(f,statusRes); if (statusRes > 0) return;
     //logDebugB("byte0:", buffer[0]);
 
-    buffer[1] = readHexByte(f,statusRes); if (statusRes > 0) return;
+    buffer[1] = UtilsSD::readHexByte(f,statusRes); if (statusRes > 0) return;
     //logDebugB("byte1:", buffer[1]);
 
-    buffer[2] = readHexByte(f,statusRes); if (statusRes > 0) return;
+    buffer[2] = UtilsSD::readHexByte(f,statusRes); if (statusRes > 0) return;
     //logDebugB("byte2:", buffer[2]);
 
   } else if (lineType == LINE_TYPE_LKB || lineType == LINE_TYPE_FSB || 
              lineType == LINE_TYPE_FHB || lineType == LINE_TYPE_EFB || lineType == LINE_TYPE_CLB) {
     resSize = 1;
-    buffer[0] = readHexByte(f,statusRes); if (statusRes > 0) return;
+    buffer[0] = UtilsSD::readHexByte(f,statusRes); if (statusRes > 0) return;
 
   } else if (lineType == LINE_TYPE_PRM || lineType == LINE_TYPE_ERM) {
 
-    pageNo = read3DigByte(f,statusRes); if (statusRes > 0) return;
+    pageNo = UtilsSD::read3DigByte(f,statusRes); if (statusRes > 0) return;
     //logDebugD("pageNo:", pageNo);
 
     byte cs;
-    if (!readChar(f,cs)) { statusRes = 0x30; return; }
+    if (!UtilsSD::readChar(f,cs)) { statusRes = 0x30; return; }
     //logDebugB("read cs:", cs);
     if (cs != ':') { statusRes = 0x32; return; } // No ':'
   
     resSize = 0;
     do {
       boolean isEOL = false;
-      byte b = readHexByteOrEOL(f,isEOL,statusRes);
+      byte b = UtilsSD::readHexByteOrEOL(f,isEOL,statusRes);
       if (statusRes > 0) return;
       if (isEOL) return; // its end of line, we should not continue from this place, otherwise line will get corrupted!
       
@@ -548,7 +546,7 @@ void readLine(File& f, byte& lineType, byte* buffer, int& resSize, int& pageNo, 
     } while(true);
   }
 
-  int z = readToTheEOL(f,statusRes);
+  int z = UtilsSD::readToTheEOL(f,statusRes);
   statusRes = z > 0 ? 0x30 : statusRes;
 }
 
@@ -570,12 +568,12 @@ void readLine(File& f, byte& lineType, byte* buffer, int& resSize, int& pageNo, 
 /////////////////////////////////////////////
 
 
-void _testProgramming(byte& statusRes) {
+void ProgramFile::_testProgramming(byte& statusRes) {
   byte progMemPageSize = 6;
   byte progMemPagesCount = 8;
   byte targetPage = 2;
   
-  #if 0
+  #if 1
     byte buf[128];
     for (int i = 0; i < 128; i++) buf[i] = 0xFF;
     buf[0] = 0x01;
@@ -594,19 +592,19 @@ void _testProgramming(byte& statusRes) {
   #endif
 
   delay(100);
-  loadProgramMemoryPageByte(false, 128, 0x12, statusRes); if (statusRes > 0) { logDebug("bad L0"); return; }
-  loadProgramMemoryPageByte(true, 128, 0x01, statusRes); if (statusRes > 0) { logDebug("bad H0"); return; }
-  loadProgramMemoryPageByte(false, 129, 0x34, statusRes); if (statusRes > 0) { logDebug("bad L1"); return; }
-  loadProgramMemoryPageByte(true, 129, 0x23, statusRes); if (statusRes > 0) { logDebug("bad H1"); return; }
-  loadProgramMemoryPageByte(false, 130, 0x56, statusRes); if (statusRes > 0) { logDebug("bad L2"); return; }
-  loadProgramMemoryPageByte(true, 130, 0x45, statusRes); if (statusRes > 0) { logDebug("bad H2"); return; }
+  programmer->loadProgramMemoryPageByte(false, 128, 0x12, statusRes); if (statusRes > 0) { logDebug("bad L0"); return; }
+  programmer->loadProgramMemoryPageByte(true, 128, 0x01, statusRes); if (statusRes > 0) { logDebug("bad H0"); return; }
+  programmer->loadProgramMemoryPageByte(false, 129, 0x34, statusRes); if (statusRes > 0) { logDebug("bad L1"); return; }
+  programmer->loadProgramMemoryPageByte(true, 129, 0x23, statusRes); if (statusRes > 0) { logDebug("bad H1"); return; }
+  programmer->loadProgramMemoryPageByte(false, 130, 0x56, statusRes); if (statusRes > 0) { logDebug("bad L2"); return; }
+  programmer->loadProgramMemoryPageByte(true, 130, 0x45, statusRes); if (statusRes > 0) { logDebug("bad H2"); return; }
 
-  loadProgramMemoryPageByte(false, 131, 0x68, statusRes); if (statusRes > 0) { logDebug("bad L6"); return; }
-  loadProgramMemoryPageByte(true, 131, 0x67, statusRes); if (statusRes > 0) { logDebug("bad H6"); return; }
-  writeProgramMemoryPage(0, 128, statusRes); if (statusRes > 0) { logDebug("bad Page"); return; }
+  programmer->loadProgramMemoryPageByte(false, 131, 0x68, statusRes); if (statusRes > 0) { logDebug("bad L6"); return; }
+  programmer->loadProgramMemoryPageByte(true, 131, 0x67, statusRes); if (statusRes > 0) { logDebug("bad H6"); return; }
+  programmer->writeProgramMemoryPage(0, 128, statusRes); if (statusRes > 0) { logDebug("bad Page"); return; }
   delay(500);
 
-  readProgramMemoryPage(programBuffer, targetPage, progMemPageSize, statusRes);
+  programmer->readProgramMemoryPage(programBuffer, targetPage, progMemPageSize, statusRes);
   if (statusRes > 0) {
     logErrorB("Page read failed!",targetPage);
     return;
@@ -618,14 +616,13 @@ void _testProgramming(byte& statusRes) {
   logDebug("Done!");
   
   // now lets try manual!
-  byte bh = readProgramMemoryByte(true, 0, 128, statusRes); if (statusRes > 0) { logErrorB("read bh 128 F!",targetPage); return; }
-  byte bl = readProgramMemoryByte(false, 0, 128, statusRes); if (statusRes > 0) { logErrorB("read bh 128 F!",targetPage); return; }
+  byte bh = programmer->_testReadProgramMemoryByte(true, 0, 128, statusRes); if (statusRes > 0) { logErrorB("read bh 128 F!",targetPage); return; }
+  byte bl = programmer->_testReadProgramMemoryByte(false, 0, 128, statusRes); if (statusRes > 0) { logErrorB("read bh 128 F!",targetPage); return; }
   logDebugB("bh128:",bh);
   logDebugB("bl128:",bl);
-  bh = readProgramMemoryByte(true, 0, 129, statusRes); if (statusRes > 0) { logErrorB("read bh 129 F!",targetPage); return; }
-  bl = readProgramMemoryByte(false, 0, 129, statusRes); if (statusRes > 0) { logErrorB("read bh 129 F!",targetPage); return; }
+  bh = programmer->_testReadProgramMemoryByte(true, 0, 129, statusRes); if (statusRes > 0) { logErrorB("read bh 129 F!",targetPage); return; }
+  bl = programmer->_testReadProgramMemoryByte(false, 0, 129, statusRes); if (statusRes > 0) { logErrorB("read bh 129 F!",targetPage); return; }
   logDebugB("bh129:",bh);
   logDebugB("bl129:",bl);
-
 }
 

@@ -4,8 +4,7 @@
  * Detects via Automatic method or Manual program selector, which program number to upload/verify/backup to/from target MCU.
  * For backups, mcu content will be stored to backup folder, with program detected information (for later use if needed).
  * 
- * 1) Always call TargetProgramDetector_setup() method from setup() method of your sketch.
- *    NOTE: Make it a first call, to setup MCU ports properly
+ * 1) Always create new instance as a first thing in your sketch to avoid uncertain conditions on TargetMCU
  */
 #ifndef TargetProgramDetector_h
 #define TargetProgramDetector_h
@@ -24,20 +23,18 @@
   #define ONEWIRE_CRC16 0
   #include <OneWire.h>
 
-  #define TargetProgramDetector_setup() ;
-
-  const byte READ_ID_COMMAND = 0x33;
-
   class TargetProgramDetector
   {
     public:
+      static void setup();
+    
       TargetProgramDetector(byte pinW0, byte pinW1, byte pinW2, byte pinManualM0, byte pinManualM1);
 
       /* 
        *  Call:
        *  char progIdBuf[PROG_ID_BUFFER_SIZE]; // 3 chars for type (ID_, R1_, R2_, MN_), 12 chars as a max length for ID - 6 bytes, 1 char '/0'
-       *  boolean autoSelected = false;
-       *  getTargetIdName(progIdBuf, autoSelected, statusRes);
+       *  boolean autoSelected;
+       *  getProgId(progIdBuf, autoSelected, statusRes);
        *  
        *  Returns:
        *  ID_HHHHHHHHHHHH - 6 bytes of ID
@@ -87,6 +84,7 @@
       boolean read1WireId(byte* data, byte& statusRes);
 
     private:
+      static const byte READ_ID_COMMAND = 0x33;
       byte _pinW0;
       byte _pinW1;
       byte _pinW2;

@@ -1,7 +1,7 @@
 #include "Tests.h"
 
-char __testMcuModelBuf[MCU_MODEL_BUFFER_SIZE];
-char __testMcuModelNameBuf[MCU_MODEL_HUMAN_NAME_BUFFER_SIZE];
+char __testMcuModelBuf[UtilsAVR::MCU_MODEL_BUFFER_SIZE];
+char __testMcuModelNameBuf[UtilsAVR::MCU_MODEL_HUMAN_NAME_BUFFER_SIZE];
 char __testFilePathBuf[FILE_PATH_BUFFER_SIZE];
 
 /////////////////////////////////////////////
@@ -173,7 +173,7 @@ void __testGetAVRModelIdBySignature() {
   //        readSignatureBytes(signBytes, statusRes); checkStatus();
   //        byte modelId = getAVRModelIdBySignature(signBytes, statusRes); checkStatus();
   byte signBytes[3] = { MCU_AVR_TYPES[MCU_AVR_ATmega88PA - 1][0], MCU_AVR_TYPES[MCU_AVR_ATmega88PA - 1][1], MCU_AVR_TYPES[MCU_AVR_ATmega88PA - 1][2] } ;
-  byte modelId = getAVRModelIdBySignature(signBytes, statusRes);
+  byte modelId = UtilsAVR::getAVRModelIdBySignature(signBytes, statusRes);
   if (statusRes != 0) {
     logErrorB("#mbysign1:", statusRes);
   }
@@ -192,7 +192,7 @@ void __testGetAVRModelAndConf() {
 void __testGetAVRModelNameById() {
   logInfo(">utils_07");
   byte statusRes;
-  getAVRModelNameById(__testMcuModelNameBuf, MCU_AVR_ATmega168PA, statusRes);
+  UtilsAVR::getAVRModelNameById(__testMcuModelNameBuf, MCU_AVR_ATmega168PA, statusRes);
   if (statusRes != 0) {
     logErrorB("#avrname1:", statusRes);
   }
@@ -206,7 +206,7 @@ void __testGetAVRModelNameById() {
 void __testGetAVRModelIdByName() {
   logInfo(">utils_08");
   byte statusRes;
-  byte res = getAVRModelIdByName("AVR@002", statusRes);
+  byte res = UtilsAVR::getAVRModelIdByName("AVR@002", statusRes);
   if (statusRes != 0) {
     logErrorB("#avrm_id1:", statusRes);
   }
@@ -214,7 +214,7 @@ void __testGetAVRModelIdByName() {
     logErrorD("#avrm_id2:", res);
   }
 
-  res = getAVRModelIdByName("AVR[1e9514]", statusRes);
+  res = UtilsAVR::getAVRModelIdByName("AVR[1e9514]", statusRes);
   if (statusRes != 0) {
     logErrorB("#avrm_id3:", statusRes);
   }

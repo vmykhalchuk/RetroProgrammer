@@ -30,6 +30,6 @@
   // turnOn - true if On, false if Off
   void setLedOnOff(byte led, boolean turnOn);
 
-  void blinkLeds(byte times);
+  void runLeds(byte times);
 
 #endif

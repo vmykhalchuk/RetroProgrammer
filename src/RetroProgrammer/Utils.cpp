@@ -14,22 +14,6 @@ int freeRam() {
   return size;
 }
 
-boolean initSDCard() {
-  logInfo("Init-g SD card...");
-  // On the Ethernet Shield, CS is pin 4. It's set as an output by default.
-  // Note that even if it's not used as the CS pin, the hardware SS pin
-  // (10 on most Arduino boards, 53 on the Mega) must be left as an output
-  // or the SD library functions will not work.
-  pinMode(10, OUTPUT);
-
-  if (!SD.begin(4)) {
-    logError("SD init failed!");
-    return false;
-  }
-  logInfo("SD init done");
-  return true;
-}
-
 char convertByteToHexChar(byte b, boolean high4bits) {
   if (high4bits) {
     b = b >> 4;
@@ -88,7 +72,7 @@ inline void _aC(char* modelName, char c) {
   modelName[__getAVRModleName_pos++] = c;
 }
 
-void getAVRModelNameById(char* mn, byte modelId, byte& statusRes) {
+void UtilsAVR::getAVRModelNameById(char* mn, byte modelId, byte& statusRes) {
   initStatus();
   __getAVRModleName_pos = 0;
   _aC(mn, 'A'); _aC(mn, 'T');
@@ -126,7 +110,7 @@ void getAVRModelNameById(char* mn, byte modelId, byte& statusRes) {
   _aC(mn, '\0');
 }
 
-byte getAVRModelIdByName(const char* mcuModelStr, byte& statusRes) {
+byte UtilsAVR::getAVRModelIdByName(const char* mcuModelStr, byte& statusRes) {
   initStatus();
   int l = strLength(mcuModelStr);
   if (l < 4) {
@@ -177,26 +161,26 @@ byte getAVRModelIdByName(const char* mcuModelStr, byte& statusRes) {
 
 
 // Print 3 digits
-void fPrint3Dig(File& f, byte b) {
+void UtilsSD::fPrint3Dig(File& f, byte b) {
   f.print(b / 100);
   f.print((b / 10) % 10);
   f.print(b % 10);
 }
 
 //  Print String + Byte + EOL
-void fPrintBln(File& f, String str, byte b) {
+void UtilsSD::fPrintBln(File& f, String str, byte b) {
   f.print(str);
   fPrintB(f, b);
   f.println();
 }
 
 // Print Byte
-void fPrintB(File& f, byte b) {
+void UtilsSD::fPrintB(File& f, byte b) {
   f.print(String((b & 0xF0)>>4,HEX));
   f.print(String(b & 0x0F,HEX));
 }
 
-byte read3DigByte(File& f, byte& statusRes) {
+byte UtilsSD::read3DigByte(File& f, byte& statusRes) {
   byte b = readHexByte(f,statusRes);
   if (statusRes > 0) return 0;
   byte c1,c2,c3;
@@ -212,7 +196,7 @@ byte read3DigByte(File& f, byte& statusRes) {
   return r;
 }
 
-byte readHexByte(File& f, byte& statusRes) {
+byte UtilsSD::readHexByte(File& f, byte& statusRes) {
   boolean isEOL;
   byte b = readHexByteOrEOL(f,isEOL,statusRes);
   if (isEOL) {
@@ -222,7 +206,7 @@ byte readHexByte(File& f, byte& statusRes) {
 }
 
 // remember to check isEOL before statusRes!!! When EOL, statusRes is also an error!
-byte readHexByteOrEOL(File& f, boolean& isEOL, byte& statusRes) {
+byte UtilsSD::readHexByteOrEOL(File& f, boolean& isEOL, byte& statusRes) {
   statusRes = 0;
   byte c1,c2;
   if (!readChar(f,c1)) { statusRes = 0x30; return 0; }
@@ -248,7 +232,7 @@ byte readHexByteOrEOL(File& f, boolean& isEOL, byte& statusRes) {
   return (c1 << 4) | c2;
 }
 
-boolean readChar(File& f, byte& c) {
+boolean UtilsSD::readChar(File& f, byte& c) {
   if (f.available()) {
     c = f.read();
     return true;
@@ -257,7 +241,7 @@ boolean readChar(File& f, byte& c) {
   }
 }
 
-int readToTheEOL(File& f, byte& statusRes) {
+int UtilsSD::readToTheEOL(File& f, byte& statusRes) {
   int readChars = 0;
   while (f.available()) {
     byte c = f.read();

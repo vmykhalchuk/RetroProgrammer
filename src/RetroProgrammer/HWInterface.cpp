@@ -12,7 +12,7 @@ boolean __LED_OK    = false;
 byte waitForUserCommand() {
   byte res;
   while ((res = readButtons()) == 0) {
-    blinkLeds(1);
+    runLeds(1);
   }
   return res;
 }
@@ -23,13 +23,13 @@ byte readButtons() {
   pinMode(BUTTON_BACKUP, INPUT);
   delayMicroseconds(5);
   byte res = 0;
-  if (analogRead(BUTTON_UPLOAD__LED_RDY__LED_AUTO) < BUTTON_UPLOAD_VERIFY_TRESHOLD) {
+  if (digitalRead(BUTTON_UPLOAD__LED_RDY__LED_AUTO) == LOW) { //analogRead(BUTTON_UPLOAD__LED_RDY__LED_AUTO) < BUTTON_UPLOAD_VERIFY_TRESHOLD) {
     res |= BTN_UPLOAD;
   }
   if (analogRead(BUTTON_VERIFY__LED_ERR__LED_OK) < BUTTON_UPLOAD_VERIFY_TRESHOLD) {
     res |= BTN_VERIFY;
   }
-  if (!digitalRead(BUTTON_BACKUP)) {
+  if (digitalRead(BUTTON_BACKUP) == LOW) {
     res |= BTN_BACKUP;
   }
   return res;
@@ -50,7 +50,7 @@ void setLedOnOff(byte led, boolean turnOn) {
   }
 }
 
-void blinkLeds(byte times) {
+void runLeds(byte times) {
   pinMode(BUTTON_UPLOAD__LED_RDY__LED_AUTO, OUTPUT);
   pinMode(BUTTON_VERIFY__LED_ERR__LED_OK, OUTPUT);
   while (times-- > 0) {

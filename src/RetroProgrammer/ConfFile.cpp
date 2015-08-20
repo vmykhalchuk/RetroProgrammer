@@ -150,7 +150,7 @@ boolean getFilePathByProgIdAndMcuModel(const char* progId, byte mcuModelId, char
     }
 
     // check if mcuModel matches mcuModelBuf
-    byte detectedMcuModelId = getAVRModelIdByName(mcuModelBuf, statusRes); checkStatusV(false);
+    byte detectedMcuModelId = UtilsAVR::getAVRModelIdByName(mcuModelBuf, statusRes); checkStatusV(false);
     logDebugD("mcuModel:", detectedMcuModelId);
     if (mcuModelId == detectedMcuModelId) {
       return true; // SUCCESS
@@ -241,8 +241,8 @@ void readRootConfFile(const char* progId, char* mcuModel, char* filePath, byte& 
     skipWhiteCharactersExpectNoEolNoEof(statusRes); checkStatus();
     pos = 0;
     while (true) {
-      if (pos >= MCU_MODEL_BUFFER_SIZE) {// too long MCU_MODEL in conf file!
-        mcuModel[MCU_MODEL_BUFFER_SIZE-1] = '\0';
+      if (pos >= UtilsAVR::MCU_MODEL_BUFFER_SIZE) {// too long MCU_MODEL in conf file!
+        mcuModel[UtilsAVR::MCU_MODEL_BUFFER_SIZE-1] = '\0';
         returnStatus(0x22);
       }
       

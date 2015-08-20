@@ -1,6 +1,7 @@
 /*
  * User is responsible for SD and File lifecycle control!
  * 
+ * Always make sure that SD Card is initialized before hand!
  * initSDCard();
  */
 
@@ -24,36 +25,51 @@
   // Public declarations
   ////////////////////////////////////////////////
 
-  void backupMcuData(String filePref, byte& statusRes);
+  class ProgramFile {
+    public:
+
+      static void backupMcuData(String filePref, byte& statusRes);
   
-  void backupMcuDataToFile(String fileName, byte progMemPageSize, byte progMemPagesCount, 
+      static void backupMcuDataToFile(String fileName, byte progMemPageSize, byte progMemPagesCount, 
                         byte eepromMemPageSize, byte eepromMemPagesCount, byte& statusRes);
   
-  void uploadMcuDataFromFile(String fileName, byte* targetMcuSign, byte progMemPagesCount, byte progMemPageSize,
+      static void uploadMcuDataFromFile(String fileName, byte* targetMcuSign, byte progMemPagesCount, byte progMemPageSize,
                         byte eepromMemPagesCount, byte eepromMemPageSize, byte& statusRes);
   
-  void uploadMcuDataFromFile(String fileName, byte targetMcuModel, byte& statusRes);
+      static void uploadMcuDataFromFile(String fileName, byte targetMcuModel, byte& statusRes);
 
+      static void _testProgramming(byte& statusRes);
 
-  ////////////////////////////////////////////////
-  // Private declarations (constants)
-  ////////////////////////////////////////////////
+    public:  // Constants For parsing the file
+      static const byte LINE_TYPE_COMMENT = 0x01; // Comment
+      static const byte LINE_TYPE_TYP     = 0x10; // Type ("AVR","PIC",...)
+      static const byte LINE_TYPE_MDL     = 0x11; // Model (1,2,3,4,....)
+      static const byte LINE_TYPE_SGN     = 0x12; // Signature (for AVR - 3 bytes)
+      static const byte LINE_TYPE_LKB     = 0x20; // Lock Bits
+      static const byte LINE_TYPE_FSB     = 0x21; // Fuse Bits
+      static const byte LINE_TYPE_FHB     = 0x22; // Fuse High Bits
+      static const byte LINE_TYPE_EFB     = 0x23; // Extended Fuse Bits
+      static const byte LINE_TYPE_CLB     = 0x24; // Calibration Byte
+      static const byte LINE_TYPE_PRM     = 0x30; // Flash/Program Memory Page
+      static const byte LINE_TYPE_ERM     = 0x31; // EEPROM Page
 
-  // For parsing the file
-  const byte LINE_TYPE_COMMENT = 0x01; // Comment
-  const byte LINE_TYPE_TYP     = 0x10; // Type ("AVR","PIC",...)
-  const byte LINE_TYPE_MDL     = 0x11; // Model (1,2,3,4,....)
-  const byte LINE_TYPE_SGN     = 0x12; // Signature (for AVR - 3 bytes)
-  const byte LINE_TYPE_LKB     = 0x20; // Lock Bits
-  const byte LINE_TYPE_FSB     = 0x21; // Fuse Bits
-  const byte LINE_TYPE_FHB     = 0x22; // Fuse High Bits
-  const byte LINE_TYPE_EFB     = 0x23; // Extended Fuse Bits
-  const byte LINE_TYPE_CLB     = 0x24; // Calibration Byte
-  const byte LINE_TYPE_PRM     = 0x30; // Flash/Program Memory Page
-  const byte LINE_TYPE_ERM     = 0x31; // EEPROM Page
+      static const byte LINE_READ_BUFFER_SIZE = 128;
 
-  const byte LINE_READ_BUFFER_SIZE = 128;
+    private:
 
-  void _testProgramming(byte& statusRes);
+      static void openFile(File& f, String fileName, int mode, byte& statusRes);
+      static void openFile2(File& f, String fileName, int mode, byte& statusRes);
+      static void findNextFileName(String filePref, String& resFile, byte& statusRes);
+
+      static void uploadMcuDataFromFile_internal(boolean progMode, String fileName, byte targetMcuModel, byte& statusRes);
+      static void uploadMcuDataFromFile_internal(boolean progMode, String fileName, byte* targetMcuSign,
+                              byte progMemPagesCount, byte progMemPageSize,
+                              byte eepromMemPagesCount, byte eepromMemPageSize, byte& statusRes);
+      static void readLine(File& f, byte& lineType, byte* buffer, int& resSize, int& pageNo, byte& statusRes);
+      static void uploadProgramMemoryPage(byte* buf, int pageNo, 
+                              byte progMemPagesCount, byte progMemPageSize, byte& statusRes);
+      
+  };
+
 
 #endif

@@ -20,9 +20,6 @@
 const byte pinRandomRead = A6;
 
 
-//                                    TARGET_MCU_ID__W0, TARGET_MCU_ID__W1, TARGET_MCU_ID__W2, TARGET_MCU_ID__MANUAL0, TARGET_MCU_ID__MANUAL1
-TargetProgramDetector programDetector(       A0        ,       A1         ,      A2          ,       A3              ,         A4            );
-
 #define RAM_DEPOSIT_SIZE 550
 byte RAM_DEPOSIT[RAM_DEPOSIT_SIZE];
 
@@ -30,20 +27,22 @@ void setup() {
   #if RAM_DEPOSIT_SIZE > 0
     RAM_DEPOSIT[0]=0;
   #endif
+
+  AVRProgrammer::setup();
+  //                                    TARGET_MCU_ID__W0, TARGET_MCU_ID__W1, TARGET_MCU_ID__W2, TARGET_MCU_ID__MANUAL0, TARGET_MCU_ID__MANUAL1
+  TargetProgramDetector programDetector(       A0        ,       A1         ,      A2          ,       A3              ,         A4            );
   
-  AVRProgrammingRoutines_setup();
   Logger_setup();
-  TargetProgramDetector_setup();
   //initTargetMcuIdReaderPins();
   //serialInit();
   //lcdInit();
   logInfo("Hello World!");
 
-  //setup_test();
-  setup_prod();
+  //setup_test(&programDetector);
+  setup_prod(&programDetector);
 }
 
-void setup_test() {//Used for testing
+void setup_test(TargetProgramDetector* programDetector) {//Used for testing
   logFreeRam();
 
   testUtilsGen();
@@ -66,7 +65,7 @@ void setup_test() {//Used for testing
   logFreeRam();
 }
 
-void setup_prod() {
+void setup_prod(TargetProgramDetector* programDetector) {
   byte statusRes=0;
   
   delay(1000);
@@ -79,11 +78,24 @@ void setup_prod() {
     return;
   }
 
+  // find out what program is selected
+  char progIdBuf[PROG_ID_BUFFER_SIZE]; // 3 chars for type (ID_, R1_, R2_, MN_), 12 chars as a max length for ID - 6 bytes, 1 char '/0'
+  boolean autoSelected;
+  programDetector->getProgId(progIdBuf, autoSelected, statusRes);
+  if (statusRes > 0) {
+    logError("getProgId");
+    return;
+  } else {
+    logInfoS("ProgId:", progIdBuf);
+  }
+  delay(2000);
+  
+
   // Prepare Target MCU for Programming
-  startupTargetMcuProgramming(statusRes);
+  AVRProgrammer::startupTargetMcuProgramming(statusRes);
   if (statusRes > 0) {
     logError("ProgEn failed!");
-    shutdownTargetMcu();
+    AVRProgrammer::shutdownTargetMcu();
     return;
   } else {
     logInfo("Started prog!");
@@ -94,7 +106,7 @@ void setup_prod() {
   byte signBytes[3];
   #if 1
   // make sure it is ATmega328P
-  readSignatureBytes(signBytes,statusRes);
+  AVRProgrammer::readSignatureBytes(signBytes,statusRes);
   if (statusRes > 0) {
     logError("signature error!");
     return;
@@ -104,7 +116,7 @@ void setup_prod() {
 
   #if 1
   logInfo("Uploading...");
-  uploadMcuDataFromFile("TEST01", signBytes,
+  ProgramFile::uploadMcuDataFromFile("TEST01", signBytes,
           AVR_MEM_PAGES_COUNT_256, AVR_MEM_PAGE_SIZE_64, 
           AVR_MEM_PAGES_COUNT_256, AVR_MEM_PAGE_SIZE_4, statusRes);
   if (statusRes > 0) {
@@ -117,7 +129,7 @@ void setup_prod() {
 
   #if 1
   // test example of programming
-  _testProgramming(statusRes);
+  ProgramFile::_testProgramming(statusRes);
   if (statusRes > 0) { logErrorB("Failed!", statusRes); return; }
   logInfo("Success testing!");
   delay(2000);
@@ -125,7 +137,7 @@ void setup_prod() {
   
   #if 1
   logInfo("Reading...");
-  backupMcuDataToFile("RND" + String(analogRead(pinRandomRead),HEX), 
+  ProgramFile::backupMcuDataToFile("RND" + String(analogRead(pinRandomRead),HEX), 
           AVR_MEM_PAGES_COUNT_256, AVR_MEM_PAGE_SIZE_64, 
           AVR_MEM_PAGES_COUNT_256, AVR_MEM_PAGE_SIZE_4, statusRes);
   if (statusRes > 0) {
@@ -138,7 +150,7 @@ void setup_prod() {
 
   #if 1
   logInfo("Backup to file...");
-  backupMcuData("BACK", statusRes);
+  ProgramFile::backupMcuData("BACK", statusRes);
   if (statusRes > 0) {
     logError("Error backing-up!");
     return;
@@ -147,27 +159,37 @@ void setup_prod() {
   #endif
 
   // now shutdown Target MCU
-  shutdownTargetMcu();
+  AVRProgrammer::shutdownTargetMcu();
 
   logInfo("Done!");
 }
 
 
-/////////////////////////////////////////////
-/////////////////////////////////////////////
-/////////////////////////////////////////////
-/////////////////////////////////////////////
-/////////////////////////////////////////////
-///    LOOP
-///    LOOP
-///    LOOP
-///    LOOP
-/////////////////////////////////////////////
-/////////////////////////////////////////////
-/////////////////////////////////////////////
-/////////////////////////////////////////////
-/////////////////////////////////////////////
-/////////////////////////////////////////////
+boolean initSDCard() {
+  // SD Card Module pins:
+  // Arduino | Target
+  //   Nano  |  MCU
+  //------------------
+  //    11   | MOSI
+  //    12   | MISO
+  //    13   | CLK
+  //    4    | CS
+  //    10   | is not used but always set to OUTPUT (read more in SD method implementation)
+
+  logInfo("Init-g SD card...");
+  // On the Ethernet Shield, CS is pin 4. It's set as an output by default.
+  // Note that even if it's not used as the CS pin, the hardware SS pin
+  // (10 on most Arduino boards, 53 on the Mega) must be left as an output
+  // or the SD library functions will not work.
+  pinMode(10, OUTPUT);
+
+  if (!SD.begin(4)) {
+    logError("SD init failed!");
+    return false;
+  }
+  logInfo("SD init done");
+  return true;
+}
 
 void loop()
 {
