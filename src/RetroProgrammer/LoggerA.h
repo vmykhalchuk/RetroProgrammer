@@ -18,7 +18,7 @@
 #define LoggerA_h
 
 
-  #define LOGGER_LEVEL 4
+  #define LOGGER_LEVEL 0
 
   #include <Arduino.h>
   #include "Utils.h"
@@ -72,7 +72,7 @@
   #define logErrorD(str,d) ;
     
   //////////////////////////////////
-  // Define Active methods
+  // Override definitions of stubs when needed
 
 
   //#define delayLog() delay(100);

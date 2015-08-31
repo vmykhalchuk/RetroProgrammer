@@ -28,14 +28,6 @@ void setup() {
     RAM_DEPOSIT[0]=0;
   #endif
 
-  AVRProgrammer::setup();
-  //                           TARGET_MCU_ID__W0, TARGET_MCU_ID__W1, TARGET_MCU_ID__W2, TARGET_MCU_ID__MANUAL0, TARGET_MCU_ID__MANUAL1
-  TargetProgramDetector::setup(       A0        ,       A1         ,      A2          ,       A3              ,         A4            );
-  
-  Logger_setup();
-  //initTargetMcuIdReaderPins();
-  //serialInit();
-  //lcdInit();
   logInfo("Hello World!");
 
   setup_test();
@@ -43,6 +35,12 @@ void setup() {
 }
 
 void setup_test() {//Used for testing
+  AVRProgrammer::setup();
+  HWInterface::setup();
+  //                           TARGET_MCU_ID__W0, TARGET_MCU_ID__W1, TARGET_MCU_ID__W2, TARGET_MCU_ID__MANUAL0, TARGET_MCU_ID__MANUAL1
+  TargetProgramDetector::setup(       A0        ,       A1         ,      A2          ,       A3              ,         A4            );
+  Logger_setup();
+  
   logFreeRam();
 
   testUtilsGen();
@@ -58,9 +56,13 @@ void setup_test() {//Used for testing
       logError("SD init failed!");
       return;
     }
-    testConfFile();
+    Tests_ConfFile::testConfFile();
   #endif
 
+  #if 1 // Test HWInterface
+    Tests_HWInterface::testLedsAndBtns();
+  #endif
+  
   logInfo("Happy testing day!");
   logFreeRam();
 }
@@ -68,8 +70,14 @@ void setup_test() {//Used for testing
 void setup_prod() {
   byte statusRes=0;
   
+  AVRProgrammer::setup();
+  HWInterface::setup();
+  //                           TARGET_MCU_ID__W0, TARGET_MCU_ID__W1, TARGET_MCU_ID__W2, TARGET_MCU_ID__MANUAL0, TARGET_MCU_ID__MANUAL1
+  TargetProgramDetector::setup(       A0        ,       A1         ,      A2          ,       A3              ,         A4            );
+  Logger_setup();
+  
   delay(1000);
-  byte b = waitForUserCommand();
+  byte b = HWInterface::waitForUserCommand();
   logInfoD("Command:",b);
   
   // Init SD Card
@@ -129,7 +137,7 @@ void setup_prod() {
 
   #if 1
   // test example of programming
-  ProgramFile::_testProgramming(statusRes);
+  ProgramFile_Test::_testProgramming(statusRes);
   if (statusRes > 0) { logErrorB("Failed!", statusRes); return; }
   logInfo("Success testing!");
   delay(2000);

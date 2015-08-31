@@ -259,3 +259,27 @@ int UtilsSD::readToTheEOL(File& f, byte& statusRes) {
   statusRes = 0x30;// unexpected end
 }
 
+
+  //////////////////////////
+  //   Tests Related
+  //////////////////////////
+
+void UtilsTests::_testStringMatches_LogDebug(char c1, char c2) {
+  char str[] = "c-c";
+  str[0] = c1; str[2] = c2;
+  logDebugS("", str);
+  return;
+}
+
+boolean UtilsTests::assertStringMatches(const char* str1, const char* str2, boolean debugMode) {
+  byte pos = 0;
+  while (str1[pos] == str2[pos]) {
+    if (debugMode) _testStringMatches_LogDebug(str1[pos], str2[pos]);
+    if (str1[pos] == '\0') {
+      return true;
+    }
+    if (pos++ > 125) return false;
+  }
+  if (debugMode) _testStringMatches_LogDebug(str1[pos], str2[pos]);
+  return false;
+}

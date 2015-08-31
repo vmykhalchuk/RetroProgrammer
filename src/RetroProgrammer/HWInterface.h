@@ -1,3 +1,7 @@
+/*
+ * Always call HWInterface::setup() method from your setup sketch to initialize communication ports
+ */
+
 #ifndef HWInterface_h
 #define HWInterface_h
 
@@ -6,30 +10,45 @@
   #include "AVRConstants.h"
   #include "Utils.h"
 
-  // Define what pins are for which button / led
-  const byte BUTTON_UPLOAD__LED_RDY__LED_AUTO = A5;
-  const byte BUTTON_VERIFY__LED_ERR__LED_OK = A4;
-  const byte BUTTON_BACKUP = 2;
+  class HWInterface {
+    public:
+    // Define what pins are for which button / led
+    static const byte BUTTON_UPLOAD__LED_RDY__LED_AUTO = A5;
+    static const byte BUTTON_VERIFY__LED_ERR__LED_OK = A4;
+    static const byte BUTTON_BACKUP = 2;
   
-  const byte LED_RDY   = 0x11;
-  const byte LED_AUTO  = 0x12;
-  const byte LED_ERR   = 0x21;
-  const byte LED_OK    = 0x22;
+    static const byte LED_RDY   = 0x11;
+    static const byte LED_AUTO  = 0x12;
+    static const byte LED_ERR   = 0x21;
+    static const byte LED_OK    = 0x22;
 
-  const byte BTN_UPLOAD = 0x1;
-  const byte BTN_VERIFY = 0x2;
-  const byte BTN_BACKUP = 0x4;
+    static const byte BTN_UPLOAD = 0x1;
+    static const byte BTN_VERIFY = 0x2;
+    static const byte BTN_BACKUP = 0x4;
 
-  // waits for a user command and maintains LEDs statuses
-  byte waitForUserCommand();
+    static void setup();
 
-  // returns which BTN_XXXX is pressed
-  byte readButtons();
+    // waits for a user command and maintains LEDs statuses (by calling runLeds() till button is pressed)
+    // returns which BTN_XXXX is pressed
+    static byte waitForUserCommand();
 
-  // led - LED_XXXX
-  // turnOn - true if On, false if Off
-  void setLedOnOff(byte led, boolean turnOn);
+    // returns which BTN_XXXX is pressed
+    static byte readButtons();
 
-  void runLeds(byte times);
+    // led - LED_XXXX
+    // turnOn - true if On, false if Off
+    static void setLedOnOff(byte led, boolean turnOn);
+
+    // run Leds for <times> cycle(s) (around 200ms)
+    static void runLeds(byte times);
+
+    private:
+    static const int BUTTON_UPLOAD_VERIFY_TRESHOLD = 512; // when button pressed, voltage level drops below middle value, closer to 0. Note: 1023 - 5v
+
+    static boolean __LED_RDY;
+    static boolean __LED_AUTO;
+    static boolean __LED_ERR;
+    static boolean __LED_OK;
+  };
 
 #endif

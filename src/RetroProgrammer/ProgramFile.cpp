@@ -1,7 +1,7 @@
 #include "ProgramFile.h"
 
 
-byte programBuffer[1 << (AVR_MEM_PAGE_SIZE_64 + 1)];//128 bytes
+byte ProgramFile::programBuffer[1 << (AVR_MEM_PAGE_SIZE_64 + 1)];//128 bytes
 
 
   ////////////////////////////////////////////////
@@ -567,7 +567,7 @@ void ProgramFile::readLine(File& f, byte& lineType, byte* buffer, int& resSize, 
 /////////////////////////////////////////////
 
 
-void ProgramFile::_testProgramming(byte& statusRes) {
+void ProgramFile_Test::_testProgramming(byte& statusRes) {
   byte progMemPageSize = 6;
   byte progMemPagesCount = 8;
   byte targetPage = 2;
@@ -583,7 +583,7 @@ void ProgramFile::_testProgramming(byte& statusRes) {
     buf[5] = 0x56;
     buf[125] = 0x20;
     buf[126] = 0x30;
-    uploadProgramMemoryPage(buf,targetPage,progMemPagesCount,progMemPageSize,statusRes);
+    ProgramFile::uploadProgramMemoryPage(buf,targetPage,progMemPagesCount,progMemPageSize,statusRes);
     if (statusRes > 0) {
       logErrorB("Page upoad failed!",targetPage);
       return;
@@ -603,7 +603,7 @@ void ProgramFile::_testProgramming(byte& statusRes) {
   AVRProgrammer::writeProgramMemoryPage(0, 128, statusRes); if (statusRes > 0) { logDebug("bad Page"); return; }
   delay(500);
 
-  AVRProgrammer::readProgramMemoryPage(programBuffer, targetPage, progMemPageSize, statusRes);
+  AVRProgrammer::readProgramMemoryPage(ProgramFile::programBuffer, targetPage, progMemPageSize, statusRes);
   if (statusRes > 0) {
     logErrorB("Page read failed!",targetPage);
     return;
@@ -615,12 +615,12 @@ void ProgramFile::_testProgramming(byte& statusRes) {
   logDebug("Done!");
   
   // now lets try manual!
-  byte bh = AVRProgrammer::_testReadProgramMemoryByte(true, 0, 128, statusRes); if (statusRes > 0) { logErrorB("read bh 128 F!",targetPage); return; }
-  byte bl = AVRProgrammer::_testReadProgramMemoryByte(false, 0, 128, statusRes); if (statusRes > 0) { logErrorB("read bh 128 F!",targetPage); return; }
+  byte bh = AVRProgrammer_Test::_testReadProgramMemoryByte(true, 0, 128, statusRes); if (statusRes > 0) { logErrorB("read bh 128 F!",targetPage); return; }
+  byte bl = AVRProgrammer_Test::_testReadProgramMemoryByte(false, 0, 128, statusRes); if (statusRes > 0) { logErrorB("read bh 128 F!",targetPage); return; }
   logDebugB("bh128:",bh);
   logDebugB("bl128:",bl);
-  bh = AVRProgrammer::_testReadProgramMemoryByte(true, 0, 129, statusRes); if (statusRes > 0) { logErrorB("read bh 129 F!",targetPage); return; }
-  bl = AVRProgrammer::_testReadProgramMemoryByte(false, 0, 129, statusRes); if (statusRes > 0) { logErrorB("read bh 129 F!",targetPage); return; }
+  bh = AVRProgrammer_Test::_testReadProgramMemoryByte(true, 0, 129, statusRes); if (statusRes > 0) { logErrorB("read bh 129 F!",targetPage); return; }
+  bl = AVRProgrammer_Test::_testReadProgramMemoryByte(false, 0, 129, statusRes); if (statusRes > 0) { logErrorB("read bh 129 F!",targetPage); return; }
   logDebugB("bh129:",bh);
   logDebugB("bl129:",bl);
 }

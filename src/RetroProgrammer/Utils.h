@@ -143,4 +143,15 @@ class UtilsSD {
   
 };
 
+class UtilsTests {
+  public:
+
+    static boolean assertStringMatches(const char* str1, const char* str2, boolean debugMode);
+
+  private:
+
+    static void _testStringMatches_LogDebug(char c1, char c2);
+  
+};
+
 #endif

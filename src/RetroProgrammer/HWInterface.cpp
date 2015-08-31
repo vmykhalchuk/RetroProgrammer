@@ -1,15 +1,18 @@
 #include "HWInterface.h"
 
+boolean HWInterface::__LED_RDY   = false;
+boolean HWInterface::__LED_AUTO  = false;
+boolean HWInterface::__LED_ERR   = false;
+boolean HWInterface::__LED_OK    = false;
 
-const int BUTTON_UPLOAD_VERIFY_TRESHOLD = 512; // when button pressed, voltage level drops below middle value, closer to 0. Note: 1023 - 5v
-
-boolean __LED_RDY   = false;
-boolean __LED_AUTO  = false;
-boolean __LED_ERR   = false;
-boolean __LED_OK    = false;
+void HWInterface::setup() {
+  pinMode(BUTTON_UPLOAD__LED_RDY__LED_AUTO, INPUT);
+  pinMode(BUTTON_VERIFY__LED_ERR__LED_OK, INPUT);
+  pinMode(BUTTON_BACKUP, INPUT);
+}
 
 // return 1 - UPLOAD; 2 - VERIFY; 3 - BACKUP
-byte waitForUserCommand() {
+byte HWInterface::waitForUserCommand() {
   byte res;
   while ((res = readButtons()) == 0) {
     runLeds(1);
@@ -17,7 +20,7 @@ byte waitForUserCommand() {
   return res;
 }
 
-byte readButtons() {
+byte HWInterface::readButtons() {
   pinMode(BUTTON_UPLOAD__LED_RDY__LED_AUTO, INPUT);
   pinMode(BUTTON_VERIFY__LED_ERR__LED_OK, INPUT);
   pinMode(BUTTON_BACKUP, INPUT);
@@ -35,7 +38,7 @@ byte readButtons() {
   return res;
 }
 
-void setLedOnOff(byte led, boolean turnOn) {
+void HWInterface::setLedOnOff(byte led, boolean turnOn) {
   if (led & LED_RDY != 0) {
     __LED_RDY = turnOn;
   }
@@ -50,7 +53,7 @@ void setLedOnOff(byte led, boolean turnOn) {
   }
 }
 
-void runLeds(byte times) {
+void HWInterface::runLeds(byte times) {
   pinMode(BUTTON_UPLOAD__LED_RDY__LED_AUTO, OUTPUT);
   pinMode(BUTTON_VERIFY__LED_ERR__LED_OK, OUTPUT);
   while (times-- > 0) {

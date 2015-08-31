@@ -30,7 +30,7 @@ void AVRProgrammer::setup() {
   pinMode(pinSck, OUTPUT);
   pinMode(pinReset, OUTPUT);
   digitalWrite(pinMosi, LOW);
-  //digitalWrite(pinMiso, LOW);// enable pull-up on MISO line
+  //digitalWrite(pinMiso, HIGH);// enable pull-up on MISO line
   digitalWrite(pinSck, LOW);
   digitalWrite(pinReset, HIGH);
 }

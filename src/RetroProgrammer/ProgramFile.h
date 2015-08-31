@@ -1,7 +1,7 @@
 /*
  * User is responsible for SD and File lifecycle control!
  * 
- * Always make sure that SD Card is initialized before hand!
+ * !!!! Always make sure that SD Card is initialized before hand!
  * initSDCard();
  */
 
@@ -15,18 +15,12 @@
   #include <SD.h>
   #include "AVRProgrammer.h"
 
-  ////////////////////////////////////////////////
-  // File related procedures!!!
-  ////////////////////////////////////////////////
-
-  // !!! Requires SD Card to be initialized by Utils initializeSDCard() method!
-
-  ////////////////////////////////////////////////
-  // Public declarations
-  ////////////////////////////////////////////////
+  class ProgramFile_Test;
 
   class ProgramFile {
     public:
+
+      friend ProgramFile_Test;
 
       static void backupMcuData(String filePref, byte& statusRes);
   
@@ -37,8 +31,6 @@
                         byte eepromMemPagesCount, byte eepromMemPageSize, byte& statusRes);
   
       static void uploadMcuDataFromFile(String fileName, byte targetMcuModel, byte& statusRes);
-
-      static void _testProgramming(byte& statusRes);
 
     public:  // Constants For parsing the file
       static const byte LINE_TYPE_COMMENT = 0x01; // Comment
@@ -57,6 +49,8 @@
 
     private:
 
+      static byte programBuffer[];
+
       static void openFile(File& f, String fileName, int mode, byte& statusRes);
       static void openFile2(File& f, String fileName, int mode, byte& statusRes);
       static void findNextFileName(String filePref, String& resFile, byte& statusRes);
@@ -71,5 +65,10 @@
       
   };
 
+
+  class ProgramFile_Test {
+    public:
+      static void _testProgramming(byte& statusRes);
+  };
 
 #endif

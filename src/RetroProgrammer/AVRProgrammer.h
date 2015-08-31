@@ -13,27 +13,13 @@
   #include "AVRConstants.h"
   #include "Utils.h"
 
-  // Programing pins:
-  // Arduino | Target
-  //   Nano  |  MCU
-  //------------------
-  //     5   | MOSI
-  //     6   | MISO
-  //     7   | SCK
-  //     8   | RESET
-  //     3   | VCC Enable
-  //     9   | AVCC Enable
-  const byte pinMosi =  5;
-  const byte pinMiso =  6;
-  const byte pinSck =  7;
-  const byte pinReset =  8;
-  const byte pinVccEnable =  3;
-  const byte pinAVccEnable =  9;
-
+  class AVRProgrammer_Test;
 
   class AVRProgrammer
   {
     public:
+
+    friend AVRProgrammer_Test;
 
     /** 
      *  Must always be called before creating any objects of this class
@@ -76,9 +62,25 @@
         issueByteWriteCmd(0xC2, addrMsb, addrLsb, 0x00, statusRes);
     }
 
-    inline static byte _testReadProgramMemoryByte(byte highB, byte addrHigh, byte addrLow, byte& statusRes) { return readProgramMemoryByte(highB, addrHigh, addrLow, statusRes); }
-    
     private:
+
+    // Programing pins:
+    // Arduino | Target
+    //   Nano  |  MCU
+    //------------------
+    //     5   | MOSI
+    //     6   | MISO
+    //     7   | SCK
+    //     8   | RESET
+    //     3   | VCC Enable
+    //     9   | AVCC Enable
+    static const byte pinMosi =  5;
+    static const byte pinMiso =  6;
+    static const byte pinSck =  7;
+    static const byte pinReset =  8;
+    static const byte pinVccEnable =  3;
+    static const byte pinAVccEnable =  9;
+
 
     static boolean targetMcuProgMode; // If true - Target MCU is in Programming mode
     static boolean targetMcuOutOfSync; // If true - Target MCU Programming mode is out of sync due to communication error, etc
@@ -94,4 +96,11 @@
 
     static byte sendReadByte(byte byteToSend);
   };
+
+
+  class AVRProgrammer_Test {
+    public:
+    inline static byte _testReadProgramMemoryByte(byte highB, byte addrHigh, byte addrLow, byte& statusRes) { return AVRProgrammer::readProgramMemoryByte(highB, addrHigh, addrLow, statusRes); }
+  };
+  
 #endif
