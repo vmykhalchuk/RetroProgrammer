@@ -30,23 +30,24 @@ void setup() {
 
   logInfo("Hello World!");
 
+  AVRProgrammer::setup();
+  HWInterface::setup();
+  //                           TARGET_MCU_ID__W0, TARGET_MCU_ID__W1, TARGET_MCU_ID__W2, TARGET_MCU_ID__MANUAL0, TARGET_MCU_ID__MANUAL1
+  TargetProgramDetector::setup(       A0        ,       A1         ,      A2          ,       A3              ,         A6            );
+  Logger_setup();
+
   setup_test();
   //setup_prod();
 }
 
 void setup_test() {//Used for testing
-  AVRProgrammer::setup();
-  HWInterface::setup();
-  //                           TARGET_MCU_ID__W0, TARGET_MCU_ID__W1, TARGET_MCU_ID__W2, TARGET_MCU_ID__MANUAL0, TARGET_MCU_ID__MANUAL1
-  TargetProgramDetector::setup(       A0        ,       A1         ,      A2          ,       A3              ,         A4            );
-  Logger_setup();
   
   logFreeRam();
 
   testUtilsGen();
   testUtilsAVR();
   
-  #if 0
+  #if 1
     testTargetProgramDetector();
   #endif
 
@@ -75,12 +76,6 @@ void setup_test() {//Used for testing
 
 void setup_prod() {
   byte statusRes=0;
-  
-  AVRProgrammer::setup();
-  HWInterface::setup();
-  //                           TARGET_MCU_ID__W0, TARGET_MCU_ID__W1, TARGET_MCU_ID__W2, TARGET_MCU_ID__MANUAL0, TARGET_MCU_ID__MANUAL1
-  TargetProgramDetector::setup(       A0        ,       A1         ,      A2          ,       A3              ,         A4            );
-  Logger_setup();
   
   delay(1000);
   byte b = HWInterface::waitForUserCommand();

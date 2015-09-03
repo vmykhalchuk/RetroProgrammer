@@ -348,7 +348,8 @@ void TargetProgramDetector::readManualProgrammSelectorPort(char* data, byte port
     data[0] = 'B';
     data[1] = '2';
   } else {
-    logDebugD("t1", v); // value is in between!
+    logDebugD("t1:", port);
+    logDebugD("t1:", v); // value is in between!
     returnStatus(ERROR_TARGET_DETECTOR + 0x8);
   }
 }
