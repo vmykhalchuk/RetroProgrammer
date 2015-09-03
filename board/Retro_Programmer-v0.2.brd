@@ -9,16 +9,16 @@
 <grid distance="1" unitdist="mil" unit="mm" style="lines" multiple="1" display="yes" altdistance="0.025" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
-<layer number="16" name="Bottom" color="1" fill="1" visible="no" active="yes"/>
+<layer number="16" name="Bottom" color="1" fill="1" visible="yes" active="yes"/>
 <layer number="17" name="Pads" color="2" fill="1" visible="yes" active="yes"/>
 <layer number="18" name="Vias" color="2" fill="1" visible="yes" active="yes"/>
 <layer number="19" name="Unrouted" color="6" fill="1" visible="yes" active="yes"/>
 <layer number="20" name="Dimension" color="15" fill="1" visible="yes" active="yes"/>
-<layer number="21" name="tPlace" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="21" name="tPlace" color="7" fill="1" visible="no" active="yes"/>
 <layer number="22" name="bPlace" color="7" fill="1" visible="yes" active="yes"/>
-<layer number="23" name="tOrigins" color="15" fill="1" visible="yes" active="yes"/>
+<layer number="23" name="tOrigins" color="15" fill="1" visible="no" active="yes"/>
 <layer number="24" name="bOrigins" color="15" fill="1" visible="yes" active="yes"/>
-<layer number="25" name="tNames" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="25" name="tNames" color="7" fill="1" visible="no" active="yes"/>
 <layer number="26" name="bNames" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="27" name="tValues" color="7" fill="1" visible="no" active="yes"/>
 <layer number="28" name="bValues" color="7" fill="1" visible="no" active="yes"/>
@@ -16738,9 +16738,9 @@ Copyright: Würth Elektronik</description>
 <attribute name="NAME" x="30.2222" y="4.1722" size="0.6096" layer="25" rot="R180"/>
 <attribute name="VALUE" x="28.6554" y="15.3564" size="0.6096" layer="27" rot="R180"/>
 </element>
-<element name="ICSP+TD" library="Wuerth_Elektronik_Board_to_Board" package="61301021821" value="61301021821" x="9.54" y="14.74" smashed="yes" rot="R90">
-<attribute name="NAME" x="13.2417" y="6.3214" size="1.27" layer="26" rot="MR0"/>
-<attribute name="VALUE" x="18.8178" y="3.5528" size="1.27" layer="27" rot="R90"/>
+<element name="ICSP+TD" library="Wuerth_Elektronik_Board_to_Board" package="61301021821" value="61301021821" x="9.54" y="14.74" smashed="yes" rot="MR90">
+<attribute name="NAME" x="5.8383" y="6.3214" size="1.27" layer="25"/>
+<attribute name="VALUE" x="0.2622" y="3.5528" size="1.27" layer="28" rot="MR90"/>
 </element>
 <element name="RDY" library="led" package="CHIPLED_1206" value="YEL" x="23" y="25.1" smashed="yes" rot="R180">
 <attribute name="NAME" x="21.9834" y="22.6774" size="1.27" layer="25" font="vector" ratio="16" rot="R90"/>
@@ -16972,44 +16972,35 @@ Copyright: Würth Elektronik</description>
 <contactref element="R15" pad="1"/>
 <contactref element="ICSP+TD" pad="1"/>
 <contactref element="K1" pad="10"/>
-<wire x1="15.8" y1="16.0032" x2="16.4592" y2="16.6624" width="0.254" layer="16"/>
-<wire x1="16.4592" y1="16.6624" x2="16.6168" y2="16.82" width="0.254" layer="16"/>
 <wire x1="19.1" y1="16.82" x2="20.1488" y2="16.82" width="0.254" layer="1"/>
 <wire x1="20.1488" y1="16.82" x2="21.7002" y2="18.3714" width="0.254" layer="1"/>
-<wire x1="19.1" y1="16.82" x2="16.6168" y2="16.82" width="0.254" layer="16"/>
-<wire x1="8.27" y1="9.66" x2="8.27" y2="10.3782" width="0.254" layer="16"/>
-<wire x1="8.27" y1="10.3782" x2="8.7376" y2="10.8458" width="0.254" layer="16"/>
-<wire x1="8.7376" y1="10.8458" x2="8.8392" y2="10.9474" width="0.254" layer="16"/>
-<wire x1="8.8392" y1="10.9474" x2="12.7508" y2="10.9474" width="0.254" layer="16"/>
-<wire x1="12.7508" y1="10.9474" x2="13.6906" y2="11.8872" width="0.254" layer="16"/>
-<wire x1="13.6906" y1="11.8872" x2="13.6906" y2="13.8938" width="0.254" layer="16"/>
-<wire x1="13.6906" y1="13.8938" x2="16.4592" y2="16.6624" width="0.254" layer="16"/>
+<wire x1="19.1" y1="16.82" x2="15.3468" y2="16.7946" width="0.254" layer="16"/>
+<wire x1="15.3468" y1="16.7946" x2="15.3468" y2="12.7052" width="0.254" layer="16"/>
+<wire x1="15.3468" y1="12.7052" x2="12.7508" y2="9.652" width="0.254" layer="16"/>
+<wire x1="12.7508" y1="9.652" x2="10.81" y2="9.66" width="0.254" layer="16"/>
 </signal>
 <signal name="A1">
 <contactref element="R14" pad="1"/>
 <contactref element="ICSP+TD" pad="10"/>
 <contactref element="K1" pad="11"/>
-<via x="14.8" y="12.2" extent="1-16" drill="0.508"/>
-<wire x1="14.8" y1="12.2" x2="14.8" y2="13.978" width="0.254" layer="1"/>
+<via x="12.9204" y="13.978" extent="1-16" drill="0.508"/>
+<wire x1="12.9204" y1="13.978" x2="14.8" y2="13.978" width="0.254" layer="1"/>
 <wire x1="14.8" y1="13.978" x2="15.1" y2="14.278" width="0.254" layer="1"/>
 <wire x1="19.1" y1="14.28" x2="15.102" y2="14.28" width="0.254" layer="1"/>
 <wire x1="15.102" y1="14.28" x2="15.1" y2="14.278" width="0.254" layer="1"/>
-<wire x1="10.81" y1="9.66" x2="13.6224" y2="9.66" width="0.254" layer="16"/>
-<wire x1="13.6224" y1="9.66" x2="14.7828" y2="10.8204" width="0.254" layer="16"/>
-<wire x1="14.7828" y1="10.8204" x2="14.7828" y2="12.1828" width="0.254" layer="16"/>
-<wire x1="14.7828" y1="12.1828" x2="14.8" y2="12.2" width="0.254" layer="16"/>
+<wire x1="9.525" y1="10.915" x2="8.27" y2="9.66" width="0.254" layer="16"/>
+<wire x1="9.525" y1="10.915" x2="11.7532" y2="10.915" width="0.254" layer="16"/>
+<wire x1="11.7532" y1="10.915" x2="12.9286" y2="12.2428" width="0.254" layer="16"/>
+<wire x1="12.9286" y1="12.2428" x2="12.9204" y2="13.978" width="0.254" layer="16"/>
 </signal>
 <signal name="A0">
 <contactref element="ICSP+TD" pad="2"/>
 <contactref element="R16" pad="1"/>
 <contactref element="K1" pad="12"/>
-<wire x1="9.57" y1="10.9" x2="8.27" y2="12.2" width="0.254" layer="1"/>
-<wire x1="9.57" y1="10.9" x2="15.6498" y2="10.9" width="0.254" layer="1"/>
-<wire x1="15.6498" y1="10.9" x2="16.4846" y2="11.7348" width="0.254" layer="1"/>
-<wire x1="16.4846" y1="11.7348" x2="19.0948" y2="11.7348" width="0.254" layer="1"/>
-<wire x1="19.0948" y1="11.7348" x2="19.1" y2="11.74" width="0.254" layer="1"/>
 <wire x1="22.3" y1="11.778" x2="19.138" y2="11.778" width="0.254" layer="1"/>
 <wire x1="19.138" y1="11.778" x2="19.1" y2="11.74" width="0.254" layer="1"/>
+<wire x1="19.1" y1="11.74" x2="11.27" y2="11.74" width="0.254" layer="1"/>
+<wire x1="11.27" y1="11.74" x2="10.81" y2="12.2" width="0.254" layer="1"/>
 </signal>
 <signal name="D13_SD_CLK">
 <contactref element="R17" pad="1"/>
@@ -17067,35 +17058,31 @@ Copyright: Würth Elektronik</description>
 <signal name="D5">
 <contactref element="ICSP+TD" pad="4"/>
 <contactref element="K2" pad="8"/>
-<wire x1="5.0748" y1="21.9" x2="6.2484" y2="20.3962" width="0.254" layer="16"/>
-<via x="6.2484" y="20.3962" extent="1-16" drill="0.508"/>
-<wire x1="6.2484" y1="20.3962" x2="6.223" y2="18.9206" width="0.254" layer="1"/>
-<wire x1="6.223" y1="18.9206" x2="8.27" y2="17.28" width="0.254" layer="1"/>
+<wire x1="5.0748" y1="21.9" x2="6.2484" y2="20.5994" width="0.254" layer="16"/>
+<via x="6.2484" y="20.5994" extent="1-16" drill="0.508"/>
 <wire x1="3.9" y1="21.9" x2="5.0748" y2="21.9" width="0.254" layer="16"/>
+<wire x1="6.2484" y1="20.5994" x2="6.2484" y2="19.1262" width="0.254" layer="1"/>
+<wire x1="6.2484" y1="19.1262" x2="6.8072" y2="18.5674" width="0.254" layer="1"/>
+<wire x1="6.8072" y1="18.5674" x2="9.5226" y2="18.5674" width="0.254" layer="1"/>
+<wire x1="9.5226" y1="18.5674" x2="10.81" y2="17.28" width="0.254" layer="1"/>
 </signal>
 <signal name="D6">
 <contactref element="ICSP+TD" pad="6"/>
 <contactref element="K2" pad="9"/>
-<wire x1="6.5734" y1="19.36" x2="7.3406" y2="18.5928" width="0.254" layer="16"/>
-<wire x1="7.3406" y1="18.5928" x2="9.5828" y2="18.5928" width="0.254" layer="16"/>
-<wire x1="9.5828" y1="18.5928" x2="10.81" y2="19.82" width="0.254" layer="16"/>
-<wire x1="3.9" y1="19.36" x2="6.5734" y2="19.36" width="0.254" layer="16"/>
+<wire x1="3.9" y1="19.36" x2="7.81" y2="19.36" width="0.254" layer="16"/>
+<wire x1="7.81" y1="19.36" x2="8.27" y2="19.82" width="0.254" layer="16"/>
 </signal>
 <signal name="D7">
 <contactref element="ICSP+TD" pad="7"/>
 <contactref element="K2" pad="10"/>
-<wire x1="6.1162" y1="16.82" x2="6.8072" y2="16.129" width="0.254" layer="16"/>
-<wire x1="6.8072" y1="16.129" x2="9.659" y2="16.129" width="0.254" layer="16"/>
-<wire x1="9.659" y1="16.129" x2="10.81" y2="17.28" width="0.254" layer="16"/>
-<wire x1="3.9" y1="16.82" x2="6.1162" y2="16.82" width="0.254" layer="16"/>
+<wire x1="3.9" y1="16.82" x2="7.81" y2="16.82" width="0.254" layer="16"/>
+<wire x1="7.81" y1="16.82" x2="8.27" y2="17.28" width="0.254" layer="16"/>
 </signal>
 <signal name="D8">
 <contactref element="ICSP+TD" pad="8"/>
 <contactref element="K2" pad="11"/>
-<wire x1="6.4972" y1="14.28" x2="7.239" y2="13.5382" width="0.254" layer="16"/>
-<wire x1="7.239" y1="13.5382" x2="9.6082" y2="13.5382" width="0.254" layer="16"/>
-<wire x1="9.6082" y1="13.5382" x2="10.81" y2="14.74" width="0.254" layer="16"/>
-<wire x1="3.9" y1="14.28" x2="6.4972" y2="14.28" width="0.254" layer="16"/>
+<wire x1="3.9" y1="14.28" x2="7.81" y2="14.28" width="0.254" layer="16"/>
+<wire x1="7.81" y1="14.28" x2="8.27" y2="14.74" width="0.254" layer="16"/>
 </signal>
 <signal name="D11_SD_MOSI">
 <contactref element="R19" pad="2"/>
@@ -17451,8 +17438,8 @@ Copyright: Würth Elektronik</description>
 <wire x1="10.9982" y1="26.0604" x2="10.9982" y2="23.6052" width="0.6096" layer="16"/>
 <wire x1="10.9982" y1="23.6052" x2="11.016" y2="23.5874" width="0.254" layer="16"/>
 <wire x1="10.9998" y1="23.5712" x2="11.016" y2="23.5874" width="0.254" layer="1"/>
-<wire x1="10.9998" y1="23.5712" x2="10.9998" y2="22.5498" width="0.6096" layer="1"/>
-<wire x1="10.9998" y1="22.5498" x2="8.27" y2="19.82" width="0.6096" layer="1"/>
+<wire x1="10.9998" y1="23.5712" x2="10.9998" y2="20.0098" width="0.6096" layer="1"/>
+<wire x1="10.9998" y1="20.0098" x2="10.81" y2="19.82" width="0.6096" layer="1"/>
 </signal>
 <signal name="SD_CLK">
 <contactref element="U3" pad="5"/>
