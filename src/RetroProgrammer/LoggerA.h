@@ -18,7 +18,7 @@
 #define LoggerA_h
 
 
-  #define LOGGER_LEVEL 0
+  #define LOGGER_LEVEL 4
 
   #include <Arduino.h>
   #include "Utils.h"

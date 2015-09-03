@@ -16,8 +16,8 @@
 
 // For Random read
 //------------------
-//    A6
-const byte pinRandomRead = A6;
+//    A7
+const byte pinRandomRead = A7;
 
 
 #define RAM_DEPOSIT_SIZE 550
@@ -47,7 +47,7 @@ void setup_test() {//Used for testing
   testUtilsGen();
   testUtilsAVR();
   
-  #if 1
+  #if 0
     testTargetProgramDetector();
   #endif
 
