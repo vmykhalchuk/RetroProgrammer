@@ -34,10 +34,10 @@
   void __testGetProgId(int d);
   
 
+  // 1) requires SD Card to be connected (see ConfFile.h for more details)
+  // 2) requires test files to be written to SD card
   class Tests_ConfFile {
     public:
-      // 1) requires SD Card to be connected (see ConfFile.h for more details)
-      // 2) requires test files to be written to SD card
       static void testConfFile();
       
     private:

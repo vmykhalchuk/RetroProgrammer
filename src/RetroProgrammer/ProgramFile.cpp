@@ -610,7 +610,7 @@ void ProgramFile_Test::_testProgramming(byte& statusRes) {
   }
   byte maxByte = 1 << (progMemPageSize + 1);
   for (byte i = 0; i < maxByte; i++) {
-    logDebugB("",programBuffer[i]);
+    logDebugB("",ProgramFile::programBuffer[i]);
   }
   logDebug("Done!");
   

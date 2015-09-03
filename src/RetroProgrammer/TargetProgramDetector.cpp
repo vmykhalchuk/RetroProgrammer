@@ -200,8 +200,8 @@ boolean TargetProgramDetector::reset1Wire(byte& statusRes) {
   do {
     delayMicroseconds(5);
     v = analogRead(_pinW0);
-  } while (retries-- > 0 && v != 1023);
-  if (v != 1023) returnStatusV(ERROR_TARGET_DETECTOR + 0x3, false);
+  } while (retries-- > 0 && v < 1000); //FIXME use constant
+  if (v < 1000) returnStatusV(ERROR_TARGET_DETECTOR + 0x3, false);
   
   pinMode(_pinW0, OUTPUT);
   digitalWrite(_pinW0, LOW);
@@ -211,13 +211,13 @@ boolean TargetProgramDetector::reset1Wire(byte& statusRes) {
   delayMicroseconds(60);
   v = analogRead(_pinW0);
   delayMicroseconds(400);
-  if (v == 1023) {
+  if (v >= 1000) { // FIXME use constant here
     return false; // still floating, so there is no Target ID auto defined
-  } else if (v == 0) {
+  } else if (v <= 20) { // FIXME use constant here
     charge1Wire(1000, statusRes);
     return true; // ID chip detected
   } else {
-    returnStatusV(ERROR_TARGET_DETECTOR + 0x4, false);
+    returnStatusV(ERROR_TARGET_DETECTOR + 0x4, false); // 0x14
   }
 }
 
@@ -325,39 +325,30 @@ void TargetProgramDetector::readManualProgrammSelector(char* data, byte& statusR
   checkStatus();
   data[2] = data[2] + 2;
   data[3] = data[3] + 2;
-  return;
 }
 
 void TargetProgramDetector::readManualProgrammSelectorPort(char* data, byte port, byte& statusRes) {
   initStatus();
   int v = analogRead(port);
-  if (v >= 0 && v <= 150) {
-    logDebug("t1"); // value is in between!
-    returnStatus(ERROR_TARGET_DETECTOR + 0x8);
-  } else if (v > 150 && v <= 300) {
+
+  // 1000 - 1023 - 1023 => A1 | C3
+  //  680 -  705 -  720 => B1 | D3
+  //  480 -  508 -  520 => A2 | C4
+  //  380 -  414 -  435 => B2 | D4
+  if (v >= 1000 && v <= 1023) {
     data[0] = 'A';
     data[1] = '1';
-  } else if (v > 300 && v <= 450) {
-    logDebug("t2"); // value is in between!
-    returnStatus(ERROR_TARGET_DETECTOR + 0x8);
-  } else if (v > 450 && v <= 600) {
+  } else if (v >= 680 && v <= 720) {
     data[0] = 'B';
     data[1] = '1';
-  } else if (v > 600 && v <= 750) {
-    logDebug("t3"); // value is in between!
-    returnStatus(ERROR_TARGET_DETECTOR + 0x8);
-  } else if (v > 750 && v <= 900) {
+  } else if (v >= 480 && v <= 520) {
     data[0] = 'A';
     data[1] = '2';
-  } else if (v > 900 && v < 1023) {
-    logDebug("t4"); // value is in between!
-    returnStatus(ERROR_TARGET_DETECTOR + 0x8);
-  } else if (v == 1023) {
+  } else if (v >= 380 && v <= 435) {
     data[0] = 'B';
     data[1] = '2';
   } else {
-    logDebug("tF"); // very strange value!
+    logDebugD("t1", v); // value is in between!
     returnStatus(ERROR_TARGET_DETECTOR + 0x8);
   }
-  return;
 }

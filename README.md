@@ -57,7 +57,11 @@ v0.2 board has support for Arduino Micro (A4 and A6 are swapped comparing to v0.
 * Auto detection of programming speed
 * Auto detection of power present on Target device - to avoid turning programming voltage ON
 * Support of 3.3v target MCU
-** How to autodetect if this is 3.3v or 5v device?
+*# How to autodetect if this is 3.3v or 5v device?
+*# Then we need level shifter to work on two separate supply levels.
+*#* For this the ideal solution is: 74LVC2T45; 74LVCH2T45
+*#* Price on Aliexperess is OK for 50pieces only.
+*#* Or search for “dual supply level” shifter/translator.
 * Extend AVR supported list
 * Support PDI interface (http://www.atmel.com/images/doc8282.pdf)
 * PIC support

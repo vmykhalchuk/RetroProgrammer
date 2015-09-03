@@ -21,12 +21,12 @@ byte HWInterface::waitForUserCommand() {
 }
 
 byte HWInterface::readButtons() {
-  pinMode(BUTTON_UPLOAD__LED_RDY__LED_AUTO, INPUT);
-  pinMode(BUTTON_VERIFY__LED_ERR__LED_OK, INPUT);
-  pinMode(BUTTON_BACKUP, INPUT);
+  //pinMode(BUTTON_UPLOAD__LED_RDY__LED_AUTO, INPUT);
+  //pinMode(BUTTON_VERIFY__LED_ERR__LED_OK, INPUT);
+  //pinMode(BUTTON_BACKUP, INPUT);
   delayMicroseconds(5);
   byte res = 0;
-  if (digitalRead(BUTTON_UPLOAD__LED_RDY__LED_AUTO) == LOW) { //analogRead(BUTTON_UPLOAD__LED_RDY__LED_AUTO) < BUTTON_UPLOAD_VERIFY_TRESHOLD) {
+  if (analogRead(BUTTON_UPLOAD__LED_RDY__LED_AUTO) < BUTTON_UPLOAD_VERIFY_TRESHOLD) {
     res |= BTN_UPLOAD;
   }
   if (analogRead(BUTTON_VERIFY__LED_ERR__LED_OK) < BUTTON_UPLOAD_VERIFY_TRESHOLD) {
@@ -39,40 +39,62 @@ byte HWInterface::readButtons() {
 }
 
 void HWInterface::setLedOnOff(byte led, boolean turnOn) {
-  if (led & LED_RDY != 0) {
+  if ((led & LED_RDY) != 0) {
     __LED_RDY = turnOn;
   }
-  if (led & LED_AUTO != 0) {
+  if ((led & LED_AUTO) != 0) {
     __LED_AUTO = turnOn;
   }
-  if (led & LED_ERR != 0) {
+  if ((led & LED_ERR) != 0) {
     __LED_ERR = turnOn;
   }
-  if (led & LED_OK != 0) {
+  if ((led & LED_OK) != 0) {
     __LED_OK = turnOn;
   }
 }
 
-void HWInterface::runLeds(byte times) {
-  pinMode(BUTTON_UPLOAD__LED_RDY__LED_AUTO, OUTPUT);
-  pinMode(BUTTON_VERIFY__LED_ERR__LED_OK, OUTPUT);
-  while (times-- > 0) {
+void HWInterface::debugWhatLedsAreOn() {
+  logDebug("debugWhatLedsAreOn");
     if (__LED_RDY) {
-      digitalWrite(BUTTON_UPLOAD__LED_RDY__LED_AUTO, LOW);
+      logDebug("__LED_RDY");
     }
     if (__LED_ERR) {
-      digitalWrite(BUTTON_VERIFY__LED_ERR__LED_OK, LOW);
+      logDebug("__LED_ERR");
     }
-    delay(100);
     if (__LED_AUTO) {
-      digitalWrite(BUTTON_UPLOAD__LED_RDY__LED_AUTO, HIGH);
+      logDebug("__LED_AUTO");
     }
     if (__LED_OK) {
+      logDebug("__LED_OK");
+    }
+}
+
+void HWInterface::runLeds(byte times) {
+  debugWhatLedsAreOn();
+  while (times-- > 0) {
+    if (__LED_RDY) {
+      pinMode(BUTTON_UPLOAD__LED_RDY__LED_AUTO, OUTPUT);
+      digitalWrite(BUTTON_UPLOAD__LED_RDY__LED_AUTO, HIGH);
+    }
+    if (__LED_ERR) {
+      pinMode(BUTTON_VERIFY__LED_ERR__LED_OK, OUTPUT);
+      digitalWrite(BUTTON_VERIFY__LED_ERR__LED_OK, LOW);
+    }
+    delay(10);
+    pinMode(BUTTON_UPLOAD__LED_RDY__LED_AUTO, INPUT);
+    pinMode(BUTTON_VERIFY__LED_ERR__LED_OK, INPUT);
+
+    if (__LED_AUTO) {
+      pinMode(BUTTON_UPLOAD__LED_RDY__LED_AUTO, OUTPUT);
+      digitalWrite(BUTTON_UPLOAD__LED_RDY__LED_AUTO, LOW);
+    }
+    if (__LED_OK) {
+      pinMode(BUTTON_VERIFY__LED_ERR__LED_OK, OUTPUT);
       digitalWrite(BUTTON_VERIFY__LED_ERR__LED_OK, HIGH);
     }
-    delay(100);
+    delay(10);
+    pinMode(BUTTON_UPLOAD__LED_RDY__LED_AUTO, INPUT);
+    pinMode(BUTTON_VERIFY__LED_ERR__LED_OK, INPUT);
   }
-  pinMode(BUTTON_UPLOAD__LED_RDY__LED_AUTO, INPUT);
-  pinMode(BUTTON_VERIFY__LED_ERR__LED_OK, INPUT);
 }
 

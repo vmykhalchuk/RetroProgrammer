@@ -17,10 +17,10 @@
     static const byte BUTTON_VERIFY__LED_ERR__LED_OK = A4;
     static const byte BUTTON_BACKUP = 2;
   
-    static const byte LED_RDY   = 0x11;
-    static const byte LED_AUTO  = 0x12;
-    static const byte LED_ERR   = 0x21;
-    static const byte LED_OK    = 0x22;
+    static const byte LED_RDY   = 0x01;
+    static const byte LED_AUTO  = 0x02;
+    static const byte LED_ERR   = 0x04;
+    static const byte LED_OK    = 0x08;
 
     static const byte BTN_UPLOAD = 0x1;
     static const byte BTN_VERIFY = 0x2;
@@ -42,13 +42,17 @@
     // run Leds for <times> cycle(s) (around 200ms)
     static void runLeds(byte times);
 
-    private:
-    static const int BUTTON_UPLOAD_VERIFY_TRESHOLD = 512; // when button pressed, voltage level drops below middle value, closer to 0. Note: 1023 - 5v
+    public:
+    static const int BUTTON_UPLOAD_VERIFY_TRESHOLD = 200; // when button pressed, voltage level drops below middle value, closer to 0. Note: 1023 - 5v
+                                                         // treshold must be low, in order to avoid high noise on the line!
+                                                         // this value is very hard to predict, because for red leds it should be higher, for green and blue leds - lower, etc
 
     static boolean __LED_RDY;
     static boolean __LED_AUTO;
     static boolean __LED_ERR;
     static boolean __LED_OK;
+
+    static void debugWhatLedsAreOn();
   };
 
 #endif

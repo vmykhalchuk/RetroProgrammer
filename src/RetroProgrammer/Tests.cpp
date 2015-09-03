@@ -493,30 +493,36 @@ void Tests_ConfFile::testReadRootConfFile() {
 /////////////////////////////////////////////
 /////////////////////////////////////////////
 
-    static const byte BTN_UPLOAD = 0x1;
-    static const byte BTN_VERIFY = 0x2;
-    static const byte BTN_BACKUP = 0x4;
-
 void Tests_HWInterface::testLedsAndBtns() {
   logInfo(">>Tests_HWInterface::testLedsAndBtns");
-  logDebug("-Blinking with all LEDs in a row! (one by one)");
+  logInfo("-Blinking with all LEDs in a row! (one by one)");
+
+    /*HWInterface::setLedOnOff(HWInterface::LED_AUTO, true);
+    while(true) {
+      HWInterface::runLeds(60); // around 1200ms
+      delay(1200);
+    }*/
+
   byte leds[] = {HWInterface::LED_RDY, HWInterface::LED_AUTO, HWInterface::LED_ERR, HWInterface::LED_OK};
   byte ledN = 0;
-  for (int i = 0; i < 50; i++) {
+  while (true) {
     HWInterface::setLedOnOff(leds[ledN], true);
     byte btns = HWInterface::readButtons();
     char res[] = "U: 0; V: 0; B: 0";
     if (btns & HWInterface::BTN_UPLOAD) {res[3]='1';}
     if (btns & HWInterface::BTN_VERIFY) {res[9]='1';}
-    if (btns & HWInterface::BTN_UPLOAD) {res[15]='1';}
-    HWInterface::runLeds(3); // around 600ms
+    if (btns & HWInterface::BTN_BACKUP) {res[15]='1';}
+    logInfoS("", res);
+    
+    HWInterface::runLeds(120); // 1200+ms
     HWInterface::setLedOnOff(leds[ledN], false);
 
-    if (ledN == 3) {
+    ledN++;
+    if (ledN == 4) {
       ledN = 0;
-    } else {
-      ledN++;
     }
+
+    logDebugD("VERIFY:", analogRead(HWInterface::BUTTON_VERIFY__LED_ERR__LED_OK));
   }
   
   logInfo("- END");

@@ -31,7 +31,7 @@ void setup() {
   logInfo("Hello World!");
 
   setup_test();
-  setup_prod();
+  //setup_prod();
 }
 
 void setup_test() {//Used for testing
@@ -46,11 +46,11 @@ void setup_test() {//Used for testing
   testUtilsGen();
   testUtilsAVR();
   
-  #if 1
+  #if 0
     testTargetProgramDetector();
   #endif
 
-  #if 1 // Upoad test files to SD Card!!!
+  #if 0 // Upoad test files to SD Card!!!
     // Init SD Card
     if (!initSDCard()) {
       logError("SD init failed!");
@@ -59,7 +59,13 @@ void setup_test() {//Used for testing
     Tests_ConfFile::testConfFile();
   #endif
 
-  #if 1 // Test HWInterface
+  #if 0 // Test ports directly (optional)
+    // select only one!
+    testSDCardPorts();
+    testManualProgramSelectorPorts();
+  #endif
+
+  #if 0 // Test HWInterface
     Tests_HWInterface::testLedsAndBtns();
   #endif
   
@@ -197,6 +203,79 @@ boolean initSDCard() {
   }
   logInfo("SD init done");
   return true;
+}
+
+void testManualProgramSelectorPorts() {
+  logInfo("Setup test: testManualProgramSelectorPorts");
+  pinMode(A5, INPUT);
+  while (true) {
+    int a5Sum = 0;
+    int a5Min = 1023;
+    int a5Max = 0;
+    for (int i = 0; i < 10; i++) {
+      int r = analogRead(A5);
+      if (r < a5Min) a5Min = r;
+      if (r > a5Max) a5Max = r;
+      a5Sum += r;
+    }
+    logInfoD("a5Min: ", a5Min);
+    logInfoD("a5Aver: ", a5Sum / 10);
+    logInfoD("a5Max: ", a5Max);
+    delay(1500);
+  }
+  
+  /*pinMode(A3, INPUT);
+  pinMode(A4, INPUT);
+  while(true) {
+    int a3Res = analogRead(A3);
+    logInfoD("A3 result: ", a3Res);
+    int a4Res = analogRead(A4);
+    logInfoD("A4 result: ", a4Res);
+    delay(1500);
+  }*/
+}
+
+void testSDCardPorts() {
+  logInfo("Setup test: Test SD Card ports");
+  pinMode(4, OUTPUT);
+  pinMode(13, OUTPUT);
+  pinMode(11, OUTPUT);
+  pinMode(12, INPUT);
+
+  int i = 0;
+  while (true) {
+    if (i == 0) {
+      digitalWrite(4, HIGH);
+      logInfo("CS: On");
+    } else if (i == 1) {
+      digitalWrite(4, LOW);
+      logInfo("CS: Off");
+    } else if (i == 2) {
+      digitalWrite(13, HIGH);
+      logInfo("CLK: On");
+    } else if (i == 3) {
+      digitalWrite(13, LOW);
+      logInfo("CLK: Off");
+    } else if (i == 4) {
+      digitalWrite(11, HIGH);
+      logInfo("MOSI: On");
+    } else if (i == 5) {
+      digitalWrite(11, LOW);
+      logInfo("MOSI: Off");
+    }
+    int r = digitalRead(12);
+    if (r == LOW) {
+      logInfo("MISO: 0");
+    } else {
+      logInfo("MISO: 1");
+    }
+    delay(1500);
+
+    i++;
+    if (i == 6) {
+      i = 0;
+    }
+  }
 }
 
 void loop()
