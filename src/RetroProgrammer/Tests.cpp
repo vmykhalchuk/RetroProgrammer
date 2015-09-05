@@ -9,10 +9,10 @@ char __testFilePathBuf[FILE_PATH_BUFFER_SIZE];
 /////////////////////////////////////////////
 /////////////////////////////////////////////
 /////////////////////////////////////////////
-///    UTILS
-///    UTILS
-///    UTILS
-///    UTILS
+///    DIRECT BOARD TESTS
+///    DIRECT BOARD TESTS
+///    DIRECT BOARD TESTS
+///    DIRECT BOARD TESTS
 /////////////////////////////////////////////
 /////////////////////////////////////////////
 /////////////////////////////////////////////
@@ -20,281 +20,118 @@ char __testFilePathBuf[FILE_PATH_BUFFER_SIZE];
 /////////////////////////////////////////////
 /////////////////////////////////////////////
 
-void testUtilsGen() {
-  logInfo(">> Utils - GEN");
-  __testConvertByteToHexChar();
-  __testConvertHexCharToByte();
-  __testConvertTwoHexCharsToByte();
-  __testConvert3DigitsToInt();
-  __testIsWhiteChar();
-  __testIsValidNameChar();
-  __testStrLength();
-  logInfo("-- END");
-  return;
+
+void Tests_Board::testManualProgramSelectorPorts() {
+  logInfo("Setup test: testManualProgramSelectorPorts");
+  pinMode(A5, INPUT);
+  while (true) {
+    int a5Sum = 0;
+    int a5Min = 1023;
+    int a5Max = 0;
+    for (int i = 0; i < 10; i++) {
+      int r = analogRead(A5);
+      if (r < a5Min) a5Min = r;
+      if (r > a5Max) a5Max = r;
+      a5Sum += r;
+    }
+    logInfoD("a5Min: ", a5Min);
+    logInfoD("a5Aver: ", a5Sum / 10);
+    logInfoD("a5Max: ", a5Max);
+    delay(1500);
+  }
+  
+  /*pinMode(A3, INPUT);
+  pinMode(A4, INPUT);
+  while(true) {
+    int a3Res = analogRead(A3);
+    logInfoD("A3 result: ", a3Res);
+    int a4Res = analogRead(A4);
+    logInfoD("A4 result: ", a4Res);
+    delay(1500);
+  }*/
 }
 
-void testUtilsAVR() {
-  logInfo(">> Utils - AVR");
-  __testGetAVRModelIdBySignature();
-  __testGetAVRModelAndConf();
-  __testGetAVRModelNameById();
-  __testGetAVRModelIdByName();
-  logInfo("-- END");
-  return;
-}
+void Tests_Board::testSDCardPorts() {
+  logInfo("Setup test: Test SD Card ports");
+  pinMode(4, OUTPUT);
+  pinMode(13, OUTPUT);
+  pinMode(11, OUTPUT);
+  pinMode(12, INPUT);
 
-
-void __testConvertByteToHexChar() {
-  // convertByteToHexChar
-  logInfo(">utils_01");
-  char c = convertByteToHexChar(0xEA, true);
-  if (c != 'E') {
-    logError("#E");
-  }
-  c = convertByteToHexChar(0xE8, false);
-  if (c != '8') {
-    logError("#8");
-  }
-  c = convertByteToHexChar(0xA0, true);
-  if (c != 'A') {
-    logError("#A");
-  }
-  c = convertByteToHexChar(0xA0, false);
-  if (c != '0') {
-    logError("#0");
-  }
-  logInfo("- END");
-  return;
-}
-
-void __testConvertHexCharToByte() {
-  byte statusRes;
-  logInfo(">utils_02");
-  byte r = convertHexCharToByte('0', statusRes);
-  if (statusRes == 7) {
-    logError("#I");//statusInit didn't work properly
-  }
-  if (statusRes != 0) {
-    logError("#0a");
-  }
-  if (r != 0) {
-    logError("#0b");
-  }
-  r = convertHexCharToByte('1', statusRes);
-  if (r != 1) {
-    logError("#1");
-  }
-  r = convertHexCharToByte('9', statusRes);
-  if (r != 9) {
-    logError("#9");
-  }
-  r = convertHexCharToByte('A', statusRes);
-  if (r != 0xA) {
-    logError("#A");
-  }
-  r = convertHexCharToByte('a', statusRes);
-  if (r != 0xA) {
-    logError("#a");
-  }
-  r = convertHexCharToByte('F', statusRes);
-  if (r != 0xF) {
-    logError("#F");
-  }
-  r = convertHexCharToByte('e', statusRes);
-  if (r != 0xE) {
-    logError("#e");
-  }
-  r = convertHexCharToByte('Z', statusRes);
-  if (statusRes == 0) {
-    logError("#Z");
-  }
-  logInfo("- END");
-  return;
-}
-
-void __testConvertTwoHexCharsToByte() {
-  logInfo(">utils_03");
-
-  byte statusRes;
-  char r[] = "A3";
-  byte res = convertTwoHexCharsToByte(r, statusRes);
-  if (res != 0xA3) {
-    logErrorB("#A3:", res);
-  }
-
-  char r2[] = "jhkjF4";
-  res = convertTwoHexCharsToByte(r2 + 4, statusRes);
-  if (res != 0xF4) {
-    logErrorB("#F4:", res);
-  }
-
-  logInfo("- END");
-  return;
-}
-
-void __testConvert3DigitsToInt() {
-  logInfo(">utils_04");
-
-  byte statusRes;
-  char r[] = "jhkjh_456";
-  int res = convert3DigitsToInt(r + 6, statusRes);
-  if (res != 456) {
-    logErrorD("#456:", res);
-  }
-
-  logInfo("- END");
-  return;
-}
-
-void __testIsWhiteChar() {
-  return;
-}
-
-void __testIsValidNameChar() {
-  return;
-}
-
-void __testStrLength() {
-  logInfo(">utils_05");
-  char s[] = "123";
-  int l = strLength(s);
-  if (l != 3) {
-    logErrorD("strLength", l);
-  }
-  logInfo("- END");
-  return;
-}
-
-void __testGetAVRModelIdBySignature() {
-  logInfo(">utils_06");
-  byte statusRes;
-  // return model ID by signature
-  //        byte signBytes[3];
-  //        readSignatureBytes(signBytes, statusRes); checkStatus();
-  //        byte modelId = getAVRModelIdBySignature(signBytes, statusRes); checkStatus();
-  byte signBytes[3] = { MCU_AVR_TYPES[MCU_AVR_ATmega88PA - 1][0], MCU_AVR_TYPES[MCU_AVR_ATmega88PA - 1][1], MCU_AVR_TYPES[MCU_AVR_ATmega88PA - 1][2] } ;
-  byte modelId = UtilsAVR::getAVRModelIdBySignature(signBytes, statusRes);
-  if (statusRes != 0) {
-    logErrorB("#mbysign1:", statusRes);
-  }
-  if (modelId != MCU_AVR_ATmega88PA) {
-    logErrorD("#mbysign2:", modelId);
-  }
-  logInfo("- END");
-  return;
-}
-
-void __testGetAVRModelAndConf() {
-  //inline byte getAVRModelAndConf(byte* signBytes, byte& flashPageSize, byte& flashPagesCount, byte& eepromPageSize, byte& eepromPagesCount, byte& statusRes) {
-  return;
-}
-
-void __testGetAVRModelNameById() {
-  logInfo(">utils_07");
-  byte statusRes;
-  UtilsAVR::getAVRModelNameById(__testMcuModelNameBuf, MCU_AVR_ATmega168PA, statusRes);
-  if (statusRes != 0) {
-    logErrorB("#avrname1:", statusRes);
-  }
-  if (__testMcuModelNameBuf[3] != 'e') {
-    logErrorB("#avrname2:", __testMcuModelNameBuf[3]);
-  }
-  logInfo("- END");
-  return;
-}
-
-void __testGetAVRModelIdByName() {
-  logInfo(">utils_08");
-  byte statusRes;
-  byte res = UtilsAVR::getAVRModelIdByName("AVR@002", statusRes);
-  if (statusRes != 0) {
-    logErrorB("#avrm_id1:", statusRes);
-  }
-  if (res != 2) {
-    logErrorD("#avrm_id2:", res);
-  }
-
-  res = UtilsAVR::getAVRModelIdByName("AVR[1e9514]", statusRes);
-  if (statusRes != 0) {
-    logErrorB("#avrm_id3:", statusRes);
-  }
-  if (res != MCU_AVR_ATmega328) {
-    logErrorD("#avrm_id4:", res);
-  }
-  logInfo("- END");
-  return;
-}
-
-
-/////////////////////////////////////////////
-/////////////////////////////////////////////
-/////////////////////////////////////////////
-/////////////////////////////////////////////
-/////////////////////////////////////////////
-///    TARGET PROGRAM DETECTOR
-///    TARGET PROGRAM DETECTOR
-///    TARGET PROGRAM DETECTOR
-///    TARGET PROGRAM DETECTOR
-/////////////////////////////////////////////
-/////////////////////////////////////////////
-/////////////////////////////////////////////
-/////////////////////////////////////////////
-/////////////////////////////////////////////
-/////////////////////////////////////////////
-
-void testTargetProgramDetector() {
-  logDebug(">> TargetPD");
-  logFreeRam();
-  logDebug("TargetPD#01");
-  __testOneWireID(2000);
-  logDebug("TargetPD#02");
-  __testGetProgId(2000);
-  logDebug("-- END");
-  return;
-}
-
-// requires programDetecter
-void __testOneWireID(int d) {
-  logInfo(">TPD#01");
-  byte statusRes;
-  byte id[8];
-  boolean idPresent = TargetProgramDetector::read1WireId(id, statusRes);
-  if (statusRes != 0) {
-    logInfo("Error detecting ID chip!");
-  } else {
-    if (idPresent) {
-      logInfo("ID chip data:");
-      logDebugB("[0] ", id[0]);
-      logDebugB("[1] ", id[1]);
-      logDebugB("[5] ", id[5]);
-      logDebugB("[6] ", id[6]);
-      if (id[0] != 0x81) {
-        logError("Wrong family code!");
-      }
+  int i = 0;
+  while (true) {
+    if (i == 0) {
+      digitalWrite(4, HIGH);
+      logInfo("CS: On");
+    } else if (i == 1) {
+      digitalWrite(4, LOW);
+      logInfo("CS: Off");
+    } else if (i == 2) {
+      digitalWrite(13, HIGH);
+      logInfo("CLK: On");
+    } else if (i == 3) {
+      digitalWrite(13, LOW);
+      logInfo("CLK: Off");
+    } else if (i == 4) {
+      digitalWrite(11, HIGH);
+      logInfo("MOSI: On");
+    } else if (i == 5) {
+      digitalWrite(11, LOW);
+      logInfo("MOSI: Off");
+    }
+    int r = digitalRead(12);
+    if (r == LOW) {
+      logInfo("MISO: 0");
     } else {
-      logError("No ID chip!");
+      logInfo("MISO: 1");
+    }
+    delay(1500);
+
+    i++;
+    if (i == 6) {
+      i = 0;
     }
   }
-  logInfo("-END"); delay(d);
-  return;
 }
 
-// requires programDetecter
-void __testGetProgId(int d) {
-  logInfo(">TPD#02");
+
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+///    TEST AVR PROGRAMMER
+///    TEST AVR PROGRAMMER
+///    TEST AVR PROGRAMMER
+///    TEST AVR PROGRAMMER
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+
+void Tests_AVRProgrammer::testAVRSignatureRead() {
   byte statusRes;
-  boolean autoSelected;
-  char progIdBuf[16];
-  logFreeRam();
-  TargetProgramDetector::getProgId(progIdBuf, autoSelected, statusRes);
-  logFreeRam();
-  if (statusRes != 0) {
-    logErrorB("Error! ", statusRes);
+  AVRProgrammer::startupTargetMcuProgramming(statusRes);// Prepare Target MCU for Programming
+  if (statusRes > 0) {
+    logError("ProgEn failed!");
+    AVRProgrammer::shutdownTargetMcu();
+    return;
   } else {
-    logInfoS("Good! ", progIdBuf);
+    logInfo("Started prog!");
   }
-  logInfo("-END"); delay(d);
-  return;
+  byte signBytes[3];
+  // make sure it is ATmega328P
+  AVRProgrammer::readSignatureBytes(signBytes,statusRes);
+  if (statusRes > 0) {
+    logError("signature error!");
+    return;
+  }
+  logInfoB("sig0:", signBytes[0]);
+  logInfoB("sig1:", signBytes[1]);
+  logInfoB("sig2:", signBytes[2]);
+  AVRProgrammer::shutdownTargetMcu();
 }
 
 /////////////////////////////////////////////
@@ -525,6 +362,281 @@ void Tests_HWInterface::testLedsAndBtns() {
     logDebugD("VERIFY:", analogRead(HWInterface::BUTTON_VERIFY__LED_ERR__LED_OK));
   }
   
+  logInfo("- END");
+}
+
+
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+///    TARGET PROGRAM DETECTOR
+///    TARGET PROGRAM DETECTOR
+///    TARGET PROGRAM DETECTOR
+///    TARGET PROGRAM DETECTOR
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+
+void Tests_TargetProgramDetector::testTargetProgramDetector() {
+  logDebug(">> TargetPD");
+  __testOneWireID(2000);
+  __testGetProgId(2000);
+  logDebug("-- END");
+}
+
+// requires programDetecter
+void Tests_TargetProgramDetector::__testOneWireID(int d) {
+  logInfo(">TPD#01 - trying to read 1wire ID");
+  byte statusRes;
+  byte id[8];
+  boolean idPresent = TargetProgramDetector::read1WireId(id, statusRes);
+  if (statusRes != 0) {
+    logInfo("Error detecting ID chip!");
+  } else {
+    if (idPresent) {
+      logInfo("ID chip data:");
+      logDebugB("[0] ", id[0]);
+      logDebugB("[1] ", id[1]);
+      logDebugB("[5] ", id[5]);
+      logDebugB("[6] ", id[6]);
+      if (id[0] != 0x81) {
+        logError("Wrong family code!");
+      }
+    } else {
+      logError("No ID chip!");
+    }
+  }
+}
+
+// requires programDetecter
+void Tests_TargetProgramDetector::__testGetProgId(int d) {
+  logInfo(">TPD#02 - getProgId (AUTO/MANUAL)");
+  byte statusRes;
+  boolean autoSelected;
+  char progIdBuf[16];
+  logFreeRam();
+  TargetProgramDetector::getProgId(progIdBuf, autoSelected, statusRes);
+  logFreeRam();
+  if (statusRes != 0) {
+    logErrorB("Error! ", statusRes);
+  } else {
+    logInfoS("Good! ", progIdBuf);
+  }
+}
+
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+///    UTILS
+///    UTILS
+///    UTILS
+///    UTILS
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+
+void testUtilsGen() {
+  logInfo(">> Utils - GEN");
+  __testConvertByteToHexChar();
+  __testConvertHexCharToByte();
+  __testConvertTwoHexCharsToByte();
+  __testConvert3DigitsToInt();
+  __testIsWhiteChar();
+  __testIsValidNameChar();
+  __testStrLength();
+  logInfo("-- END");
+}
+
+void testUtilsAVR() {
+  logInfo(">> Utils - AVR");
+  __testGetAVRModelIdBySignature();
+  __testGetAVRModelAndConf();
+  __testGetAVRModelNameById();
+  __testGetAVRModelIdByName();
+  logInfo("-- END");
+}
+
+
+void __testConvertByteToHexChar() {
+  // convertByteToHexChar
+  logInfo(">utils_01");
+  char c = convertByteToHexChar(0xEA, true);
+  if (c != 'E') {
+    logError("#E");
+  }
+  c = convertByteToHexChar(0xE8, false);
+  if (c != '8') {
+    logError("#8");
+  }
+  c = convertByteToHexChar(0xA0, true);
+  if (c != 'A') {
+    logError("#A");
+  }
+  c = convertByteToHexChar(0xA0, false);
+  if (c != '0') {
+    logError("#0");
+  }
+  logInfo("- END");
+}
+
+void __testConvertHexCharToByte() {
+  byte statusRes;
+  logInfo(">utils_02");
+  byte r = convertHexCharToByte('0', statusRes);
+  if (statusRes == 7) {
+    logError("#I");//statusInit didn't work properly
+  }
+  if (statusRes != 0) {
+    logError("#0a");
+  }
+  if (r != 0) {
+    logError("#0b");
+  }
+  r = convertHexCharToByte('1', statusRes);
+  if (r != 1) {
+    logError("#1");
+  }
+  r = convertHexCharToByte('9', statusRes);
+  if (r != 9) {
+    logError("#9");
+  }
+  r = convertHexCharToByte('A', statusRes);
+  if (r != 0xA) {
+    logError("#A");
+  }
+  r = convertHexCharToByte('a', statusRes);
+  if (r != 0xA) {
+    logError("#a");
+  }
+  r = convertHexCharToByte('F', statusRes);
+  if (r != 0xF) {
+    logError("#F");
+  }
+  r = convertHexCharToByte('e', statusRes);
+  if (r != 0xE) {
+    logError("#e");
+  }
+  r = convertHexCharToByte('Z', statusRes);
+  if (statusRes == 0) {
+    logError("#Z");
+  }
+  logInfo("- END");
+}
+
+void __testConvertTwoHexCharsToByte() {
+  logInfo(">utils_03");
+
+  byte statusRes;
+  char r[] = "A3";
+  byte res = convertTwoHexCharsToByte(r, statusRes);
+  if (res != 0xA3) {
+    logErrorB("#A3:", res);
+  }
+
+  char r2[] = "jhkjF4";
+  res = convertTwoHexCharsToByte(r2 + 4, statusRes);
+  if (res != 0xF4) {
+    logErrorB("#F4:", res);
+  }
+
+  logInfo("- END");
+}
+
+void __testConvert3DigitsToInt() {
+  logInfo(">utils_04");
+
+  byte statusRes;
+  char r[] = "jhkjh_456";
+  int res = convert3DigitsToInt(r + 6, statusRes);
+  if (res != 456) {
+    logErrorD("#456:", res);
+  }
+
+  logInfo("- END");
+}
+
+void __testIsWhiteChar() {
+  // FIXME Implement this test
+}
+
+void __testIsValidNameChar() {
+  // FIXME Implement this test
+}
+
+void __testStrLength() {
+  logInfo(">utils_05");
+  char s[] = "123";
+  int l = strLength(s);
+  if (l != 3) {
+    logErrorD("strLength", l);
+  }
+  logInfo("- END");
+}
+
+void __testGetAVRModelIdBySignature() {
+  logInfo(">utils_06");
+  byte statusRes;
+  // return model ID by signature
+  //        byte signBytes[3];
+  //        readSignatureBytes(signBytes, statusRes); checkStatus();
+  //        byte modelId = getAVRModelIdBySignature(signBytes, statusRes); checkStatus();
+  byte signBytes[3] = { MCU_AVR_TYPES[MCU_AVR_ATmega88PA - 1][0], MCU_AVR_TYPES[MCU_AVR_ATmega88PA - 1][1], MCU_AVR_TYPES[MCU_AVR_ATmega88PA - 1][2] } ;
+  byte modelId = UtilsAVR::getAVRModelIdBySignature(signBytes, statusRes);
+  if (statusRes != 0) {
+    logErrorB("#mbysign1:", statusRes);
+  }
+  if (modelId != MCU_AVR_ATmega88PA) {
+    logErrorD("#mbysign2:", modelId);
+  }
+  logInfo("- END");
+}
+
+void __testGetAVRModelAndConf() {
+  //inline byte getAVRModelAndConf(byte* signBytes, byte& flashPageSize, byte& flashPagesCount, byte& eepromPageSize, byte& eepromPagesCount, byte& statusRes) {
+  // FIXME Implement this test
+}
+
+void __testGetAVRModelNameById() {
+  logInfo(">utils_07");
+  byte statusRes;
+  UtilsAVR::getAVRModelNameById(__testMcuModelNameBuf, MCU_AVR_ATmega168PA, statusRes);
+  if (statusRes != 0) {
+    logErrorB("#avrname1:", statusRes);
+  }
+  if (__testMcuModelNameBuf[3] != 'e') {
+    logErrorB("#avrname2:", __testMcuModelNameBuf[3]);
+  }
+  logInfo("- END");
+}
+
+void __testGetAVRModelIdByName() {
+  logInfo(">utils_08");
+  byte statusRes;
+  byte res = UtilsAVR::getAVRModelIdByName("AVR@002", statusRes);
+  if (statusRes != 0) {
+    logErrorB("#avrm_id1:", statusRes);
+  }
+  if (res != 2) {
+    logErrorD("#avrm_id2:", res);
+  }
+
+  res = UtilsAVR::getAVRModelIdByName("AVR[1e9514]", statusRes);
+  if (statusRes != 0) {
+    logErrorB("#avrm_id3:", statusRes);
+  }
+  if (res != MCU_AVR_ATmega328) {
+    logErrorD("#avrm_id4:", res);
+  }
   logInfo("- END");
 }
 

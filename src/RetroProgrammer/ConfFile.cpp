@@ -1,5 +1,8 @@
 #include "ConfFile.h"
 
+// ERR() List:
+// 0x2? - JKHLKJHLJHLJHJ - JKHLJKHLKJH
+
 File ConfFile::_confFile;
 
   ////////////////////////////////////////////////

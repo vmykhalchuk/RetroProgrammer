@@ -22,6 +22,10 @@
 
       friend ProgramFile_Test;
 
+      /**
+       * filePref must be 4 chars max!
+       * File is then generated with 4 additional digits to give a number of backup file.
+       */
       static void backupMcuData(String filePref, byte& statusRes);
   
       static void backupMcuDataToFile(String fileName, byte progMemPageSize, byte progMemPagesCount, 
@@ -32,7 +36,7 @@
   
       static void uploadMcuDataFromFile(String fileName, byte targetMcuModel, byte& statusRes);
 
-    public:  // Constants For parsing the file
+    private:  // Constants For parsing the file
       static const byte LINE_TYPE_COMMENT = 0x01; // Comment
       static const byte LINE_TYPE_TYP     = 0x10; // Type ("AVR","PIC",...)
       static const byte LINE_TYPE_MDL     = 0x11; // Model (1,2,3,4,....)
@@ -49,9 +53,10 @@
 
     private:
 
+      static const byte line_types[10][4];
       static byte programBuffer[];
 
-      static void openFile(File& f, String fileName, int mode, byte& statusRes);
+      static void __openFile(File& f, String fileName, int mode, byte& statusRes);
       static void openFile2(File& f, String fileName, int mode, byte& statusRes);
       static void findNextFileName(String filePref, String& resFile, byte& statusRes);
 

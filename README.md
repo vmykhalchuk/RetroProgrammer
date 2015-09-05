@@ -50,6 +50,7 @@ As a solution, I have designed and developed this Handheld programmer shield for
 
 # Difference between Board v0.1 and v0.2
 v0.2 board has support for Arduino Micro (A4 and A6 are swapped comparing to v0.1 board) which gives possibility to support arduino micro for a sake of lost manual programs choices (not possible to select C,D,3,4), only A,B,1,2 will be active.
+Now it also has fixed pinout of ICSP port (mirrored to allow ICSP connector be directly connected without wires).
 
 # To be implemented
 * CRC every HRP file before programming/verifying it!
@@ -83,11 +84,14 @@ v0.2 board has support for Arduino Micro (A4 and A6 are swapped comparing to v0.
 ** software has to be modified slightly
 ** pin A4 must be swapped with A6 (Arduino Micro has no A6 nor A7, so we will have limited Manual programs selection)
 
-# Board improvements
+# Board improvements / fixes
+* Move LEDs to the edge of board, so they are move visible and distinguishable
+* Fix TargetVPP - when Arduino board is not connected, or is RESET - TargetVPP is Enabled till MCU gets control over ports. This must be redesigned! Just remove one transistor, thats it.
 * Add LED to show that power supply to target MCU is ON
 * Add switch to turn-off power supply to target MCU (in case it uses own power supply)
-** additionally auto-sense voltage on VPP and disable VPP-on switch to prevent failures.
+** additionally auto-sense voltage on VPP and disable VPP-on switch to prevent failures
 ** also add this option into automatic target detection algorithm - to check if it is expected to have VPP on target board or not
+* Add LED to show when SD card bussy (attach to CS pin)
 
 # Optimizations
 * Move statusRes as a global variable, and don't toss around all methods!

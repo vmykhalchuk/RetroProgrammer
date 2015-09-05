@@ -7,14 +7,10 @@
   #include "LoggerA.h"
   #include "AVRConstants.h"
 
-  //BUFFER SIZE FOR MCU MODEL CHAR STRING
-  // 'TT_' + '112233445566' + '\0' - here TT is 'MN','R1', 'R2', 'ID', and 112233445566 - is a maximum length for 'ID' case; (see TargetProgramDetector#getTargetIdName)
-  //          // 3 chars for type (ID_, R1_, R2_, MN_), 12 chars as a max length for ID - 6 bytes, 1 char '/0'
-  const byte PROG_ID_BUFFER_SIZE = (3+12+1);
   // BUFFER SIZE FOR FILE PATH TO HRP FILE
   const byte FILE_PATH_BUFFER_SIZE = (8+1+3+1);
 
-  #define ERROR_TARGET_DETECTOR 0x10
+  #define ERR(err) err
 
   #define initStatus() statusRes=0;
   #define checkStatus() if (statusRes != 0) return;
@@ -126,6 +122,8 @@ class UtilsAVR {
 
 class UtilsSD {
   public:
+
+  static boolean initSDCard();
 
   // Print 3 digits
   static void fPrint3Dig(File& f, byte b);

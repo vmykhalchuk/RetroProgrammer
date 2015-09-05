@@ -20,7 +20,7 @@
 const byte pinRandomRead = A7;
 
 
-#define RAM_DEPOSIT_SIZE 550
+#define RAM_DEPOSIT_SIZE 55
 byte RAM_DEPOSIT[RAM_DEPOSIT_SIZE];
 
 void setup() {
@@ -28,7 +28,7 @@ void setup() {
     RAM_DEPOSIT[0]=0;
   #endif
 
-  logInfo("Hello World!");
+  logDebug("Hello World!");
 
   AVRProgrammer::setup();
   HWInterface::setup();
@@ -36,84 +36,187 @@ void setup() {
   TargetProgramDetector::setup(       A0        ,       A1         ,      A2          ,       A3              ,         A6            );
   Logger_setup();
 
-  setup_test();
-  //setup_prod();
+  //setup_test();
+  setup_prod();
 }
 
 void setup_test() {//Used for testing
+  byte statusRes=0;
   
   logFreeRam();
 
   testUtilsGen();
   testUtilsAVR();
   
+  #if 0 // Test AVR Signature Read (Target MCU must be connected)
+    Tests_AVRProgrammer::testAVRSignatureRead();
+  #endif
+  
   #if 0
-    testTargetProgramDetector();
+    Tests_TargetProgramDetector::testTargetProgramDetector();
   #endif
 
   #if 0 // Upoad test files to SD Card!!!
     // Init SD Card
-    if (!initSDCard()) {
+    if (!UtilsSD::initSDCard()) {
       logError("SD init failed!");
       return;
     }
     Tests_ConfFile::testConfFile();
   #endif
 
-  #if 0 // Test ports directly (optional)
+  #if 0 // Test Board ports directly
     // select only one!
-    testSDCardPorts();
-    testManualProgramSelectorPorts();
+    Tests_Board::testSDCardPorts();
+    Tests_Board::testManualProgramSelectorPorts();
   #endif
 
   #if 0 // Test HWInterface
     Tests_HWInterface::testLedsAndBtns();
   #endif
-  
+
+  #if 1 // Test Display Error
+    displayError(2, 4, 0);
+  #endif
+
   logInfo("Happy testing day!");
   logFreeRam();
 }
 
+void displayError(byte mainErr, byte subErr, byte okNumber) {
+  // Blink ERR mainErr times
+  // Blink AUTO subErr times
+  //
+  // 1 - No Target device discovered => make sure is properly connected
+  // 2 - SD Card failure => Make sure SD Card is attached and proper files are uploaded
+  // 2-0 - Not detected => Insert SD Card
+  // 2-1 - No Conf file => Make sure Conf file is available on SD card
+  // 2-2 - Corrupted Conf file => Check structure
+  // 2-3 - Corrupted Program file => Fix it or upload new
+  // 2-4 - No space for backups => Remove some backup files to free up space
+  // 2-5 - Failure writing Conf file => Make sure SD Card is not corrupted
+  // 2-6 - Failure writing Program file => Make sure SD Card is not corrupted
+  // 3 - Auto Program Identification Failed => Make sure Target ICSP+TID connector compatible, and wires are not too long (no noise on wires)
+          // ERR(0x60,61,62,63,64,65,66,67,6A,6B,6C) - low digit is displayed by OK led
+  // 4 - No program file found => Make sure file is available on SD Card & Configuration file is updated with TargetID
+  // 5 - Wrong Target MCU model => Make sure Conf/Program file is correct and Target MCU is correct model
+  // 6 - Bad program file => Fix it or upload new
+  // 7 - Program file & Target MCU didn't match => See AUTO for details
+  // 7-1 - Program EEPROM differs => See OK led for a segment where difference starts
+  // 7-2 - Flash EEPROM differs => See OK led for a segment where difference starts
+  // 7-3 - Fuse/Lock bits differs => See OK led for which byte differs
+  // 8 - Target MCU communication failure => Make sure cable is not too long, etc
+  // A - General System Failure => Logging required
+  // A-1 - Manual Program selector failure
+          // ERR(0x68)
+  // A-0 - Unknown
+
+  while (true) {
+    for (int i = 0; i < 20; i++) {
+      if (HWInterface::readButtons()) {
+        if (i < subErr) {
+          HWInterface::setLedOnOff(HWInterface::LED_AUTO, true);
+        }
+        if (i < okNumber) {
+          HWInterface::setLedOnOff(HWInterface::LED_OK, true);
+        }
+      } else {
+        if (i < mainErr) {
+          HWInterface::setLedOnOff(HWInterface::LED_ERR, true);
+        }
+      }
+      
+      HWInterface::runLeds(15); // 300ms
+      
+      HWInterface::setLedOnOff(HWInterface::LED_ERR, false);
+      HWInterface::setLedOnOff(HWInterface::LED_AUTO, false);
+      HWInterface::setLedOnOff(HWInterface::LED_OK, false);
+      
+      HWInterface::runLeds(15); // 300ms
+    }
+  }
+}
+
+void confirmProgramSelected(byte btn) {
+  byte no = 0;
+  if (btn == HWInterface::BTN_UPLOAD) {
+    no = 3;
+  } else if (btn == HWInterface::BTN_VERIFY) {
+    no = 4;
+  } else if (btn == HWInterface::BTN_BACKUP) {
+    no = 5;
+  }
+  for (int i = 0; i < no; i++) {
+    HWInterface::setLedOnOff(HWInterface::LED_OK, true);
+    HWInterface::runLeds(20); // 400ms
+    HWInterface::setLedOnOff(HWInterface::LED_OK, false);
+    HWInterface::runLeds(20); // 400ms
+  }
+}
+
 void setup_prod() {
   byte statusRes=0;
-  
-  delay(1000);
-  byte b = HWInterface::waitForUserCommand();
-  logInfoD("Command:",b);
-  
   // Init SD Card
-  if (!initSDCard()) {
+  if (!UtilsSD::initSDCard()) {
     logError("SD init failed!");
+    displayError(0x2, 0x0, 0x0);
     return;
   }
-
+  
+  delay(500);
+  HWInterface::setLedOnOff(HWInterface::LED_RDY, true);
+  byte btn = HWInterface::waitForUserCommand();
+  HWInterface::setLedOnOff(HWInterface::LED_RDY, false);
+  logInfoD("Command:",btn);
+  
   // find out what program is selected
-  char progIdBuf[PROG_ID_BUFFER_SIZE]; // 3 chars for type (ID_, R1_, R2_, MN_), 12 chars as a max length for ID - 6 bytes, 1 char '/0'
+  // 3 chars for type (ID_, R1_, R2_, MN_), 12 chars as a max length for ID - 6 bytes, 1 char '/0'
+  char progIdBuf[TargetProgramDetector::PROG_ID_BUFFER_SIZE];
   boolean autoSelected;
   TargetProgramDetector::getProgId(progIdBuf, autoSelected, statusRes);
   if (statusRes > 0) {
     logError("getProgId");
+    if ((statusRes >= 0x60 && statusRes <= 0x67) || (statusRes >= 0x6A && statusRes <= 0x6C)) {
+      displayError(0x3, 0x0, statusRes & 0xF);
+    } else if (statusRes == 0x68) {
+      displayError(0xA, 0x1, 0x0);
+    } else {
+      displayError(0xA, 0x0, 0x0);
+    }
     return;
   } else {
     logInfoS("ProgId:", progIdBuf);
   }
-  delay(2000);
-  
+  delay(500);
+  confirmProgramSelected(btn);
+  delay(500);
 
   // Prepare Target MCU for Programming
   AVRProgrammer::startupTargetMcuProgramming(statusRes);
   if (statusRes > 0) {
     logError("ProgEn failed!");
     AVRProgrammer::shutdownTargetMcu();
+    displayError(0x8, 0x0, 0x0);
     return;
   } else {
     logInfo("Started prog!");
   }
-  delay(2000);
+  delay(200);
 
+  if (btn == HWInterface::BTN_BACKUP) {
+    logInfo("Backup to file...");
+    //FIXME take next file (find the free name)
+    ProgramFile::backupMcuData("B_A_", statusRes);
+    if (statusRes > 0) {
+      logErrorB("Error backing-up!", statusRes);
+      return;
+    }
+    logInfo("Success backing-up!");
+  }
 
+#if 0
   byte signBytes[3];
-  #if 1
+  #if 0
   // make sure it is ATmega328P
   AVRProgrammer::readSignatureBytes(signBytes,statusRes);
   if (statusRes > 0) {
@@ -123,7 +226,7 @@ void setup_prod() {
   delay(2000);
   #endif
 
-  #if 1
+  #if 0
   logInfo("Uploading...");
   ProgramFile::uploadMcuDataFromFile("TEST01", signBytes,
           AVR_MEM_PAGES_COUNT_256, AVR_MEM_PAGE_SIZE_64, 
@@ -136,7 +239,7 @@ void setup_prod() {
   delay(2000);
   #endif
 
-  #if 1
+  #if 0
   // test example of programming
   ProgramFile_Test::_testProgramming(statusRes);
   if (statusRes > 0) { logErrorB("Failed!", statusRes); return; }
@@ -144,7 +247,7 @@ void setup_prod() {
   delay(2000);
   #endif
   
-  #if 1
+  #if 0
   logInfo("Reading...");
   ProgramFile::backupMcuDataToFile("RND" + String(analogRead(pinRandomRead),HEX), 
           AVR_MEM_PAGES_COUNT_256, AVR_MEM_PAGE_SIZE_64, 
@@ -156,120 +259,15 @@ void setup_prod() {
   logInfo("Success reading!");
   delay(2000);
   #endif
-
-  #if 1
-  logInfo("Backup to file...");
-  ProgramFile::backupMcuData("BACK", statusRes);
-  if (statusRes > 0) {
-    logError("Error backing-up!");
-    return;
-  }
-  logError("Success backing-up!");
-  #endif
+#endif
 
   // now shutdown Target MCU
   AVRProgrammer::shutdownTargetMcu();
 
   logInfo("Done!");
-}
-
-
-boolean initSDCard() {
-  // SD Card Module pins:
-  // Arduino | Target
-  //   Nano  |  MCU
-  //------------------
-  //    11   | MOSI
-  //    12   | MISO
-  //    13   | CLK
-  //    4    | CS
-  //    10   | is not used but always set to OUTPUT (read more in SD method implementation)
-
-  logInfo("Init-g SD card...");
-  // On the Ethernet Shield, CS is pin 4. It's set as an output by default.
-  // Note that even if it's not used as the CS pin, the hardware SS pin
-  // (10 on most Arduino boards, 53 on the Mega) must be left as an output
-  // or the SD library functions will not work.
-  pinMode(10, OUTPUT);
-
-  if (!SD.begin(4)) {
-    logError("SD init failed!");
-    return false;
-  }
-  logInfo("SD init done");
-  return true;
-}
-
-void testManualProgramSelectorPorts() {
-  logInfo("Setup test: testManualProgramSelectorPorts");
-  pinMode(A5, INPUT);
+  HWInterface::setLedOnOff(HWInterface::LED_OK, true);
   while (true) {
-    int a5Sum = 0;
-    int a5Min = 1023;
-    int a5Max = 0;
-    for (int i = 0; i < 10; i++) {
-      int r = analogRead(A5);
-      if (r < a5Min) a5Min = r;
-      if (r > a5Max) a5Max = r;
-      a5Sum += r;
-    }
-    logInfoD("a5Min: ", a5Min);
-    logInfoD("a5Aver: ", a5Sum / 10);
-    logInfoD("a5Max: ", a5Max);
-    delay(1500);
-  }
-  
-  /*pinMode(A3, INPUT);
-  pinMode(A4, INPUT);
-  while(true) {
-    int a3Res = analogRead(A3);
-    logInfoD("A3 result: ", a3Res);
-    int a4Res = analogRead(A4);
-    logInfoD("A4 result: ", a4Res);
-    delay(1500);
-  }*/
-}
-
-void testSDCardPorts() {
-  logInfo("Setup test: Test SD Card ports");
-  pinMode(4, OUTPUT);
-  pinMode(13, OUTPUT);
-  pinMode(11, OUTPUT);
-  pinMode(12, INPUT);
-
-  int i = 0;
-  while (true) {
-    if (i == 0) {
-      digitalWrite(4, HIGH);
-      logInfo("CS: On");
-    } else if (i == 1) {
-      digitalWrite(4, LOW);
-      logInfo("CS: Off");
-    } else if (i == 2) {
-      digitalWrite(13, HIGH);
-      logInfo("CLK: On");
-    } else if (i == 3) {
-      digitalWrite(13, LOW);
-      logInfo("CLK: Off");
-    } else if (i == 4) {
-      digitalWrite(11, HIGH);
-      logInfo("MOSI: On");
-    } else if (i == 5) {
-      digitalWrite(11, LOW);
-      logInfo("MOSI: Off");
-    }
-    int r = digitalRead(12);
-    if (r == LOW) {
-      logInfo("MISO: 0");
-    } else {
-      logInfo("MISO: 1");
-    }
-    delay(1500);
-
-    i++;
-    if (i == 6) {
-      i = 0;
-    }
+    HWInterface::runLeds(1);
   }
 }
 

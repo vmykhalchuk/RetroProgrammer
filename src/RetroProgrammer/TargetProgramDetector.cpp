@@ -1,5 +1,18 @@
 #include "TargetProgramDetector.h"
 
+// ERR() List:
+// 0x60 - failure reading TargetID - _pinW0 wrong value
+// 0x61 - failure reading TargetID - _pinW1 or _pinW1 wrong value(s)
+// 0x62 - failure reading TargetID - 1wire CRC didn't match
+// 0x63 -   >>>>
+// 0x64 - failure reading TargetID - failure on the line, too much noise
+// 0x65 -   >>>>
+// 0x66 - failure reading TargetID - strange state of 1wire device
+// 0x67 - failure reading TargetID - wrong resistive divider value (line unknown)
+// 0x68 - failure reading Manual Program ID - wrong resistive value (unknown line)
+// 0x6A - failure reading TargetID - wrong resistive divider value W0
+// 0x6B - failure reading TargetID - wrong resistive divider value W1
+// 0x6C - failure reading TargetID - wrong resistive divider value W2
 
 byte TargetProgramDetector::_pinW0 = 0;
 byte TargetProgramDetector::_pinW1 = 0;
@@ -95,19 +108,19 @@ void TargetProgramDetector::readTargetMcuId(byte* data, byte& idType, byte& stat
   } else { // idType == 2
     // Read Resistive Data
     data[0] = readResistiveDividerValue(_pinW0, statusRes);
-    checkStatus();
+    checkOverrideStatus(ERR(0x6A));
     if (data[0] == 127) {
-      returnStatus(ERROR_TARGET_DETECTOR + 0x0);
+      returnStatus(ERR(0x60)); // failure reading TargetID - _pinW0 wrong value
     }
     data[1] = readResistiveDividerValue(_pinW1, statusRes);
-    checkStatus();
+    checkOverrideStatus(ERR(0x6B));
     data[2] = readResistiveDividerValue(_pinW2, statusRes);
-    checkStatus();
+    checkOverrideStatus(ERR(0x6C));
     if (data[1] == 127 || data[2] == 127) {
       if (data[1] == 127 && data[2] == 127) {
         // fine, limited version of identification used
       } else {
-        returnStatus(ERROR_TARGET_DETECTOR + 0x1);
+        returnStatus(ERR(0x61)); // failure reading TargetID - _pinW1 or _pinW1 wrong value(s)
       }
     }
   }
@@ -144,7 +157,7 @@ boolean TargetProgramDetector::read1WireId(byte* data, byte& statusRes) {
   logDebugB("Actual CRC: ", data[7]);
 
   if (data[7] != crc_calc) {
-    returnStatusV(ERROR_TARGET_DETECTOR + 0x2, false);
+    returnStatusV(ERR(0x62), false);
   }
   return true;
 }
@@ -180,7 +193,7 @@ boolean TargetProgramDetector::read1WireId(byte* data, byte& statusRes) {
   logDebugB("Actual CRC: ", data[7]);
 
   if (data[7] != crc_calc) {
-    returnStatusV(ERROR_TARGET_DETECTOR + 0x3, false);
+    returnStatusV(ERR(0x63), false);
   }
   return true;
 }
@@ -201,7 +214,7 @@ boolean TargetProgramDetector::reset1Wire(byte& statusRes) {
     delayMicroseconds(5);
     v = analogRead(_pinW0);
   } while (retries-- > 0 && v < 1000); //FIXME use constant
-  if (v < 1000) returnStatusV(ERROR_TARGET_DETECTOR + 0x3, false);
+  if (v < 1000) returnStatusV(ERR(0x64), false);// reading TargetID failed - failure on the line, too much noise
   
   pinMode(_pinW0, OUTPUT);
   digitalWrite(_pinW0, LOW);
@@ -217,7 +230,7 @@ boolean TargetProgramDetector::reset1Wire(byte& statusRes) {
     charge1Wire(1000, statusRes);
     return true; // ID chip detected
   } else {
-    returnStatusV(ERROR_TARGET_DETECTOR + 0x4, false); // 0x14
+    returnStatusV(ERR(0x65), false);// failure probably caused by noise on line
   }
 }
 
@@ -227,7 +240,7 @@ void TargetProgramDetector::charge1Wire(int delay, byte& statusRes) {
   delayMicroseconds(20);
   int v = analogRead(_pinW0);
   if (v <= ONE_WIRE_TRESHOLD_HIGH) {
-    returnStatus(ERROR_TARGET_DETECTOR + 0x5); // strange state of device
+    returnStatus(ERR(0x66)); // strange state of device
   }
   pinMode(_pinW0, OUTPUT);
   digitalWrite(_pinW0, HIGH);
@@ -292,27 +305,27 @@ byte TargetProgramDetector::readResistiveDividerValue(byte portW, byte& statusRe
     return 0;
   } else if (v > 0 && v <= 150) {
     logDebug("t1"); // value is in between!
-    returnStatusV(ERROR_TARGET_DETECTOR + 0x7, 127);
+    returnStatusV(ERR(0x67), 127);
   } else if (v > 150 && v <= 300) {
     return 1;
   } else if (v > 300 && v <= 450) {
     logDebug("t2"); // value is in between!
-    returnStatusV(ERROR_TARGET_DETECTOR + 0x7, 127);
+    returnStatusV(ERR(0x67), 127);
   } else if (v > 450 && v <= 600) {
     return 2;
   } else if (v > 600 && v <= 750) {
     logDebug("t3"); // value is in between!
-    returnStatusV(ERROR_TARGET_DETECTOR + 0x7, 127);
+    returnStatusV(ERR(0x67), 127);
   } else if (v > 750 && v <= 900) {
     return 3;
   } else if (v > 900 && v < 1023) {
     logDebug("t4"); // value is in between!
-    returnStatusV(ERROR_TARGET_DETECTOR + 0x7, 127);
+    returnStatusV(ERR(0x67), 127);
   } else if (v == 1023) {
     return 127;
   } else {
     logDebug("tF"); // very strange value! programm error!
-    returnStatusV(ERROR_TARGET_DETECTOR + 0x7, 127);
+    returnStatusV(ERR(0x67), 127);
   }
 }
 
@@ -348,8 +361,7 @@ void TargetProgramDetector::readManualProgrammSelectorPort(char* data, byte port
     data[0] = 'B';
     data[1] = '2';
   } else {
-    logDebugD("t1:", port);
     logDebugD("t1:", v); // value is in between!
-    returnStatus(ERROR_TARGET_DETECTOR + 0x8);
+    returnStatus(ERR(0x68));
   }
 }

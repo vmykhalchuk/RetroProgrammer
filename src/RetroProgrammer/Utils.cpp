@@ -1,5 +1,8 @@
 #include "Utils.h"
 
+// ERR() List:
+// 0x8? - JKHLKJHLJHLJHJ - JKHLJKHLKJH
+
 // freeRam: http://playground.arduino.cc/Code/AvailableMemory
 int freeRam_1() {
   extern int __heap_start, *__brkval;
@@ -159,6 +162,31 @@ byte UtilsAVR::getAVRModelIdByName(const char* mcuModelStr, byte& statusRes) {
   //   SD Files Related
   //////////////////////////
 
+boolean UtilsSD::initSDCard() {
+  // SD Card Module pins:
+  // Arduino | Target
+  //   Nano  |  MCU
+  //------------------
+  //    11   | MOSI
+  //    12   | MISO
+  //    13   | CLK
+  //    4    | CS
+  //    10   | is not used but always set to OUTPUT (read more in SD method implementation)
+
+  logInfo("Init-g SD card...");
+  // On the Ethernet Shield, CS is pin 4. It's set as an output by default.
+  // Note that even if it's not used as the CS pin, the hardware SS pin
+  // (10 on most Arduino boards, 53 on the Mega) must be left as an output
+  // or the SD library functions will not work.
+  pinMode(10, OUTPUT);
+
+  if (!SD.begin(4)) {
+    logError("SD init failed!");
+    return false;
+  }
+  logInfo("SD init done");
+  return true;
+}
 
 // Print 3 digits
 void UtilsSD::fPrint3Dig(File& f, byte b) {

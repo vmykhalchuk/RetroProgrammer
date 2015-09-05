@@ -26,6 +26,11 @@
   class TargetProgramDetector
   {
     public:
+      //BUFFER SIZE FOR MCU MODEL CHAR STRING
+      // 'TT_' + '112233445566' + '\0' - here TT is 'MN','R1', 'R2', 'ID', and 112233445566 - is a maximum length for 'ID' case; (see TargetProgramDetector#getTargetIdName)
+      //          // 3 chars for type (ID_, R1_, R2_, MN_), 12 chars as a max length for ID - 6 bytes, 1 char '/0'
+      static const byte PROG_ID_BUFFER_SIZE = (3+12+1);
+      
       static void setup(byte pinW0, byte pinW1, byte pinW2, byte pinManualM0, byte pinManualM1);
 
       /* 

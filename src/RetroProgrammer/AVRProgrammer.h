@@ -51,16 +51,12 @@
     /**
       addr - 0..3
     */
-    inline static void loadEEPROMMemoryPageByte(byte addr, byte b, byte& statusRes) { if (addr > 3) returnStatus(0xFF); issueByteWriteCmd(0xC1, 0x00, addr, b, statusRes); }
+    static void loadEEPROMMemoryPageByte(byte addr, byte b, byte& statusRes);
     /**
        addrMsb - 0000 00aa
        addrLsb - aaaa aa00
     */
-    inline static void writeEEPROMMemoryPage(byte addrMsb, byte addrLsb, byte& statusRes) { 
-        if (addrMsb & B00000011 > 0) returnStatus(0xFF);
-        if (addrLsb & B11111100 > 0) returnStatus(0xFF);
-        issueByteWriteCmd(0xC2, addrMsb, addrLsb, 0x00, statusRes);
-    }
+    static void writeEEPROMMemoryPage(byte addrMsb, byte addrLsb, byte& statusRes);
 
     private:
 

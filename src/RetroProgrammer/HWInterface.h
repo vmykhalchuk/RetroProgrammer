@@ -10,8 +10,12 @@
   #include "AVRConstants.h"
   #include "Utils.h"
 
+  class HWInterface_Test;
+
   class HWInterface {
     public:
+    friend HWInterface_Test;
+    
     // Define what pins are for which button / led
     static const byte BUTTON_UPLOAD__LED_RDY__LED_AUTO = A5;
     static const byte BUTTON_VERIFY__LED_ERR__LED_OK = A4;
@@ -39,10 +43,10 @@
     // turnOn - true if On, false if Off
     static void setLedOnOff(byte led, boolean turnOn);
 
-    // run Leds for <times> cycle(s) (around 200ms)
+    // run Leds for <times> cycle(s) (around 20ms)
     static void runLeds(byte times);
 
-    public:
+    private:
     static const int BUTTON_UPLOAD_VERIFY_TRESHOLD = 200; // when button pressed, voltage level drops below middle value, closer to 0. Note: 1023 - 5v
                                                          // treshold must be low, in order to avoid high noise on the line!
                                                          // this value is very hard to predict, because for red leds it should be higher, for green and blue leds - lower, etc
@@ -51,7 +55,10 @@
     static boolean __LED_AUTO;
     static boolean __LED_ERR;
     static boolean __LED_OK;
+  };
 
+  class HWInterface_Test {
+    public:
     static void debugWhatLedsAreOn();
   };
 

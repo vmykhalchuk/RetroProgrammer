@@ -6,36 +6,33 @@
   
   #include "Utils.h"
   #include "AVRConstants.h"
+  #include "AVRProgrammer.h"
   #include "TargetProgramDetector.h"
   #include "ConfFile.h"
   #include "HWInterface.h"
 
-  // nothing is required to run these tests (no special connections just Arduino Nano/Micro)
-  void testUtilsGen();
-  void __testConvertByteToHexChar();
-  void __testConvertHexCharToByte();
-  void __testConvertTwoHexCharsToByte();
-  void __testConvert3DigitsToInt();
-  void __testIsWhiteChar();
-  void __testIsValidNameChar();
-  void __testStrLength();
+  /**
+   * Test ports on Board
+   */
+  class Tests_Board {
+    public:
+    // !!! call only one method at once
+    static void testManualProgramSelectorPorts();
+    static void testSDCardPorts();
+  };
 
-  // nothing is required to run these tests (no special connections just Arduino Nano/Micro)
-  void testUtilsAVR();
-  void __testGetAVRModelIdBySignature();
-  void __testGetAVRModelAndConf();
-  void __testGetAVRModelNameById();
-  void __testGetAVRModelIdByName();
+  /*
+   * Requires Target MCU connected
+   */
+  class Tests_AVRProgrammer {
+    public:
+    static void testAVRSignatureRead();
+  };
 
-
-  // requires A0,A1,A2,A3 and A4 connections, depending on type of test, see schematics
-  void testTargetProgramDetector();
-  void __testOneWireID(int d);
-  void __testGetProgId(int d);
-  
-
-  // 1) requires SD Card to be connected (see ConfFile.h for more details)
-  // 2) requires test files to be written to SD card
+  /**
+   * 1) requires SD Card to be connected (see ConfFile.h for more details)
+   * 2) requires test files to be written to SD card
+   */
   class Tests_ConfFile {
     public:
       static void testConfFile();
@@ -59,5 +56,32 @@
     public:
       static void testLedsAndBtns();
   };
+
+  /**
+   * requires A0,A1,A2,A3 and A4 connections, depending on type of test, see schematics
+   */
+  class Tests_TargetProgramDetector {
+    public:
+    static void testTargetProgramDetector();
+    static void __testOneWireID(int d);
+    static void __testGetProgId(int d);
+  };
+
+  // nothing is required to run these tests (no special connections just Arduino Nano/Micro)
+  void testUtilsGen();
+  void __testConvertByteToHexChar();
+  void __testConvertHexCharToByte();
+  void __testConvertTwoHexCharsToByte();
+  void __testConvert3DigitsToInt();
+  void __testIsWhiteChar();
+  void __testIsValidNameChar();
+  void __testStrLength();
+
+  // nothing is required to run these tests (no special connections just Arduino Nano/Micro)
+  void testUtilsAVR();
+  void __testGetAVRModelIdBySignature();
+  void __testGetAVRModelAndConf();
+  void __testGetAVRModelNameById();
+  void __testGetAVRModelIdByName();
 
 #endif

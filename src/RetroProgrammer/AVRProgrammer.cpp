@@ -1,5 +1,17 @@
 #include "AVRProgrammer.h"
 
+// ERR() List:
+// 0x1B - Target Programming failure - Wrong state
+// 0x13 -       >>>>
+// 0x14 -       >>>>
+// 0x11 - Target Programming failure - communication failure
+// 0x12 -       >>>>
+// 0x15 -       >>>>
+// 0x16 -       >>>>
+// 0x19 - Target Programming failure - program error
+// 0x1A -       >>>>
+// 0x10 -       >>>>
+
 /////////////////////////////////////////////
 /////////////////////////////////////////////
 /////////////////////////////////////////////
@@ -50,7 +62,7 @@ void AVRProgrammer::startupTargetMcuProgramming(byte& statusRes) {
   initStatus();
   if (targetMcuProgMode) {
     logError("MCU In PMODE!");
-    returnStatus(0x10);
+    returnStatus(ERR(0x1B));
   }
   
   digitalWrite(pinVccEnable, HIGH);
@@ -71,7 +83,7 @@ void AVRProgrammer::startupTargetMcuProgramming(byte& statusRes) {
   targetMcuProgMode = true;
   targetMcuOutOfSync = (byte3 != 0x53 || byte4 != 0x00);
   if (targetMcuOutOfSync) {
-    returnStatus(0x11);
+    returnStatus(ERR(0x11));
   }
 }
 
@@ -80,7 +92,7 @@ void AVRProgrammer::issueByteWriteCmd(byte b1, byte b2, byte b3, byte b4, byte& 
   if (r != b3) {
     targetMcuOutOfSync = true;
     logErrorB("OutOfSync b4:",b3);// Out of sync on 4th byte
-    returnStatus(0x12);
+    returnStatus(ERR(0x12));
   }
 }
 
@@ -88,11 +100,11 @@ byte AVRProgrammer::issueByteReadCmd4(byte b1, byte b2, byte b3, byte b4, byte& 
   initStatus();
   if (!targetMcuProgMode) {
     logError("MCU !ProgMode");
-    returnStatusV(0x13, 0);
+    returnStatusV(ERR(0x13), 0);
   }
   if (targetMcuOutOfSync) {
     logError("MCU OutOfSync!");
-    returnStatusV(0x14, 0);
+    returnStatusV(ERR(0x14), 0);
   }
   
   // Send Byte #1
@@ -102,14 +114,14 @@ byte AVRProgrammer::issueByteReadCmd4(byte b1, byte b2, byte b3, byte b4, byte& 
   if (sendReadByte(b2) != b1) {
     targetMcuOutOfSync = true;
     logErrorB(("OutOfSync b2:"),b1);// Out of sync on 2nd byte
-    returnStatusV(0x15, 0);
+    returnStatusV(ERR(0x15), 0);
   }
 
   // Send Byte #3 and check result with Byte #2
   if (sendReadByte(b3) != b2) {
     targetMcuOutOfSync = true;
     logErrorB(("OutOfSync b3:"),b2);// Out of sync on 3rd byte
-    returnStatusV(0x16, 0);
+    returnStatusV(ERR(0x16), 0);
   }
 
   // Send Byte #4 and return result
@@ -137,7 +149,7 @@ void AVRProgrammer::readSignatureBytes(byte* signBytes, byte& statusRes) {
 
 void AVRProgrammer::readProgramMemoryPage(byte* pageBuffer, byte pageNumber, byte pageSize, byte& statusRes) {
   if (pageSize < AVR_MEM_PAGE_SIZE_16 || pageSize > AVR_MEM_PAGE_SIZE_64) {
-    returnStatus(0x19);
+    returnStatus(ERR(0x19));
   }
   byte addrHigh = pageNumber >> (8 - pageSize);
   byte addrLowPage = pageNumber << pageSize;
@@ -153,7 +165,7 @@ void AVRProgrammer::readProgramMemoryPage(byte* pageBuffer, byte pageNumber, byt
 
 void AVRProgrammer::readEepromMemoryPage(byte* pageBuffer, byte pageNumber, byte pageSize, byte& statusRes) {
   if (pageSize != AVR_MEM_PAGE_SIZE_4) {
-    returnStatus(0x1A);
+    returnStatus(ERR(0x1A));
   }
   byte addrHigh = pageNumber >> (8 - pageSize);
   byte addrLowPage = pageNumber << pageSize;
@@ -206,5 +218,22 @@ byte AVRProgrammer::sendReadByte(byte byteToSend) {
   }
   
   return resByte;
+}
+
+/**
+  addr - 0..3
+*/
+void AVRProgrammer::loadEEPROMMemoryPageByte(byte addr, byte b, byte& statusRes) { 
+  if (addr > 3) returnStatus(0x10); issueByteWriteCmd(0xC1, 0x00, addr, b, statusRes); 
+}
+
+/**
+  addrMsb - 0000 00aa
+  addrLsb - aaaa aa00
+*/
+void AVRProgrammer::writeEEPROMMemoryPage(byte addrMsb, byte addrLsb, byte& statusRes) {
+  if (addrMsb & B00000011 > 0) returnStatus(0x10);
+  if (addrLsb & B11111100 > 0) returnStatus(0x10);
+  issueByteWriteCmd(0xC2, addrMsb, addrLsb, 0x00, statusRes);
 }
 

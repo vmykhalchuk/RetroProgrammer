@@ -1,5 +1,9 @@
 #include "ProgramFile.h"
 
+// ERR() List:
+// 0x5? - JKHLKJHLJHLJHJ - JKHLJKHLKJH
+
+// 0x55 - System error - backup file length pref is too long, 4char max
 
 byte ProgramFile::programBuffer[1 << (AVR_MEM_PAGE_SIZE_64 + 1)];//128 bytes
 
@@ -8,45 +12,44 @@ byte ProgramFile::programBuffer[1 << (AVR_MEM_PAGE_SIZE_64 + 1)];//128 bytes
   // MAIN/PUBLIC FUNCTIONS
   ////////////////////////////////////////////////
 
-void ProgramFile::openFile(File& f, String fileName, int mode, byte& statusRes) {
+void ProgramFile::__openFile(File& f, String fileName, int mode, byte& statusRes) {
   initStatus();
   if (fileName.length() > 8) {
     logError("2long F name");// File Name too long
-    returnStatus(0x20);
+    returnStatus(ERR(0x50));
   }
-  //char buf[13];
   fileName = String(fileName + ".HRP");
-  boolean fileExists = SD.exists(fileName);
+  boolean fileExists = false;//SD.exists(fileName); FIXME shitty method!
   if (mode == FILE_WRITE && fileExists) {
     logError("File exists!");// File already exists
-    returnStatus(0x20);
+    returnStatus(ERR(0x50));
   }
   if (mode == FILE_READ && !fileExists) {
     logError("No file!");// No such file!
-    returnStatus(0x20);
+    returnStatus(ERR(0x50));
   }
   f = SD.open(fileName, mode);
   if (!f) {
     logError("OpenFailed!"); //Cannot open file for write:
-    returnStatus(0x20);
+    returnStatus(ERR(0x50));
   }
 }
 
 void ProgramFile::openFile2(File& f, String fileName, int mode, byte& statusRes) {
   initStatus();
-  boolean fileExists = SD.exists(fileName);//buf);
+  boolean fileExists = false;//SD.exists(fileName); FIXME shitty method!
   if (mode == FILE_WRITE && fileExists) {
     logError("File exists!");// File already exists
-    returnStatus(0x20);
+    returnStatus(ERR(0x51));
   }
   if (mode == FILE_READ && !fileExists) {
     logError("No file!");// No such file!
-    returnStatus(0x20);
+    returnStatus(ERR(0x52));
   }
   f = SD.open(fileName, mode);//buf, mode);
   if (!f) {
     logError("OpenFailed!"); //Cannot open file for write:
-    returnStatus(0x20);
+    returnStatus(ERR(0x53));
   } else {
     logInfoS("Opened file:", fileName);
   }
@@ -56,14 +59,14 @@ void ProgramFile::findNextFileName(String filePref, String& resFile, byte& statu
   initStatus();
   // Create file
   if (filePref.length() > 4) {
-    returnStatus(0x20);
+    returnStatus(ERR(0x55));
   }
   //char buf[13];
   String fileName;
   boolean isF = false;
   for (int n = 0; n < 10000; n++) {
     fileName = String(filePref + String(n / 1000) + String(n / 100 % 10) + String(n / 10 % 10) + String(n % 10) + ".BKP");
-    boolean fe = SD.exists(fileName);
+    boolean fe = false;//SD.exists(fileName); FIXME this shitty method seems to fail very often!
     if (!fe) {
       isF = true;
       break;
@@ -71,13 +74,14 @@ void ProgramFile::findNextFileName(String filePref, String& resFile, byte& statu
   }
   if (!isF) {
     logError("Clean backups!");
-    returnStatus(0x20);
+    returnStatus(ERR(0x56));
   }
 }
 
 void ProgramFile::backupMcuData(String filePref, byte& statusRes) {
   String fileName;
   findNextFileName(filePref, fileName, statusRes); checkStatus();
+  logDebugS("backing up to: ", fileName);
 
   byte progMemPageSize, progMemPagesCount, eepromMemPageSize, eepromMemPagesCount;
   byte signBytes[3];
@@ -294,7 +298,7 @@ void ProgramFile::uploadMcuDataFromFile_internal(boolean progMode, String fileNa
                         byte progMemPagesCount, byte progMemPageSize,
                         byte eepromMemPagesCount, byte eepromMemPageSize, byte& statusRes) {
   File f;
-  openFile(f, fileName, FILE_READ, statusRes);
+  openFile2(f, fileName, FILE_READ, statusRes);
   checkStatus();
 
   
@@ -447,10 +451,11 @@ void ProgramFile::uploadProgramMemoryPage(byte* buf, int pageNo,
       // CLB  - 0x24  Calibration Byte
       // PRM  - 0x30  Flash/Program Memory Page
       // ERM  - 0x31  EEPROM Page
-      const byte line_types[10][4] = {{'T','Y','P',ProgramFile::LINE_TYPE_TYP}, {'M','D','L',ProgramFile::LINE_TYPE_MDL}, {'S','G','N',ProgramFile::LINE_TYPE_SGN},
-                                            {'L','K','B',ProgramFile::LINE_TYPE_LKB}, {'F','S','B',ProgramFile::LINE_TYPE_FSB}, {'F','H','B',ProgramFile::LINE_TYPE_FHB},
-                                            {'E','F','B',ProgramFile::LINE_TYPE_EFB}, {'C','L','B',ProgramFile::LINE_TYPE_CLB},
-                                            {'P','R','M',ProgramFile::LINE_TYPE_PRM}, {'E','R','M',ProgramFile::LINE_TYPE_ERM}};
+      const byte ProgramFile::line_types[10][4] = 
+            {{'T','Y','P',ProgramFile::LINE_TYPE_TYP}, {'M','D','L',ProgramFile::LINE_TYPE_MDL}, {'S','G','N',ProgramFile::LINE_TYPE_SGN},
+             {'L','K','B',ProgramFile::LINE_TYPE_LKB}, {'F','S','B',ProgramFile::LINE_TYPE_FSB}, {'F','H','B',ProgramFile::LINE_TYPE_FHB},
+             {'E','F','B',ProgramFile::LINE_TYPE_EFB}, {'C','L','B',ProgramFile::LINE_TYPE_CLB},
+             {'P','R','M',ProgramFile::LINE_TYPE_PRM}, {'E','R','M',ProgramFile::LINE_TYPE_ERM}};
 
 void ProgramFile::readLine(File& f, byte& lineType, byte* buffer, int& resSize, int& pageNo, byte& statusRes) {
   byte c[4];
