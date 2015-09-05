@@ -28,7 +28,7 @@ All you need is:
 * 1-wire ID Tag or set of resistors (one set for every MCU)
 
 # Yes I want it!
-* You can order board from here: http://dirtypcbs.com/view.php?share=9566&accesskey=096bf07bd5bc00aa1c8b3e8581d80cb4
+* DO NOT! UNDER SONCTRUCTION!!! You can order board from here: http://dirtypcbs.com/view.php?share=9566&accesskey=096bf07bd5bc00aa1c8b3e8581d80cb4
 * Components - I might share some in very little quantity
 * Firmware - pending... feel free to contact me (vmykhalchuk<at>gmail<d>com) for status
 * Manual - describes how to use Retro Programmer and how to prepare your project to be supported by Retro Programmer - pending...
