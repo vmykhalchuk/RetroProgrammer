@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.01" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="16" name="Bottom" color="1" fill="1" visible="no" active="no"/>
@@ -8315,7 +8315,7 @@ Created 2014-05-29, Karrer Zheng&lt;br&gt;
 <part name="SW2" library="Ard" deviceset="SPUSH" device=""/>
 <part name="R6" library="rcl" deviceset="R-US_" device="R1206" value="22K"/>
 <part name="GND6" library="supply1" deviceset="GND" device=""/>
-<part name="ICSP+TD" library="Wuerth_Elektronik_Board_to_Board" deviceset="61301021821" device=""/>
+<part name="ICSP+TID" library="Wuerth_Elektronik_Board_to_Board" deviceset="61301021821" device=""/>
 <part name="GND7" library="supply1" deviceset="GND" device=""/>
 <part name="C2" library="rcl" deviceset="C-EU" device="C1206" value="100nF"/>
 <part name="C3" library="rcl" deviceset="C-EU" device="C1206" value="10uF"/>
@@ -8413,7 +8413,7 @@ Created 2014-05-29, Karrer Zheng&lt;br&gt;
 <instance part="SW2" gate="G$1" x="40.64" y="29.21"/>
 <instance part="R6" gate="G$1" x="40.64" y="43.18" rot="R90"/>
 <instance part="GND6" gate="1" x="40.64" y="19.05"/>
-<instance part="ICSP+TD" gate="G$1" x="205.74" y="54.61"/>
+<instance part="ICSP+TID" gate="G$1" x="205.74" y="54.61"/>
 <instance part="GND7" gate="1" x="156.21" y="68.58"/>
 <instance part="C2" gate="G$1" x="152.4" y="153.67"/>
 <instance part="C3" gate="G$1" x="196.85" y="157.48"/>
@@ -8583,7 +8583,7 @@ Created 2014-05-29, Karrer Zheng&lt;br&gt;
 <segment>
 <pinref part="R15" gate="G$1" pin="1"/>
 <wire x1="215.9" y1="60.96" x2="215.9" y2="59.69" width="0.1524" layer="91"/>
-<pinref part="ICSP+TD" gate="G$1" pin="1"/>
+<pinref part="ICSP+TID" gate="G$1" pin="1"/>
 <wire x1="213.36" y1="59.69" x2="215.9" y2="59.69" width="0.1524" layer="91"/>
 <wire x1="215.9" y1="59.69" x2="219.71" y2="59.69" width="0.1524" layer="91"/>
 <junction x="215.9" y="59.69"/>
@@ -8600,7 +8600,7 @@ Created 2014-05-29, Karrer Zheng&lt;br&gt;
 </segment>
 <segment>
 <pinref part="R14" gate="G$1" pin="1"/>
-<pinref part="ICSP+TD" gate="G$1" pin="10"/>
+<pinref part="ICSP+TID" gate="G$1" pin="10"/>
 <wire x1="198.12" y1="59.69" x2="191.77" y2="59.69" width="0.1524" layer="91"/>
 <wire x1="191.77" y1="59.69" x2="191.77" y2="62.23" width="0.1524" layer="91"/>
 <wire x1="191.77" y1="59.69" x2="185.42" y2="59.69" width="0.1524" layer="91"/>
@@ -8617,7 +8617,7 @@ Created 2014-05-29, Karrer Zheng&lt;br&gt;
 <wire x1="25.4" y1="142.24" x2="21.59" y2="142.24" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<pinref part="ICSP+TD" gate="G$1" pin="2"/>
+<pinref part="ICSP+TID" gate="G$1" pin="2"/>
 <wire x1="213.36" y1="57.15" x2="228.6" y2="57.15" width="0.1524" layer="91"/>
 <pinref part="R16" gate="G$1" pin="1"/>
 <wire x1="228.6" y1="57.15" x2="232.41" y2="57.15" width="0.1524" layer="91"/>
@@ -8691,7 +8691,7 @@ Created 2014-05-29, Karrer Zheng&lt;br&gt;
 <pinref part="K2" gate="G$1" pin="8"/>
 </segment>
 <segment>
-<pinref part="ICSP+TD" gate="G$1" pin="4"/>
+<pinref part="ICSP+TID" gate="G$1" pin="4"/>
 <wire x1="213.36" y1="52.07" x2="219.71" y2="52.07" width="0.1524" layer="91"/>
 <label x="219.71" y="52.07" size="1.27" layer="95" xref="yes"/>
 </segment>
@@ -8703,7 +8703,7 @@ Created 2014-05-29, Karrer Zheng&lt;br&gt;
 <pinref part="K2" gate="G$1" pin="9"/>
 </segment>
 <segment>
-<pinref part="ICSP+TD" gate="G$1" pin="6"/>
+<pinref part="ICSP+TID" gate="G$1" pin="6"/>
 <wire x1="198.12" y1="49.53" x2="191.77" y2="49.53" width="0.1524" layer="91"/>
 <label x="191.77" y="49.53" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
@@ -8716,7 +8716,7 @@ Created 2014-05-29, Karrer Zheng&lt;br&gt;
 <pinref part="K2" gate="G$1" pin="10"/>
 </segment>
 <segment>
-<pinref part="ICSP+TD" gate="G$1" pin="7"/>
+<pinref part="ICSP+TID" gate="G$1" pin="7"/>
 <wire x1="198.12" y1="52.07" x2="195.58" y2="52.07" width="0.1524" layer="91"/>
 <label x="195.58" y="52.07" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
@@ -8729,7 +8729,7 @@ Created 2014-05-29, Karrer Zheng&lt;br&gt;
 <pinref part="K2" gate="G$1" pin="11"/>
 </segment>
 <segment>
-<pinref part="ICSP+TD" gate="G$1" pin="8"/>
+<pinref part="ICSP+TID" gate="G$1" pin="8"/>
 <wire x1="198.12" y1="54.61" x2="191.77" y2="54.61" width="0.1524" layer="91"/>
 <label x="191.77" y="54.61" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
@@ -8845,7 +8845,7 @@ Created 2014-05-29, Karrer Zheng&lt;br&gt;
 <wire x1="64.77" y1="34.29" x2="64.77" y2="35.56" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<pinref part="ICSP+TD" gate="G$1" pin="3"/>
+<pinref part="ICSP+TID" gate="G$1" pin="3"/>
 <wire x1="213.36" y1="54.61" x2="232.41" y2="54.61" width="0.1524" layer="91"/>
 <wire x1="232.41" y1="54.61" x2="232.41" y2="52.07" width="0.1524" layer="91"/>
 <pinref part="GND12" gate="1" pin="GND"/>
@@ -9125,7 +9125,7 @@ Created 2014-05-29, Karrer Zheng&lt;br&gt;
 </net>
 <net name="D3ENB" class="0">
 <segment>
-<pinref part="ICSP+TD" gate="G$1" pin="5"/>
+<pinref part="ICSP+TID" gate="G$1" pin="5"/>
 <wire x1="213.36" y1="49.53" x2="218.44" y2="49.53" width="0.1524" layer="91"/>
 <label x="218.44" y="45.72" size="1.27" layer="95" xref="yes"/>
 <pinref part="Q1" gate="G$1" pin="C"/>

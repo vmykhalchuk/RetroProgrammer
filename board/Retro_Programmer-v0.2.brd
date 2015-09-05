@@ -9,7 +9,7 @@
 <grid distance="1" unitdist="mil" unit="mm" style="lines" multiple="1" display="yes" altdistance="0.025" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
-<layer number="16" name="Bottom" color="1" fill="1" visible="yes" active="yes"/>
+<layer number="16" name="Bottom" color="1" fill="1" visible="no" active="yes"/>
 <layer number="17" name="Pads" color="2" fill="1" visible="yes" active="yes"/>
 <layer number="18" name="Vias" color="2" fill="1" visible="yes" active="yes"/>
 <layer number="19" name="Unrouted" color="6" fill="1" visible="yes" active="yes"/>
@@ -15031,6 +15031,15 @@
 <text x="5.3594" y="4.9784" size="0.6096" layer="25" font="vector" ratio="16" distance="20" rot="SR270">D12</text>
 <text x="5.3848" y="40.386" size="0.6096" layer="25" font="vector" ratio="16" distance="20" rot="SR270">TX1</text>
 <text x="13.208" y="28.7274" size="0.6096" layer="25" font="vector" ratio="16" distance="20">v0.2</text>
+<text x="8.6868" y="21.463" size="1.778" layer="26" rot="MR0">1</text>
+<text x="11.303" y="21.5392" size="1.778" layer="26" rot="MR0">2</text>
+<text x="6.9088" y="16.51" size="1.778" layer="26" rot="MR0">3</text>
+<text x="6.9596" y="14.0208" size="1.778" layer="26" rot="MR0">5</text>
+<text x="13.589" y="11.2776" size="1.778" layer="26" rot="MR0">8</text>
+<text x="13.5382" y="14.3764" size="1.778" layer="26" rot="MR0">6</text>
+<text x="15.0114" y="8.8392" size="1.778" layer="26" rot="MR0">10</text>
+<text x="6.858" y="8.7884" size="1.778" layer="26" rot="MR0">9</text>
+<text x="6.8834" y="11.1506" size="1.778" layer="26" rot="MR0">7</text>
 </plain>
 <libraries>
 <library name="rcl">
@@ -16738,8 +16747,8 @@ Copyright: Würth Elektronik</description>
 <attribute name="NAME" x="30.2222" y="4.1722" size="0.6096" layer="25" rot="R180"/>
 <attribute name="VALUE" x="28.6554" y="15.3564" size="0.6096" layer="27" rot="R180"/>
 </element>
-<element name="ICSP+TD" library="Wuerth_Elektronik_Board_to_Board" package="61301021821" value="61301021821" x="9.54" y="14.74" smashed="yes" rot="MR90">
-<attribute name="NAME" x="5.8383" y="6.3214" size="1.27" layer="25"/>
+<element name="ICSP+TID" library="Wuerth_Elektronik_Board_to_Board" package="61301021821" value="61301021821" x="9.54" y="14.74" smashed="yes" rot="MR90">
+<attribute name="NAME" x="13.4329" y="6.3214" size="1.27" layer="26" rot="MR0"/>
 <attribute name="VALUE" x="0.2622" y="3.5528" size="1.27" layer="28" rot="MR90"/>
 </element>
 <element name="RDY" library="led" package="CHIPLED_1206" value="YEL" x="23" y="25.1" smashed="yes" rot="R180">
@@ -16763,7 +16772,7 @@ Copyright: Würth Elektronik</description>
 <attribute name="VALUE" x="38.968" y="35.3876" size="1.778" layer="27" ratio="5" rot="R90"/>
 </element>
 <element name="Q1" library="transistor-pnp" package="SOT23-BEC" value="BC857CSMD" x="15.7" y="34.3" smashed="yes" rot="MR180">
-<attribute name="NAME" x="16.462" y="37.221" size="0.6096" layer="26" rot="MR180"/>
+<attribute name="NAME" x="16.462" y="37.221" size="0.8128" layer="26" rot="MR180"/>
 <attribute name="VALUE" x="13.795" y="37.475" size="1.27" layer="28" rot="MR180"/>
 </element>
 <element name="R1" library="rcl" package="R1206" value="3.3K" x="22.9" y="31.8" smashed="yes" rot="MR90">
@@ -16771,7 +16780,7 @@ Copyright: Würth Elektronik</description>
 <attribute name="VALUE" x="20.36" y="30.53" size="1.27" layer="28" rot="MR90"/>
 </element>
 <element name="R10" library="rcl" package="R1206" value="22K" x="27.5682" y="16.9618" smashed="yes" rot="R90">
-<attribute name="NAME" x="26.0188" y="14.2948" size="0.6096" layer="25" rot="R90"/>
+<attribute name="NAME" x="26.0188" y="14.2948" size="0.8128" layer="25" rot="R90"/>
 <attribute name="VALUE" x="30.1082" y="15.6918" size="1.27" layer="27" rot="R90"/>
 </element>
 <element name="R11" library="rcl" package="R1206" value="10K" x="33.6174" y="20.3208" smashed="yes" rot="MR0">
@@ -16799,11 +16808,11 @@ Copyright: Würth Elektronik</description>
 <attribute name="VALUE" x="24.84" y="11.93" size="1.27" layer="27" rot="R90"/>
 </element>
 <element name="R17" library="rcl" package="R1206" value="3.3K" x="22.7" y="6.4" smashed="yes" rot="MR90">
-<attribute name="NAME" x="23.6144" y="2.9456" size="0.6096" layer="26" rot="MR0"/>
+<attribute name="NAME" x="23.8176" y="2.7932" size="0.8128" layer="26" rot="MR0"/>
 <attribute name="VALUE" x="20.16" y="5.13" size="1.27" layer="28" rot="MR90"/>
 </element>
 <element name="R18" library="rcl" package="R1206" value="3.3K" x="13.3" y="19.1" smashed="yes" rot="MR270">
-<attribute name="NAME" x="15.8146" y="20.4208" size="0.6096" layer="26" rot="MR270"/>
+<attribute name="NAME" x="15.8146" y="20.4208" size="0.8128" layer="26" rot="MR270"/>
 <attribute name="VALUE" x="15.84" y="20.37" size="1.27" layer="28" rot="MR270"/>
 </element>
 <element name="R19" library="rcl" package="R1206" value="3.3K" x="12" y="6.3968" smashed="yes" rot="R180">
@@ -16815,7 +16824,7 @@ Copyright: Würth Elektronik</description>
 <attribute name="VALUE" x="20.16" y="24.23" size="1.27" layer="28" rot="MR90"/>
 </element>
 <element name="R20" library="rcl" package="R1206" value="3.3K" x="36.273" y="5.873" smashed="yes" rot="R180">
-<attribute name="NAME" x="37.9494" y="4.0442" size="0.6096" layer="25" rot="R180"/>
+<attribute name="NAME" x="37.9494" y="4.0442" size="0.8128" layer="25" rot="R180"/>
 <attribute name="VALUE" x="37.543" y="8.413" size="1.27" layer="27" rot="R180"/>
 </element>
 <element name="R21" library="rcl" package="R1206" value="3.3K" x="14.7254" y="39.6064" smashed="yes" rot="MR90">
@@ -16970,7 +16979,7 @@ Copyright: Würth Elektronik</description>
 </signal>
 <signal name="A2">
 <contactref element="R15" pad="1"/>
-<contactref element="ICSP+TD" pad="1"/>
+<contactref element="ICSP+TID" pad="1"/>
 <contactref element="K1" pad="10"/>
 <wire x1="19.1" y1="16.82" x2="20.1488" y2="16.82" width="0.254" layer="1"/>
 <wire x1="20.1488" y1="16.82" x2="21.7002" y2="18.3714" width="0.254" layer="1"/>
@@ -16981,7 +16990,7 @@ Copyright: Würth Elektronik</description>
 </signal>
 <signal name="A1">
 <contactref element="R14" pad="1"/>
-<contactref element="ICSP+TD" pad="10"/>
+<contactref element="ICSP+TID" pad="10"/>
 <contactref element="K1" pad="11"/>
 <via x="12.9204" y="13.978" extent="1-16" drill="0.508"/>
 <wire x1="12.9204" y1="13.978" x2="14.8" y2="13.978" width="0.254" layer="1"/>
@@ -16994,7 +17003,7 @@ Copyright: Würth Elektronik</description>
 <wire x1="12.9286" y1="12.2428" x2="12.9204" y2="13.978" width="0.254" layer="16"/>
 </signal>
 <signal name="A0">
-<contactref element="ICSP+TD" pad="2"/>
+<contactref element="ICSP+TID" pad="2"/>
 <contactref element="R16" pad="1"/>
 <contactref element="K1" pad="12"/>
 <wire x1="22.3" y1="11.778" x2="19.138" y2="11.778" width="0.254" layer="1"/>
@@ -17056,7 +17065,7 @@ Copyright: Würth Elektronik</description>
 <wire x1="3.9" y1="24.167" x2="6.1976" y2="21.8694" width="0.254" layer="16"/>
 </signal>
 <signal name="D5">
-<contactref element="ICSP+TD" pad="4"/>
+<contactref element="ICSP+TID" pad="4"/>
 <contactref element="K2" pad="8"/>
 <wire x1="5.0748" y1="21.9" x2="6.2484" y2="20.5994" width="0.254" layer="16"/>
 <via x="6.2484" y="20.5994" extent="1-16" drill="0.508"/>
@@ -17067,19 +17076,19 @@ Copyright: Würth Elektronik</description>
 <wire x1="9.5226" y1="18.5674" x2="10.81" y2="17.28" width="0.254" layer="1"/>
 </signal>
 <signal name="D6">
-<contactref element="ICSP+TD" pad="6"/>
+<contactref element="ICSP+TID" pad="6"/>
 <contactref element="K2" pad="9"/>
 <wire x1="3.9" y1="19.36" x2="7.81" y2="19.36" width="0.254" layer="16"/>
 <wire x1="7.81" y1="19.36" x2="8.27" y2="19.82" width="0.254" layer="16"/>
 </signal>
 <signal name="D7">
-<contactref element="ICSP+TD" pad="7"/>
+<contactref element="ICSP+TID" pad="7"/>
 <contactref element="K2" pad="10"/>
 <wire x1="3.9" y1="16.82" x2="7.81" y2="16.82" width="0.254" layer="16"/>
 <wire x1="7.81" y1="16.82" x2="8.27" y2="17.28" width="0.254" layer="16"/>
 </signal>
 <signal name="D8">
-<contactref element="ICSP+TD" pad="8"/>
+<contactref element="ICSP+TID" pad="8"/>
 <contactref element="K2" pad="11"/>
 <wire x1="3.9" y1="14.28" x2="7.81" y2="14.28" width="0.254" layer="16"/>
 <wire x1="7.81" y1="14.28" x2="8.27" y2="14.74" width="0.254" layer="16"/>
@@ -17129,7 +17138,7 @@ Copyright: Würth Elektronik</description>
 <contactref element="P1" pad="1"/>
 <contactref element="U2" pad="GND"/>
 <contactref element="SW3" pad="2"/>
-<contactref element="ICSP+TD" pad="3"/>
+<contactref element="ICSP+TID" pad="3"/>
 <contactref element="C4" pad="2"/>
 <contactref element="IC1" pad="13"/>
 <contactref element="U3" pad="6"/>
@@ -17426,7 +17435,7 @@ Copyright: Würth Elektronik</description>
 <wire x1="33.8508" y1="23.8252" x2="33.58" y2="23.5544" width="0.254" layer="1"/>
 </signal>
 <signal name="D3ENB">
-<contactref element="ICSP+TD" pad="5"/>
+<contactref element="ICSP+TID" pad="5"/>
 <contactref element="Q1" pad="C"/>
 <contactref element="R23" pad="2"/>
 <contactref element="C7" pad="1"/>
