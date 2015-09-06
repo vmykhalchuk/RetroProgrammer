@@ -37,8 +37,8 @@ void setup() {
   TargetProgramDetector::setup(       A0        ,       A1         ,      A2          ,       A3              ,         A6            );
   Logger_setup();
 
-  //setup_test();
-  setup_prod();
+  setup_test();
+  //setup_prod();
 }
 
 void setup_test() {//Used for testing
@@ -49,15 +49,15 @@ void setup_test() {//Used for testing
   testUtilsGen();
   testUtilsAVR();
   
-  #if 0 // Test AVR Signature Read (Target MCU must be connected)
+  #if 1 // Test AVR Signature Read (Target MCU must be connected)
     Tests_AVRProgrammer::testAVRSignatureRead();
   #endif
   
-  #if 0
+  #if 1
     Tests_TargetProgramDetector::testTargetProgramDetector();
   #endif
 
-  #if 0 // Upoad test files to SD Card!!!
+  #if 1 // Upoad test files to SD Card!!!
     // Init SD Card
     if (!UtilsSD::initSDCard()) {
       logError("SD init failed!");
@@ -66,17 +66,17 @@ void setup_test() {//Used for testing
     Tests_ConfFile::testConfFile();
   #endif
 
-  #if 0 // Test Board ports directly
+  #if 0 // Test Board ports directly (will lock for indefinite)
     // select only one!
     Tests_Board::testSDCardPorts();
     Tests_Board::testManualProgramSelectorPorts();
   #endif
 
-  #if 0 // Test HWInterface
+  #if 1 // Test HWInterface (will lock for indefinite)
     Tests_HWInterface::testLedsAndBtns();
   #endif
 
-  #if 0 // Test Display Error
+  #if 0 // Test Display Error (will lock for indefinite)
     displayError(2, 4, 0);
   #endif
 

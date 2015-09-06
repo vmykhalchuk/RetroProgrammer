@@ -1,9 +1,6 @@
 /*
- * Author Volodymyr Mykhalchuk (vmykhalchuk@gmail.com)
- * 
  * 1) Always call AVRProgrammer::setup() method from setup() method of your sketch.
  *    NOTE: Make it a first call, to setup MCU ports properly
- *    
  */
 #ifndef AVRProgrammer_h
 #define AVRProgrammer_h

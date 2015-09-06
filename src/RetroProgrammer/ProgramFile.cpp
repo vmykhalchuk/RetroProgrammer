@@ -290,13 +290,17 @@ void ProgramFile::uploadMcuDataFromFile(String fileName, byte targetMcuModel, by
 }
 
 void ProgramFile::uploadMcuDataFromFile_internal(boolean progMode, String fileName, byte targetMcuModel, byte& statusRes) {
+  if (targetMcuModel <= 0 || targetMcuModel > MCU_AVR_DATA_LENGTH) {
+    logDebugD("modelId bad:", targetMcuModel);
+    returnStatus(ERR(0x50));
+  }
   byte m = targetMcuModel - 1;
   byte signBytes[3];
-  signBytes[0] = MCU_AVR_TYPES[m][0];
-  signBytes[1] = MCU_AVR_TYPES[m][1];
-  signBytes[2] = MCU_AVR_TYPES[m][2];
-  byte progMemPageSize = MCU_AVR_CONFIGS[m][0], progMemPagesCount = MCU_AVR_CONFIGS[m][1];
-  byte eepromMemPageSize = MCU_AVR_CONFIGS[m][2], eepromMemPagesCount = MCU_AVR_CONFIGS[m][3];
+  signBytes[0] = MCU_AVR_DATA[m][4];
+  signBytes[1] = MCU_AVR_DATA[m][5];
+  signBytes[2] = MCU_AVR_DATA[m][6];
+  byte progMemPageSize = MCU_AVR_DATA[m][0], progMemPagesCount = MCU_AVR_DATA[m][1];
+  byte eepromMemPageSize = MCU_AVR_DATA[m][2], eepromMemPagesCount = MCU_AVR_DATA[m][3];
   uploadMcuDataFromFile_internal(progMode, fileName, signBytes, 
             progMemPagesCount, progMemPageSize, eepromMemPagesCount, eepromMemPageSize, statusRes);
 }

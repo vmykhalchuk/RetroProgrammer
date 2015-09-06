@@ -1,6 +1,4 @@
 /*
- * Author Volodymyr Mykhalchuk (vmykhalchuk@gmail.com)
- * 
  * Detects via Automatic method or Manual program selector, which program number to upload/verify/backup to/from target MCU.
  * For backups, mcu content will be stored to backup folder, with program detected information (for later use if needed).
  * 

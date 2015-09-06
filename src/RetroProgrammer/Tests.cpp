@@ -590,7 +590,7 @@ void __testGetAVRModelIdBySignature() {
   //        byte signBytes[3];
   //        readSignatureBytes(signBytes, statusRes); checkStatus();
   //        byte modelId = getAVRModelIdBySignature(signBytes, statusRes); checkStatus();
-  byte signBytes[3] = { MCU_AVR_TYPES[MCU_AVR_ATmega88PA - 1][0], MCU_AVR_TYPES[MCU_AVR_ATmega88PA - 1][1], MCU_AVR_TYPES[MCU_AVR_ATmega88PA - 1][2] } ;
+  byte signBytes[3] = { MCU_AVR_DATA[MCU_AVR_ATmega88PA - 1][4], MCU_AVR_DATA[MCU_AVR_ATmega88PA - 1][5], MCU_AVR_DATA[MCU_AVR_ATmega88PA - 1][6] } ;
   byte modelId = UtilsAVR::getAVRModelIdBySignature(signBytes, statusRes);
   if (statusRes != 0) {
     logErrorB("#mbysign1:", statusRes);

@@ -53,6 +53,8 @@ v0.2 board has support for Arduino Micro (A4 and A6 are swapped comparing to v0.
 Now it also has fixed pinout of ICSP port (mirrored to allow ICSP connector be directly connected without wires).
 
 # To be implemented
+* Add autocalibration routine to calibrate position of DIP switches
+** add same for LEDs and buttons (in case position of buttons was changed)
 * CRC every HRP file before programming/verifying it!
 ** CRC every conf file
 * Auto detection of programming speed
@@ -85,6 +87,8 @@ Now it also has fixed pinout of ICSP port (mirrored to allow ICSP connector be d
 ** pin A4 must be swapped with A6 (Arduino Micro has no A6 nor A7, so we will have limited Manual programs selection)
 
 # Board improvements / fixes
+* Swap UPLOAD <=> BACKUP!!!! This is critical, when ERR led is lit - it reads as UPLOAD button is pressed!
+** Check what happens if other combination of LEDs is lit, which button is then assumed as pressed!
 * Move LEDs to the edge of board, so they are move visible and distinguishable
 * Fix TargetVPP - when Arduino board is not connected, or is RESET - TargetVPP is Enabled till MCU gets control over ports. This must be redesigned! Just remove one transistor, thats it.
 * Add LED to show that power supply to target MCU is ON

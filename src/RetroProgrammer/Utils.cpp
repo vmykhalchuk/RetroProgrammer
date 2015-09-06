@@ -96,10 +96,10 @@ boolean isValidNameChar(char c) {
 
 byte UtilsAVR::getAVRModelIdBySignature(byte* signBytes, byte& statusRes) {
   initStatus();
-  for (byte i = 0; i < MCU_AVR_TYPES_COUNT; i++) {
-    if (signBytes[0] == MCU_AVR_TYPES[i][0] &&
-        signBytes[1] == MCU_AVR_TYPES[i][1] &&
-        signBytes[2] == MCU_AVR_TYPES[i][2]) {
+  for (byte i = 0; i < MCU_AVR_DATA_LENGTH; i++) {
+    if (signBytes[0] == MCU_AVR_DATA[i][4] &&
+        signBytes[1] == MCU_AVR_DATA[i][5] &&
+        signBytes[2] == MCU_AVR_DATA[i][6]) {
       return i + 1;
     }
   }
@@ -112,10 +112,14 @@ byte UtilsAVR::getAVRModelIdBySignature(byte* signBytes, byte& statusRes) {
 byte UtilsAVR::getAVRModelAndConf(byte* signBytes, byte& flashPageSize, byte& flashPagesCount, byte& eepromPageSize, 
                                   byte& eepromPagesCount, byte& statusRes) {
   byte modelId = getAVRModelIdBySignature(signBytes, statusRes); checkStatusV(0);
-  flashPageSize = MCU_AVR_CONFIGS[modelId - 1][0];
-  flashPagesCount = MCU_AVR_CONFIGS[modelId - 1][1];
-  eepromPageSize = MCU_AVR_CONFIGS[modelId - 1][2];
-  eepromPagesCount = MCU_AVR_CONFIGS[modelId - 1][3];
+  if (modelId <= 0 || modelId >= MCU_AVR_DATA_LENGTH) {
+    logDebugD("strange0", modelId);
+    returnStatusV(ERR(0x80), 0);
+  }
+  flashPageSize = MCU_AVR_DATA[modelId - 1][0];
+  flashPagesCount = MCU_AVR_DATA[modelId - 1][1];
+  eepromPageSize = MCU_AVR_DATA[modelId - 1][2];
+  eepromPagesCount = MCU_AVR_DATA[modelId - 1][3];
   return modelId;
 }
 
@@ -177,7 +181,7 @@ byte UtilsAVR::getAVRModelIdByName(const char* mcuModelStr, byte& statusRes) {
       returnStatusV(ERR(0x84), 0);
     }
     int modelId = convert3DigitsToInt(mcuModelStr+4, statusRes); checkStatusV(0);
-    if (modelId <= 0 || modelId > MCU_AVR_TYPES_COUNT) {
+    if (modelId <= 0 || modelId > MCU_AVR_DATA_LENGTH) {
       returnStatusV(ERR(0x85), 0);
     }
     return modelId; // SUCCESS
