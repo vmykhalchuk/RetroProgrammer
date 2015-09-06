@@ -13,6 +13,7 @@
 #define ConfFile_h
 
   #include <Arduino.h>
+  #include "Statuses.h"
   #include "LoggerA.h"
   #include "Utils.h"
   #include <SPI.h>
@@ -24,6 +25,7 @@ class ConfFile {
 
   public:
   friend ConfFile_Test;
+  static void __translateErrorsToDisplayErrorCode(byte err, byte& mainErrCode, byte& subErrCode, byte& okCode);
   
   ////////////////////////////////////////////////
   // File related procedures!!!

@@ -1,7 +1,19 @@
 #include "HWInterface.h"
 
 // ERR() List:
-// 0x3? - JKHLKJHLJHLJHJ - JKHLJKHLKJH
+// 0x30 - System error
+
+void HWInterface::__translateErrorsToDisplayErrorCode(byte err, byte& mainErrCode, byte& subErrCode, byte& okCode) {
+  mainErrCode = 0;
+  subErrCode = 0;
+  okCode = 0;
+  
+  if (err == 0x30) {
+    mainErrCode = 0xA; subErrCode = 0x5;
+  } else {
+    mainErrCode = 0xA; 
+  }
+}
 
 boolean HWInterface::__LED_RDY   = false;
 boolean HWInterface::__LED_AUTO  = false;

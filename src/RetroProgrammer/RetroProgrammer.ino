@@ -1,4 +1,5 @@
 #include "LoggerA.h"
+#include "Statuses.h"
 #include "Utils.h"
 #include "AVRConstants.h"
 #include "AVRProgrammer.h"
@@ -75,7 +76,7 @@ void setup_test() {//Used for testing
     Tests_HWInterface::testLedsAndBtns();
   #endif
 
-  #if 1 // Test Display Error
+  #if 0 // Test Display Error
     displayError(2, 4, 0);
   #endif
 
@@ -91,17 +92,33 @@ void displayError(byte mainErr, byte subErr, byte okNumber) {
   // 2 - SD Card failure => Make sure SD Card is attached and proper files are uploaded
   // 2-0 - Not detected => Insert SD Card
   // 2-1 - No Conf file => Make sure Conf file is available on SD card
-  // 2-2 - Corrupted Conf file => Check structure
+  // 2-2 - Corrupted Conf file => Check structure, OK display detail of error:
+  //           1 - corrupted file, wrong EOL, [0D 0A] sequence is not followed!
+  //           2 - unexpected EOL or EOF
+  //           3 - too long MCU_MODEL in conf file!
+  //           4 - too long FILE_PATH in conf file!
   // 2-3 - Corrupted Program file => Fix it or upload new
   // 2-4 - No space for backups => Remove some backup files to free up space
   // 2-5 - Failure writing Conf file => Make sure SD Card is not corrupted
   // 2-6 - Failure writing Program file => Make sure SD Card is not corrupted
+  // 2-7 - Failure opening Program file => Make sure SD Card is not corrupted
+  // 2-A - Failure reading file - file format is corrupted
   // 3 - Auto Program Identification Failed => Make sure Target ICSP+TID connector compatible, and wires are not too long (no noise on wires)
-          // ERR(0x60,61,62,63,64,65,66,67,6A,6B,6C) - low digit is displayed by OK led
+  // 3-1 - W1 or W1 wrong ADC value(s)
+  // 3-2 - W0 - 1wire CRC didn't match
+  // 3-3 -       >>>>
+  // 3-4 - failure on the line, too much noise
+  // 3-5 -       >>>>
+  // 3-6 - W0 - strange state of 1wire device
+  // 3-7 - wrong resistive divider value (line unknown)
+  // 3-9 - W0 wrong ADC value
+  // 3-A - wrong resistive divider value W0
+  // 3-B - wrong resistive divider value W1
+  // 3-C - wrong resistive divider value W2
   // 4 - No program file found => Make sure file is available on SD Card & Configuration file is updated with TargetID
   // 5 - Wrong Target MCU model => Make sure Conf/Program file is correct and Target MCU is correct model
   // 6 - Bad program file => Fix it or upload new
-  // 7 - Program file & Target MCU didn't match => See AUTO for details
+  // 7 - VERIFY: Program file & Target MCU didn't match => See AUTO for details
   // 7-1 - Program EEPROM differs => See OK led for a segment where difference starts
   // 7-2 - Flash EEPROM differs => See OK led for a segment where difference starts
   // 7-3 - Fuse/Lock bits differs => See OK led for which byte differs
@@ -109,6 +126,13 @@ void displayError(byte mainErr, byte subErr, byte okNumber) {
   // A - General System Failure => Logging required
   // A-1 - Manual Program selector failure
           // ERR(0x68)
+  // A-2 - ProgramFile routines error
+          // ERR(0x50)
+  // A-3 - AVRProgrammer routines error
+  // A-4 - Utils routines error
+  // A-5 - HWInterface routines error
+  // A-6 - ConfFile routines error
+  // A-7 - TargetProgramDetector routines error
   // A-0 - Unknown
 
   while (true) {
@@ -120,10 +144,9 @@ void displayError(byte mainErr, byte subErr, byte okNumber) {
         if (i < okNumber) {
           HWInterface::setLedOnOff(HWInterface::LED_OK, true);
         }
-      } else {
-        if (i < mainErr) {
-          HWInterface::setLedOnOff(HWInterface::LED_ERR, true);
-        }
+      }
+      if (i < mainErr) {
+        HWInterface::setLedOnOff(HWInterface::LED_ERR, true);
       }
       
       HWInterface::runLeds(15); // 300ms
@@ -142,9 +165,9 @@ void confirmProgramSelected(byte btn) {
   if (btn == HWInterface::BTN_UPLOAD) {
     no = 3;
   } else if (btn == HWInterface::BTN_VERIFY) {
-    no = 4;
+    no = 2;
   } else if (btn == HWInterface::BTN_BACKUP) {
-    no = 5;
+    no = 1;
   }
   for (int i = 0; i < no; i++) {
     HWInterface::setLedOnOff(HWInterface::LED_OK, true);
@@ -176,13 +199,9 @@ void setup_prod() {
   TargetProgramDetector::getProgId(progIdBuf, autoSelected, statusRes);
   if (statusRes > 0) {
     logError("getProgId");
-    if ((statusRes >= 0x60 && statusRes <= 0x67) || (statusRes >= 0x6A && statusRes <= 0x6C)) {
-      displayError(0x3, 0x0, statusRes & 0xF);
-    } else if (statusRes == 0x68) {
-      displayError(0xA, 0x1, 0x0);
-    } else {
-      displayError(0xA, 0x0, 0x0);
-    }
+    byte mainErrCode, subErrCode, okCode;
+    TargetProgramDetector::__translateErrorsToDisplayErrorCode(statusRes, mainErrCode, subErrCode, okCode);
+    displayError(mainErrCode, subErrCode, okCode);
     return;
   } else {
     logInfoS("ProgId:", progIdBuf);
@@ -196,7 +215,7 @@ void setup_prod() {
   if (statusRes > 0) {
     logError("ProgEn failed!");
     AVRProgrammer::shutdownTargetMcu();
-    displayError(0x8, 0x0, 0x0);
+    displayError(0x1, 0x0, 0x0);
     return;
   } else {
     logInfo("Started prog!");
@@ -205,18 +224,21 @@ void setup_prod() {
 
   if (btn == HWInterface::BTN_BACKUP) {
     logInfo("Backup to file...");
-    //FIXME take next file (find the free name)
-    ProgramFile::backupMcuData("B_A_", statusRes);
+    ProgramFile::backupMcuData("BACK", progIdBuf, statusRes);
     if (statusRes > 0) {
       logErrorB("Error backing-up!", statusRes);
+      byte mainErrCode, subErrCode, okCode;
+      ProgramFile::__translateErrorsToDisplayErrorCode(statusRes, mainErrCode, subErrCode, okCode);
+      displayError(mainErrCode, subErrCode, okCode);
       return;
     }
     logInfo("Success backing-up!");
+  } else if (btn == HWInterface::BTN_UPLOAD) {
   }
 
 #if 0
   byte signBytes[3];
-  #if 0
+  #if 1
   // make sure it is ATmega328P
   AVRProgrammer::readSignatureBytes(signBytes,statusRes);
   if (statusRes > 0) {
@@ -226,7 +248,7 @@ void setup_prod() {
   delay(2000);
   #endif
 
-  #if 0
+  #if 1
   logInfo("Uploading...");
   ProgramFile::uploadMcuDataFromFile("TEST01", signBytes,
           AVR_MEM_PAGES_COUNT_256, AVR_MEM_PAGE_SIZE_64, 
@@ -239,7 +261,7 @@ void setup_prod() {
   delay(2000);
   #endif
 
-  #if 0
+  #if 1
   // test example of programming
   ProgramFile_Test::_testProgramming(statusRes);
   if (statusRes > 0) { logErrorB("Failed!", statusRes); return; }

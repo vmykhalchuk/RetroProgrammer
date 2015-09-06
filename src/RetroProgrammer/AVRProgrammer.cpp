@@ -1,16 +1,29 @@
 #include "AVRProgrammer.h"
 
 // ERR() List:
-// 0x1B - Target Programming failure - Wrong state
+// 0x10 - System error - wrong parameters, etc
+// 0x17 - Target Programming failure - Wrong state
 // 0x13 -       >>>>
 // 0x14 -       >>>>
 // 0x11 - Target Programming failure - communication failure
 // 0x12 -       >>>>
 // 0x15 -       >>>>
 // 0x16 -       >>>>
-// 0x19 - Target Programming failure - program error
-// 0x1A -       >>>>
-// 0x10 -       >>>>
+
+void AVRProgrammer::__translateErrorsToDisplayErrorCode(byte err, byte& mainErrCode, byte& subErrCode, byte& okCode) {
+  mainErrCode = 0;
+  subErrCode = 0;
+  okCode = 0;
+  if (err == 0x10) {
+    mainErrCode = 0xA; subErrCode = 0x3;
+  } else if (err == 0x17 || err == 0x13 || err == 0x14) {
+    mainErrCode = 0x8;
+  } else if (err == 0x11 || err == 0x12 || err == 0x15 || err == 0x16) {
+    mainErrCode = 0x8;
+  } else {
+    mainErrCode = 0xA;
+  }
+}
 
 /////////////////////////////////////////////
 /////////////////////////////////////////////
@@ -62,7 +75,7 @@ void AVRProgrammer::startupTargetMcuProgramming(byte& statusRes) {
   initStatus();
   if (targetMcuProgMode) {
     logError("MCU In PMODE!");
-    returnStatus(ERR(0x1B));
+    returnStatus(ERR(0x17));
   }
   
   digitalWrite(pinVccEnable, HIGH);
@@ -149,7 +162,8 @@ void AVRProgrammer::readSignatureBytes(byte* signBytes, byte& statusRes) {
 
 void AVRProgrammer::readProgramMemoryPage(byte* pageBuffer, byte pageNumber, byte pageSize, byte& statusRes) {
   if (pageSize < AVR_MEM_PAGE_SIZE_16 || pageSize > AVR_MEM_PAGE_SIZE_64) {
-    returnStatus(ERR(0x19));
+    logDebugD("readProgramMemoryPage:pageSize:", pageSize);
+    returnStatus(ERR(0x10));
   }
   byte addrHigh = pageNumber >> (8 - pageSize);
   byte addrLowPage = pageNumber << pageSize;
@@ -165,7 +179,8 @@ void AVRProgrammer::readProgramMemoryPage(byte* pageBuffer, byte pageNumber, byt
 
 void AVRProgrammer::readEepromMemoryPage(byte* pageBuffer, byte pageNumber, byte pageSize, byte& statusRes) {
   if (pageSize != AVR_MEM_PAGE_SIZE_4) {
-    returnStatus(ERR(0x1A));
+    logDebugD("readEepromMemoryPage:pageSize:", pageSize);
+    returnStatus(ERR(0x10));
   }
   byte addrHigh = pageNumber >> (8 - pageSize);
   byte addrLowPage = pageNumber << pageSize;
@@ -224,7 +239,11 @@ byte AVRProgrammer::sendReadByte(byte byteToSend) {
   addr - 0..3
 */
 void AVRProgrammer::loadEEPROMMemoryPageByte(byte addr, byte b, byte& statusRes) { 
-  if (addr > 3) returnStatus(0x10); issueByteWriteCmd(0xC1, 0x00, addr, b, statusRes); 
+  if (addr > 3) {
+    logDebug("loadEEPROMMemoryPageByte, addr > 3");
+    returnStatus(ERR(0x10));// system error - addr too high
+  }
+  issueByteWriteCmd(0xC1, 0x00, addr, b, statusRes); 
 }
 
 /**
@@ -232,8 +251,14 @@ void AVRProgrammer::loadEEPROMMemoryPageByte(byte addr, byte b, byte& statusRes)
   addrLsb - aaaa aa00
 */
 void AVRProgrammer::writeEEPROMMemoryPage(byte addrMsb, byte addrLsb, byte& statusRes) {
-  if (addrMsb & B00000011 > 0) returnStatus(0x10);
-  if (addrLsb & B11111100 > 0) returnStatus(0x10);
+  if (addrMsb & B00000011 > 0) {
+    logDebug("addrMsb is wrong");
+    returnStatus(ERR(0x10)); // system error, wrong addrMsb
+  }
+  if (addrLsb & B11111100 > 0) {
+    logDebug("addrLsb is wrong");
+    returnStatus(ERR(0x10)); // system error, wrong addrLsb
+  }
   issueByteWriteCmd(0xC2, addrMsb, addrLsb, 0x00, statusRes);
 }
 

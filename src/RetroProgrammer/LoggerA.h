@@ -21,7 +21,6 @@
   #define LOGGER_LEVEL 4
 
   #include <Arduino.h>
-  #include "Utils.h"
 
   //////////////////////////////////
   // Validation part

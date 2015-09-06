@@ -2,8 +2,8 @@
 #define Tests_h
 
   #include <Arduino.h>
+  #include "Statuses.h"
   #include "LoggerA.h"
-  
   #include "Utils.h"
   #include "AVRConstants.h"
   #include "AVRProgrammer.h"

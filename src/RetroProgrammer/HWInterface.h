@@ -6,15 +6,17 @@
 #define HWInterface_h
 
   #include <Arduino.h>
+  #include "Statuses.h"
   #include "LoggerA.h"
   #include "AVRConstants.h"
-  #include "Utils.h"
 
   class HWInterface_Test;
 
   class HWInterface {
     public:
     friend HWInterface_Test;
+    
+    static void __translateErrorsToDisplayErrorCode(byte err, byte& mainErrCode, byte& subErrCode, byte& okCode);
     
     // Define what pins are for which button / led
     static const byte BUTTON_UPLOAD__LED_RDY__LED_AUTO = A5;

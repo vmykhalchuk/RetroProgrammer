@@ -4,21 +4,17 @@
   #include <Arduino.h>
   #include <SPI.h>
   #include <SD.h>
+  #include "Statuses.h"
   #include "LoggerA.h"
   #include "AVRConstants.h"
 
-  // BUFFER SIZE FOR FILE PATH TO HRP FILE
+class Utils {
+  public:
+  static void __translateErrorsToDisplayErrorCode(byte err, byte& mainErrCode, byte& subErrCode, byte& okCode);
+};
+
+  // BUFFER SIZE FOR FILE PATH TO HRP FILE (Program File)
   const byte FILE_PATH_BUFFER_SIZE = (8+1+3+1);
-
-  #define ERR(err) err
-
-  #define initStatus() statusRes=0;
-  #define checkStatus() if (statusRes != 0) return;
-  #define checkStatusV(v) if (statusRes != 0) return v;
-  #define checkOverrideStatus(err) if (statusRes != 0) { logDebugB("@pr@",statusRes); statusRes = err; return; }
-  #define checkOverrideStatusV(err, v) if (statusRes != 0) { logDebugB("@pr@",statusRes); statusRes = err; return v; }
-  #define returnStatus(err) { statusRes = err; return; }
-  #define returnStatusV(err, v) { statusRes = err; return v; }
 
   int freeRam();
   #define logFreeRam() logDebugD("$$$RAM:",freeRam())
@@ -61,7 +57,6 @@
     return r;
   };
 
-
   //////////////////////////
   //   AVR Related
   //////////////////////////
@@ -80,27 +75,11 @@ class UtilsAVR {
   //        byte signBytes[3];
   //        readSignatureBytes(signBytes, statusRes); checkStatus();
   //        byte modelId = getAVRModelIdBySignature(signBytes, statusRes); checkStatus();
-  inline static byte getAVRModelIdBySignature(byte* signBytes, byte& statusRes) {
-    initStatus();
-    for (byte i = 0; i < MCU_AVR_TYPES_COUNT; i++) {
-      if (signBytes[0] == MCU_AVR_TYPES[i][0] && 
-          signBytes[1] == MCU_AVR_TYPES[i][1] &&
-          signBytes[2] == MCU_AVR_TYPES[i][2]) {
-        return i + 1;
-      }
-    }
-    returnStatusV(0x17, 0);
-  }
+  static byte getAVRModelIdBySignature(byte* signBytes, byte& statusRes);
 
   // return modelId and memory configuration of this MCU
-  inline static byte getAVRModelAndConf(byte* signBytes, byte& flashPageSize, byte& flashPagesCount, byte& eepromPageSize, byte& eepromPagesCount, byte& statusRes) {
-    byte modelId = getAVRModelIdBySignature(signBytes, statusRes); checkStatusV(0);
-    flashPageSize = MCU_AVR_CONFIGS[modelId - 1][0];
-    flashPagesCount = MCU_AVR_CONFIGS[modelId - 1][1];
-    eepromPageSize = MCU_AVR_CONFIGS[modelId - 1][2];
-    eepromPagesCount = MCU_AVR_CONFIGS[modelId - 1][3];
-    return modelId;
-  }
+  static byte getAVRModelAndConf(byte* signBytes, byte& flashPageSize, byte& flashPagesCount, byte& eepromPageSize, 
+                                  byte& eepromPagesCount, byte& statusRes);
   
   // fills in buffer with modelName, based on modelId (human readable name is returned, e.g. ATmega328P, etc)
   // char mcuModel[MCU_MODEL_HUMAN_NAME_BUFFER_SIZE]; - string for mcuModel
@@ -125,11 +104,11 @@ class UtilsSD {
 
   static boolean initSDCard();
 
-  // Print 3 digits
+  // Write 3 digits
   static void fPrint3Dig(File& f, byte b);
-  //  Print String + Byte + EOL
+  //  Write String + Byte + EOL
   static void fPrintBln(File& f, String str, byte b);
-  // Print Byte
+  // Write Byte as HEX
   static void fPrintB(File& f, byte b);
 
   static byte read3DigByte(File& f, byte& statusRes);

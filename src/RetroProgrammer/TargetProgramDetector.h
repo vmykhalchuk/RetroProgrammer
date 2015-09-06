@@ -15,6 +15,7 @@
   #define USE_ONE_WIRE_LIBRARY 0
 
   #include <Arduino.h>
+  #include "Statuses.h"
   #include "LoggerA.h"
   #include "Utils.h"
 
@@ -26,6 +27,9 @@
   class TargetProgramDetector
   {
     public:
+
+      static void __translateErrorsToDisplayErrorCode(byte err, byte& mainErrCode, byte& subErrCode, byte& okCode);
+      
       //BUFFER SIZE FOR MCU MODEL CHAR STRING
       // 'TT_' + '112233445566' + '\0' - here TT is 'MN','R1', 'R2', 'ID', and 112233445566 - is a maximum length for 'ID' case; (see TargetProgramDetector#getTargetIdName)
       //          // 3 chars for type (ID_, R1_, R2_, MN_), 12 chars as a max length for ID - 6 bytes, 1 char '/0'

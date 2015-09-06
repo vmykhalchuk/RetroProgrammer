@@ -9,9 +9,9 @@
 #define AVRProgrammer_h
 
   #include <Arduino.h>
+  #include "Statuses.h"
   #include "LoggerA.h"
   #include "AVRConstants.h"
-  #include "Utils.h"
 
   class AVRProgrammer_Test;
 
@@ -20,6 +20,7 @@
     public:
 
     friend AVRProgrammer_Test;
+    static void __translateErrorsToDisplayErrorCode(byte err, byte& mainErrCode, byte& subErrCode, byte& okCode);
 
     /** 
      *  Must always be called before creating any objects of this class

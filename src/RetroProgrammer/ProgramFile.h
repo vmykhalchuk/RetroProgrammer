@@ -9,11 +9,12 @@
 #define ProgramFile_h
 
   #include <Arduino.h>
+  #include "Statuses.h"
   #include "LoggerA.h"
   #include "Utils.h"
+  #include "AVRProgrammer.h"
   #include <SPI.h>
   #include <SD.h>
-  #include "AVRProgrammer.h"
 
   class ProgramFile_Test;
 
@@ -22,14 +23,13 @@
 
       friend ProgramFile_Test;
 
+      static void __translateErrorsToDisplayErrorCode(byte err, byte& mainErrCode, byte& subErrCode, byte& okCode);
+
       /**
        * filePref must be 4 chars max!
        * File is then generated with 4 additional digits to give a number of backup file.
        */
-      static void backupMcuData(String filePref, byte& statusRes);
-  
-      static void backupMcuDataToFile(String fileName, byte progMemPageSize, byte progMemPagesCount, 
-                        byte eepromMemPageSize, byte eepromMemPagesCount, byte& statusRes);
+      static void backupMcuData(String filePref, const char* programId, byte& statusRes);
   
       static void uploadMcuDataFromFile(String fileName, byte* targetMcuSign, byte progMemPagesCount, byte progMemPageSize,
                         byte eepromMemPagesCount, byte eepromMemPageSize, byte& statusRes);
@@ -38,6 +38,7 @@
 
     private:  // Constants For parsing the file
       static const byte LINE_TYPE_COMMENT = 0x01; // Comment
+      static const byte LINE_TYPE_TID     = 0x1F; // Target ID ("MN_A1C3",....)
       static const byte LINE_TYPE_TYP     = 0x10; // Type ("AVR","PIC",...)
       static const byte LINE_TYPE_MDL     = 0x11; // Model (1,2,3,4,....)
       static const byte LINE_TYPE_SGN     = 0x12; // Signature (for AVR - 3 bytes)
@@ -52,13 +53,16 @@
       static const byte LINE_READ_BUFFER_SIZE = 128;
 
     private:
+      static void backupMcuDataToFile(const char* programId, byte progMemPageSize, byte progMemPagesCount, 
+                        byte eepromMemPageSize, byte eepromMemPagesCount, byte& statusRes);
 
-      static const byte line_types[10][4];
+      static const byte line_types[11][4];
       static byte programBuffer[];
 
       static void __openFile(File& f, String fileName, int mode, byte& statusRes);
       static void openFile2(File& f, String fileName, int mode, byte& statusRes);
-      static void findNextFileName(String filePref, String& resFile, byte& statusRes);
+      static File backupFile;
+      static void findAndOpenNextFileBackupFile(String filePref, byte& statusRes);
 
       static void uploadMcuDataFromFile_internal(boolean progMode, String fileName, byte targetMcuModel, byte& statusRes);
       static void uploadMcuDataFromFile_internal(boolean progMode, String fileName, byte* targetMcuSign,

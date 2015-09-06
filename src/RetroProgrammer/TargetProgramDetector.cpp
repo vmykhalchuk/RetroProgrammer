@@ -1,8 +1,9 @@
 #include "TargetProgramDetector.h"
 
 // ERR() List:
-// 0x60 - failure reading TargetID - _pinW0 wrong value
-// 0x61 - failure reading TargetID - _pinW1 or _pinW1 wrong value(s)
+// 0x60 _ General system error
+// 0x69 - failure reading TargetID - _pinW0 wrong ADC value
+// 0x61 - failure reading TargetID - _pinW1 or _pinW1 wrong ADC value(s)
 // 0x62 - failure reading TargetID - 1wire CRC didn't match
 // 0x63 -   >>>>
 // 0x64 - failure reading TargetID - failure on the line, too much noise
@@ -13,6 +14,22 @@
 // 0x6A - failure reading TargetID - wrong resistive divider value W0
 // 0x6B - failure reading TargetID - wrong resistive divider value W1
 // 0x6C - failure reading TargetID - wrong resistive divider value W2
+
+void TargetProgramDetector::__translateErrorsToDisplayErrorCode(byte err, byte& mainErrCode, byte& subErrCode, byte& okCode) {
+  mainErrCode = 0;
+  subErrCode = 0;
+  okCode = 0;
+  if (err == 0x60) {
+    mainErrCode = 0xA; subErrCode = 0x7;
+  } else if (err == 0x68) {
+    mainErrCode = 0xA; subErrCode = 0x1;
+  } else if (err >= 0x61 && err <= 0x6C) {
+    mainErrCode = 0x3; subErrCode = (err & 0xF);
+  } else {
+    //mainErrCode = 0xA;
+    Utils::__translateErrorsToDisplayErrorCode(err, mainErrCode, subErrCode, okCode);
+  }
+}
 
 byte TargetProgramDetector::_pinW0 = 0;
 byte TargetProgramDetector::_pinW1 = 0;
