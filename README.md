@@ -54,47 +54,48 @@ Now it also has fixed pinout of ICSP port (mirrored to allow ICSP connector be d
 
 # To be implemented
 * Add autocalibration routine to calibrate position of DIP switches
-** add same for LEDs and buttons (in case position of buttons was changed)
+ * add same for LEDs and buttons (in case position of buttons was changed)
 * CRC every HRP file before programming/verifying it!
-** CRC every conf file
+ * CRC every conf file
 * Auto detection of programming speed
 * Auto detection of power present on Target device - to avoid turning programming voltage ON
 * Support of 3.3v target MCU
-*# How to autodetect if this is 3.3v or 5v device?
-*# Then we need level shifter to work on two separate supply levels.
-*#* For this the ideal solution is: 74LVC2T45; 74LVCH2T45
-*#* Price on Aliexperess is OK for 50pieces only.
-*#* Or search for “dual supply level” shifter/translator.
+ * How to autodetect if this is 3.3v or 5v device?
+ * Then we need level shifter to work on two separate supply levels.
+  - For this the ideal solution is: 74LVC2T45; 74LVCH2T45
+  - Price on Aliexperess is OK for 50pieces only.
+  - Or search for “dual supply level” shifter/translator.
 * Extend AVR supported list
 * Support PDI interface (http://www.atmel.com/images/doc8282.pdf)
 * PIC support
 * Support 1-wire EEPROM instead of ID (this will let manufacturer to write version of software required to be uploaded, without need to define every single ID).
-** This is more costly then ID device, however gives more flexibility and allows to support many devices of same type
+ * This is more costly then ID device, however gives more flexibility and allows to support many devices of same type
 * USB mode 2: Upload directly from manufacturer web-site (will connect to main website where IDs are registered, and will download program specific for given device).
-** 1-wire eeprom would be beneficial here if manufacturer produced many devices which basically need single version of software. So manufacturer can register unique device prototype ID which can be stored on eeprom and uploaded to every such eeprom for every similar device. Then such ID can be used to download firmware required.
+ * 1-wire eeprom would be beneficial here if manufacturer produced many devices which basically need single version of software. So manufacturer can register unique device prototype ID which can be stored on eeprom and uploaded to every such eeprom for every similar device. Then such ID can be used to download firmware required.
 * USB mode: Upload to Target MCU from Arduino dev environment via USB cable (no SD involved)
 * Add support of ZIF sockets
-** can be implemented as a standalone board connected to ICSP+TD socket
-** there can be also additional DIP switches to select program
-** alternatively mcu with 7segment digits and roller to select program, mcu will have to emulate 1wire interface
+ * can be implemented as a standalone board connected to ICSP+TD socket
+ * there can be also additional DIP switches to select program
+ * alternatively mcu with 7segment digits and roller to select program, mcu will have to emulate 1wire interface
 * Add two 7segment displays, to monitor status and program selected
 * Or add LCD display for this
 * Add rotary decoder to quickly select manual programm
+* Implement Stack-like error handling with arbitrary data supported for debugging
 
 # To be implemented (DONE)
 * Support for Arduino Micro - DONE!!! Board since v0.2 supports Arduino Micro or equivalent.
-** software has to be modified slightly
-** pin A4 must be swapped with A6 (Arduino Micro has no A6 nor A7, so we will have limited Manual programs selection)
+ * software has to be modified slightly
+ * pin A4 must be swapped with A6 (Arduino Micro has no A6 nor A7, so we will have limited Manual programs selection)
 
 # Board improvements / fixes
 * Swap UPLOAD <=> BACKUP!!!! This is critical, when ERR led is lit - it reads as UPLOAD button is pressed!
-** Check what happens if other combination of LEDs is lit, which button is then assumed as pressed!
+  * Check what happens if other combination of LEDs is lit, which button is then assumed as pressed!
 * Move LEDs to the edge of board, so they are move visible and distinguishable
 * Fix TargetVPP - when Arduino board is not connected, or is RESET - TargetVPP is Enabled till MCU gets control over ports. This must be redesigned! Just remove one transistor, thats it.
 * Add LED to show that power supply to target MCU is ON
 * Add switch to turn-off power supply to target MCU (in case it uses own power supply)
-** additionally auto-sense voltage on VPP and disable VPP-on switch to prevent failures
-** also add this option into automatic target detection algorithm - to check if it is expected to have VPP on target board or not
+  * additionally auto-sense voltage on VPP and disable VPP-on switch to prevent failures
+  * also add this option into automatic target detection algorithm - to check if it is expected to have VPP on target board or not
 * Add LED to show when SD card bussy (attach to CS pin)
 
 # Optimizations
