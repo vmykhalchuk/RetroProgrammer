@@ -49,8 +49,10 @@ As a solution, I have designed and developed this Handheld programmer shield for
 * Supports AVR microcontrollers (...TBD...)
 
 # Difference between Board v0.1 and v0.2
-v0.2 board has support for Arduino Micro (A4 and A6 are swapped comparing to v0.1 board) which gives possibility to support arduino micro for a sake of lost manual programs choices (not possible to select C,D,3,4), only A,B,1,2 will be active.
-Now it also has fixed pinout of ICSP port (mirrored to allow ICSP connector be directly connected without wires).
+* v0.2 board has support for Arduino Micro (A4 and A6 are swapped comparing to v0.1 board).
+  This gives possibility to support arduino micro for a sake of lost manual programs choices (not possible to select C,D,3,4), only A,B,1,2 will be active.
+* Now it also has fixed pinout of ICSP port (mirrored to represent Socket - not Header on Target board).
+  This allows user to attach any other Target device with ICSP header directly to Programmer.
 
 # To be implemented
 * Add autocalibration routine to calibrate position of DIP switches
