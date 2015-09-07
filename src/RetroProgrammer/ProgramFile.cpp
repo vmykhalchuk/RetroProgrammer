@@ -315,10 +315,10 @@ void ProgramFile::uploadMcuDataFromFile_internal(boolean progMode, String fileNa
 
   
   byte lkb,fsb,fhb,efb;
-  boolean isSign=false,isLkb=false,isFsb=false,isFhb=false,isEfb=false;
+  boolean isSign=false,isLkb=false,isFsb=false,isFhb=false,isEfb=false; // flag represents if any of this value is already loaded from ProgramFile
   
-  boolean isSignValid = false;
-  boolean startedProgramming = false;
+  boolean isSignValid = false; // if true - then signature is loaded from file and matches targetMcuSign provided for this method
+  boolean startedProgramming = false; // if programming already started
   
   byte buf[LINE_READ_BUFFER_SIZE];
   byte lineType;
@@ -357,7 +357,7 @@ void ProgramFile::uploadMcuDataFromFile_internal(boolean progMode, String fileNa
     if (lineType == LINE_TYPE_PRM) {
       startedProgramming = true;
       if (!isSignValid) { logDebug("!isSignValid_1"); returnStatus(ERR(0x54)); }
-      if (progMode && (pageNo == 240 || pageNo == 230)) {//FIXME something wrong here, it must work for all pages
+      if (progMode/* && (pageNo == 240 || pageNo == 230)*/) {//FIXME something wrong here, it must work for all pages
         logInfoD("PRM Page!",pageNo);
         uploadProgramMemoryPage(buf, pageNo, progMemPagesCount, progMemPageSize, statusRes);
         checkStatus();

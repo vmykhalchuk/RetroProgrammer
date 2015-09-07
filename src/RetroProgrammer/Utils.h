@@ -11,10 +11,10 @@
 class Utils {
   public:
   static void __translateErrorsToDisplayErrorCode(byte err, byte& mainErrCode, byte& subErrCode, byte& okCode);
+  // BUFFER SIZE FOR FILE PATH TO HRP FILE (Program File)
+  static const byte FILE_PATH_BUFFER_SIZE = (8+1+3+1);
 };
 
-  // BUFFER SIZE FOR FILE PATH TO HRP FILE (Program File)
-  const byte FILE_PATH_BUFFER_SIZE = (8+1+3+1);
 
   int freeRam();
   #define logFreeRam() logDebugD("$$$RAM:",freeRam())

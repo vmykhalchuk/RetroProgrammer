@@ -2,7 +2,7 @@
 
 char __testMcuModelBuf[UtilsAVR::MCU_MODEL_BUFFER_SIZE];
 char __testMcuModelNameBuf[UtilsAVR::MCU_MODEL_HUMAN_NAME_BUFFER_SIZE];
-char __testFilePathBuf[FILE_PATH_BUFFER_SIZE];
+char __testFilePathBuf[Utils::FILE_PATH_BUFFER_SIZE];
 
 /////////////////////////////////////////////
 /////////////////////////////////////////////

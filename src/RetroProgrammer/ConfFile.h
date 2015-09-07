@@ -41,9 +41,9 @@ class ConfFile {
   ////////////////////////////////////////////////
 
   /*
-   * mcuModelId - see AVRConstants.h
-   * char mcuModelBuf[MCU_MODEL_BUFFER_SIZE]; - buffer to store MCU Model (note - it will be actively used while method is being called!
-   * char filePath[FILE_PATH_BUFFER_SIZE]; - if length is 0 - then no match detected! // at the moment we support only filename and no directory path (to save space)
+   * mcuModelId - see AVRConstants.h MCU_AVR_?????
+   * char mcuModelBuf[UtilsAVR::MCU_MODEL_BUFFER_SIZE]; - buffer to store MCU Model (note - it will be actively used while method is being called!
+   * char filePath[Utils::FILE_PATH_BUFFER_SIZE]; - if length is 0 - then no match detected! // at the moment we support only filename and no directory path (to save space)
    * returns false if no configuration line matched (progId and mcuModelId must match)
    */
   static boolean getFilePathByProgIdAndMcuModel(const char* progId, byte mcuModelId, char* mcuModelBuf, char* filePath, byte& statusRes);

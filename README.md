@@ -101,7 +101,7 @@ As a solution, I have designed and developed this Handheld programmer shield for
 * Support 1-wire EEPROM instead of ID (this will let manufacturer to write version of software required to be uploaded, without need to define every single ID).
  * This is more costly then ID device, however gives more flexibility and allows to support many devices of same type
 * USB mode 2: Upload directly from manufacturer web-site (will connect to main website where IDs are registered, and will download program specific for given device).
- * 1-wire eeprom would be beneficial here if manufacturer produced many devices which basically need single version of software. So manufacturer can register unique device prototype ID which can be stored on eeprom and uploaded to every such eeprom for every similar device. Then such ID can be used to download firmware required.
+ * 1-wire eeprom would be beneficial here if manufacturer produced many devices which basically require single version of firmware. So manufacturer can register unique device prototype ID which can be stored on eeprom and uploaded to every such eeprom for every similar device. Then such ID can be used to download firmware required.
 * USB mode: Upload to Target MCU from Arduino dev environment via USB cable (no SD involved)
 * Add support of ZIF sockets
  * can be implemented as a standalone board connected to ICSP+TD socket
@@ -120,9 +120,15 @@ As a solution, I have designed and developed this Handheld programmer shield for
 ## Board improvements / fixes
 * Swap UPLOAD <=> BACKUP!!!! This is critical, when ERR led is lit - it reads as UPLOAD button is pressed!
   * Check what happens if other combination of LEDs is lit, which button is then assumed as pressed!
+* Add jumper to block Manual program selector - when blocked - only Auto TID is expected to work, otherwise failure!
+  - this can be easily done by attaching A3 to ground via jumper, then A3 will read 0, which will indicate program to not read Manual program, and rely on Auto selector only.
+* Add jumper to block TargetVPP from being supplied by Programmer
+  - this is for precaution, when Target board is externally powered
+  - easy to implement by removing jumper which connects D3 to transistor base. When connection is broken, transistor will never open to supply TargetVPP.
+  - still MCU can monitor if VPP is provided to MCU by reading voltage on ICSP_VPP directly
 * Move LEDs to the edge of board, so they are move visible and distinguishable
 * Fix TargetVPP - when Arduino board is not connected, or is RESET - TargetVPP is Enabled till MCU gets control over ports. This must be redesigned! Just remove one transistor, thats it.
-* Add LED to show that power supply to target MCU is ON
+* Add LED to show that TargetVPP is ON
 * Add switch to turn-off power supply to target MCU (in case it uses own power supply)
   * additionally auto-sense voltage on VPP and disable VPP-on switch to prevent failures
   * also add this option into automatic TargetID detection algorithm - to check if it is expected to have VPP on target board or not, and what level of voltage required (5v or 3.3v)

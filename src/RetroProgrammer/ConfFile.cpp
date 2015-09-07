@@ -300,8 +300,8 @@ void ConfFile::readRootConfFile(const char* progId, char* mcuModel, char* filePa
     skipWhiteCharactersExpectNoEolNoEof(statusRes); checkStatus();
     pos = 0;
     while (true) {
-      if (pos >= FILE_PATH_BUFFER_SIZE) {// too long FILE_PATH in conf file!
-        filePath[FILE_PATH_BUFFER_SIZE-1] = '\0';
+      if (pos >= Utils::FILE_PATH_BUFFER_SIZE) {// too long FILE_PATH in conf file!
+        filePath[Utils::FILE_PATH_BUFFER_SIZE-1] = '\0';
         returnStatus(ERR(0x24));
       }
       

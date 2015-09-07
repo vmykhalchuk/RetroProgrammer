@@ -37,8 +37,8 @@ void setup() {
   TargetProgramDetector::setup(       A0        ,       A1         ,      A2          ,       A3              ,         A6            );
   Logger_setup();
 
-  setup_test();
-  //setup_prod();
+  //setup_test();
+  setup_prod();
 }
 
 void setup_test() {//Used for testing
@@ -203,12 +203,15 @@ void setup_prod() {
     TargetProgramDetector::__translateErrorsToDisplayErrorCode(statusRes, mainErrCode, subErrCode, okCode);
     displayError(mainErrCode, subErrCode, okCode);
     return;
-  } else {
-    logInfoS("ProgId:", progIdBuf);
   }
-  delay(500);
+  logInfoS("ProgId:", progIdBuf);
+  if (autoSelected) {
+    HWInterface::setLedOnOff(HWInterface::LED_AUTO, true);
+  }
+  
+  HWInterface::runLeds(25); // 500ms
   confirmProgramSelected(btn);
-  delay(500);
+  HWInterface::runLeds(50); // 1000ms
 
   // Prepare Target MCU for Programming
   AVRProgrammer::startupTargetMcuProgramming(statusRes);
@@ -233,6 +236,33 @@ void setup_prod() {
       return;
     }
     logInfo("Success backing-up!");
+    
+  } else if (btn == HWInterface::BTN_VERIFY) {
+    char mcuModelBuf[UtilsAVR::MCU_MODEL_BUFFER_SIZE];
+    char filePath[Utils::FILE_PATH_BUFFER_SIZE];
+    byte signBytes[3];
+    AVRProgrammer::readSignatureBytes(signBytes, statusRes);
+    if (statusRes != 0) {
+      // FIXME displayError! Display correct one!!!!
+      displayError(0xA, 0, 0);
+    }
+    byte mcuModelId = UtilsAVR::getAVRModelAndConf(signBytes, progMemPageSize, progMemPagesCount, eepromMemPageSize, eepromMemPagesCount, statusRes);
+    if (statusRes != 0) {
+      // FIXME displayError! Display correct one!!!!
+      displayError(0xA, 0, 0); return;
+    }
+    logInfoD("AVR MCU ModelId: ", mcuModelId);
+    boolean detected = ConfFile::getFilePathByProgIdAndMcuModel(progIdBuf, mcuModelId, mcuModelBuf, filePath, statusRes);
+    if (statusRes != 0) {
+      // FIXME displayError! Display correct one!!!!
+      displayError(0xA, 0, 0); return;
+    }
+    if (!detected) {
+      displayError(0x4,0,0); return;
+    }
+    logInfoS("ProgramFile: ", filePath);
+    // Now run verification process
+    
   } else if (btn == HWInterface::BTN_UPLOAD) {
   }
 

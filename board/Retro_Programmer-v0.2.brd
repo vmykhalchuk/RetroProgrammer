@@ -8,18 +8,18 @@
 </settings>
 <grid distance="1" unitdist="mil" unit="mm" style="lines" multiple="1" display="yes" altdistance="0.025" altunitdist="inch" altunit="inch"/>
 <layers>
-<layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
-<layer number="16" name="Bottom" color="1" fill="1" visible="no" active="yes"/>
+<layer number="1" name="Top" color="4" fill="1" visible="no" active="yes"/>
+<layer number="16" name="Bottom" color="1" fill="1" visible="yes" active="yes"/>
 <layer number="17" name="Pads" color="2" fill="1" visible="yes" active="yes"/>
 <layer number="18" name="Vias" color="2" fill="1" visible="yes" active="yes"/>
 <layer number="19" name="Unrouted" color="6" fill="1" visible="yes" active="yes"/>
 <layer number="20" name="Dimension" color="15" fill="1" visible="yes" active="yes"/>
-<layer number="21" name="tPlace" color="7" fill="1" visible="yes" active="yes"/>
-<layer number="22" name="bPlace" color="7" fill="1" visible="no" active="yes"/>
-<layer number="23" name="tOrigins" color="15" fill="1" visible="yes" active="yes"/>
-<layer number="24" name="bOrigins" color="15" fill="1" visible="no" active="yes"/>
-<layer number="25" name="tNames" color="7" fill="1" visible="yes" active="yes"/>
-<layer number="26" name="bNames" color="7" fill="1" visible="no" active="yes"/>
+<layer number="21" name="tPlace" color="7" fill="1" visible="no" active="yes"/>
+<layer number="22" name="bPlace" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="23" name="tOrigins" color="15" fill="1" visible="no" active="yes"/>
+<layer number="24" name="bOrigins" color="15" fill="1" visible="yes" active="yes"/>
+<layer number="25" name="tNames" color="7" fill="1" visible="no" active="yes"/>
+<layer number="26" name="bNames" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="27" name="tValues" color="7" fill="1" visible="no" active="yes"/>
 <layer number="28" name="bValues" color="7" fill="1" visible="no" active="yes"/>
 <layer number="29" name="tStop" color="7" fill="3" visible="no" active="yes"/>
@@ -15035,11 +15035,11 @@
 <text x="11.303" y="21.5392" size="1.778" layer="26" rot="MR0">2</text>
 <text x="6.9088" y="16.51" size="1.778" layer="26" rot="MR0">3</text>
 <text x="6.9596" y="14.0208" size="1.778" layer="26" rot="MR0">5</text>
-<text x="13.589" y="11.2776" size="1.778" layer="26" rot="MR0">8</text>
+<text x="14.7066" y="11.4808" size="1.27" layer="26" rot="MR0">T2</text>
 <text x="13.5382" y="14.3764" size="1.778" layer="26" rot="MR0">6</text>
-<text x="15.0114" y="8.8392" size="1.778" layer="26" rot="MR0">10</text>
-<text x="6.858" y="8.7884" size="1.778" layer="26" rot="MR0">9</text>
-<text x="6.8834" y="11.1506" size="1.778" layer="26" rot="MR0">7</text>
+<text x="14.605" y="8.9916" size="1.27" layer="26" rot="MR0">T4</text>
+<text x="6.8326" y="8.7376" size="1.27" layer="26" rot="MR0">T3</text>
+<text x="6.7056" y="10.9982" size="1.27" layer="26" rot="MR0">T1</text>
 </plain>
 <libraries>
 <library name="rcl">
