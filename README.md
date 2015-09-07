@@ -1,7 +1,13 @@
-Ever wondered what happens when my DIY MCU based device after a years of fruitfull work, something bad happens to MCU? Or this device gets into hands of other DIY electricians for repairing?
-How then shell you find the binary of firmware used in this particular device? Is it located on my hard-drive, or on some of backup CDs, or ... baby elephant know where?
-What if I have many devices or single device with many MCUs, each requiring own firmware?
-Now I have to find required binaries, find proper software to upload it over my Programmer, make sure MCU model is same, and proper version of firmware is selected.
+Ever wondered what happens when my DIY MCU based device
+* after a years of fruitfull work, something bad happens to MCU?
+* or this device gets into hands of other DIY electricians for repairing?
+- How then shell you find the binary of firmware used in this particular device?
+- Is it located on my hard-drive, or on some of backup CDs, or ... baby elephant know where?
+- What if I have many devices or single device with many MCUs, each requiring own firmware?
+* Now I have to:
+ - find required binaries
+ - find proper software to upload it over my Programmer
+ - make sure MCU model is same, and proper version of firmware is selected
 
 Well, if this ever bothered you - then Retro Programmer is right for you!
 
@@ -35,9 +41,9 @@ All you need is:
 * 1-wire ID Tag or set of resistors (one set for every MCU)
 
 ### Yes I want it!
-* DO NOT! UNDER SONCTRUCTION!!! You can order board from here: http://dirtypcbs.com/view.php?share=9566&accesskey=096bf07bd5bc00aa1c8b3e8581d80cb4
+* DO NOT! UNDER CONSTRUCTION!!! You can order board from here: http://dirtypcbs.com/view.php?share=9566&accesskey=096bf07bd5bc00aa1c8b3e8581d80cb4
 * Components - I might share some in very little quantity
-* Firmware - pending... feel free to contact me (vmykhalchuk<at>gmail<d>com) for status
+* Firmware - pending... draft version see in sources, feel free to contact me (vmykhalchuk_at_gmail_dot_com) for status
 * Manual - describes how to use Retro Programmer and how to prepare your project to be supported by Retro Programmer - pending...
 
 ### History
@@ -104,5 +110,5 @@ As a solution, I have designed and developed this Handheld programmer shield for
 * Add LED to show that power supply to target MCU is ON
 * Add switch to turn-off power supply to target MCU (in case it uses own power supply)
   * additionally auto-sense voltage on VPP and disable VPP-on switch to prevent failures
-  * also add this option into automatic target detection algorithm - to check if it is expected to have VPP on target board or not
+  * also add this option into automatic TargetID detection algorithm - to check if it is expected to have VPP on target board or not, and what level of voltage required (5v or 3.3v)
 * Add LED to show when SD card bussy (attach to CS pin)
