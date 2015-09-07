@@ -1,7 +1,14 @@
-# RetroProgrammer
-Board for Arduino Nano to convert Arduino into handheld programmer (SD card support, Auto Target detection)
+Ever wondered what happens when my DIY MCU based device after a years of fruitfull work, something bad happens to MCU? Or this device gets into hands of other DIY electricians for repairing?
+How then shell you find the binary of firmware used in this particular device? Is it located on my hard-drive, or on some of backup CDs, or ... baby elephant know where?
+What if I have many devices or single device with many MCUs, each requiring own firmware?
+Now I have to find required binaries, find proper software to upload it over my Programmer, make sure MCU model is same, and proper version of firmware is selected.
 
-# Idea behind
+Well, if this ever bothered you - then Retro Programmer is right for you!
+
+## RetroProgrammer
+Board for Arduino Nano to convert Arduino into handheld programmer (SD card support, Target IDentification, no PC required, easy to repeat, cheap)
+
+### Idea behind
 Short: You want your DIY project to be repairable by any electrician, without skills in MCUs?
 
 Long story:
@@ -27,13 +34,13 @@ All you need is:
 * MicroSD card
 * 1-wire ID Tag or set of resistors (one set for every MCU)
 
-# Yes I want it!
+### Yes I want it!
 * DO NOT! UNDER SONCTRUCTION!!! You can order board from here: http://dirtypcbs.com/view.php?share=9566&accesskey=096bf07bd5bc00aa1c8b3e8581d80cb4
 * Components - I might share some in very little quantity
 * Firmware - pending... feel free to contact me (vmykhalchuk<at>gmail<d>com) for status
 * Manual - describes how to use Retro Programmer and how to prepare your project to be supported by Retro Programmer - pending...
 
-# History
+### History
 When I was developing smart house solution, main concept that I wanted to build into it was - maintainability.
 Maintainability is critical factor of having successful system.
 It must be easily repairable without special skills needed.
@@ -43,18 +50,18 @@ This dramatically limits a number of electricians who can service your system.
 
 As a solution, I have designed and developed this Handheld programmer shield for Arduino Nano/Micro.
 
-# Main features
+## Main features
 * Fully automated, no PC required to operate
 * Autodetection of target MCU (ID of target MCU can be autodetected by using extra pin(s) on ICSP). This lets you UPLOAD programm automatically and in one button press.
 * Supports AVR microcontrollers (...TBD...)
 
-# Difference between Board v0.1 and v0.2
+## Difference between Board v0.1 and v0.2
 * v0.2 board has support for Arduino Micro (A4 and A6 are swapped comparing to v0.1 board).
   This gives possibility to support arduino micro for a sake of lost manual programs choices (not possible to select C,D,3,4), only A,B,1,2 will be active.
 * Now it also has fixed pinout of ICSP port (mirrored to represent Socket - not Header on Target board).
   This allows user to attach any other Target device with ICSP header directly to Programmer.
 
-# To be implemented
+## To be implemented
 * Add autocalibration routine to calibrate position of DIP switches
  * add same for LEDs and buttons (in case position of buttons was changed)
 * CRC every HRP file before programming/verifying it!
@@ -84,12 +91,12 @@ As a solution, I have designed and developed this Handheld programmer shield for
 * Add rotary decoder to quickly select manual programm
 * Implement Stack-like error handling with arbitrary data supported for debugging
 
-# To be implemented (DONE)
+### To be implemented (DONE)
 * Support for Arduino Micro - DONE!!! Board since v0.2 supports Arduino Micro or equivalent.
  * software has to be modified slightly
  * pin A4 must be swapped with A6 (Arduino Micro has no A6 nor A7, so we will have limited Manual programs selection)
 
-# Board improvements / fixes
+## Board improvements / fixes
 * Swap UPLOAD <=> BACKUP!!!! This is critical, when ERR led is lit - it reads as UPLOAD button is pressed!
   * Check what happens if other combination of LEDs is lit, which button is then assumed as pressed!
 * Move LEDs to the edge of board, so they are move visible and distinguishable
@@ -99,7 +106,3 @@ As a solution, I have designed and developed this Handheld programmer shield for
   * additionally auto-sense voltage on VPP and disable VPP-on switch to prevent failures
   * also add this option into automatic target detection algorithm - to check if it is expected to have VPP on target board or not
 * Add LED to show when SD card bussy (attach to CS pin)
-
-# Optimizations
-* Move statusRes as a global variable, and don't toss around all methods!
-* convert initStatus, checkStatus, returnStatus into inline functions
