@@ -37,6 +37,11 @@ void setup() {
   TargetProgramDetector::setup(       A0        ,       A1         ,      A2          ,       A3              ,         A6            );
   Logger_setup();
 
+
+  // TODO:
+    // 1) try to upload again and backup and compare BACKUP3 with BACKUP4 (BACKUP4 will be new generated), make sure they match and its not a noise but algorithm issue
+    // *) switch logging to 4-DEBUG
+    // 2) run setup_tests::Test programming second page of 1blink; see if data is uploaded as expected
   //setup_test();
   setup_prod();
 }
@@ -49,15 +54,25 @@ void setup_test() {//Used for testing
   testUtilsGen();
   testUtilsAVR();
   
-  #if 1 // Test AVR Signature Read (Target MCU must be connected)
+  #if 0 // Test AVR Signature Read (Target MCU must be connected)
     Tests_AVRProgrammer::testAVRSignatureRead();
   #endif
+
+  #if 1 // Test programming second page of 1blink
+                           // Word N Byte Hight | Low:
+                           //  W0H   W0L   W1H   W1L   W2H   W2L   W3H   W3L   W4H   W4L   W5H   W5L   W6H   W6L   W7H   W7L
+    byte pageToUpload[128] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 
+                              0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 
+                              0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F,
+                              0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D, 0x3E, 0x3F};
+    Tests_AVRProgrammer::testUploadProgramTestPage(MCU_AVR_ATmega328P, 2, pageToUpload);
+  #endif
   
-  #if 1
+  #if 0
     Tests_TargetProgramDetector::testTargetProgramDetector();
   #endif
 
-  #if 1 // Upoad test files to SD Card!!!
+  #if 0 // Upoad test files to SD Card!!!
     // Init SD Card
     if (!UtilsSD::initSDCard()) {
       logError("SD init failed!");
@@ -72,12 +87,16 @@ void setup_test() {//Used for testing
     Tests_Board::testManualProgramSelectorPorts();
   #endif
 
-  #if 1 // Test HWInterface (will lock for indefinite)
+  #if 0 // Test HWInterface (will lock for indefinite)
     Tests_HWInterface::testLedsAndBtns();
   #endif
 
   #if 0 // Test Display Error (will lock for indefinite)
     displayError(2, 4, 0);
+  #endif
+
+  #if 0 // DO NOT RUN THESE, MAKE SURE THEY ARE SAFE FIRST!
+    someOldTests();
   #endif
 
   logInfo("Happy testing day!");
@@ -88,8 +107,8 @@ void displayError(byte mainErr, byte subErr, byte okNumber) {
   // Blink ERR mainErr times
   // Blink AUTO subErr times
   //
-  // 1 - No Target device discovered => make sure is properly connected
-  // 2 - SD Card failure => Make sure SD Card is attached and proper files are uploaded
+  // 1 - No Target device discovered => make sure ICSP is properly connected
+  // 2 - SD Card failure => Make sure SD Card is attached, properly formatted and proper files are uploaded
   // 2-0 - Not detected => Insert SD Card
   // 2-1 - No Conf file => Make sure Conf file is available on SD card
   // 2-2 - Corrupted Conf file => Check structure, OK display detail of error:
@@ -103,7 +122,7 @@ void displayError(byte mainErr, byte subErr, byte okNumber) {
   // 2-6 - Failure writing Program file => Make sure SD Card is not corrupted
   // 2-7 - Failure opening Program file => Make sure SD Card is not corrupted
   // 2-A - Failure reading file - file format is corrupted
-  // 3 - Auto Program Identification Failed => Make sure Target ICSP+TID connector compatible, and wires are not too long (no noise on wires)
+  // 3 - Auto Program Identification Failed => Make sure Target board is ICSP+TID compatible, and wires are not too long (no noise on wires)
   // 3-1 - W1 or W1 wrong ADC value(s)
   // 3-2 - W0 - 1wire CRC didn't match
   // 3-3 -       >>>>
@@ -116,14 +135,14 @@ void displayError(byte mainErr, byte subErr, byte okNumber) {
   // 3-B - wrong resistive divider value W1
   // 3-C - wrong resistive divider value W2
   // 4 - No program file found => Make sure file is available on SD Card & Configuration file is updated with TargetID
-  // 5 - Wrong Target MCU model => Make sure Conf/Program file is correct and Target MCU is correct model
-  // 6 - Bad program file => Fix it or upload new
-  // 7 - VERIFY: Program file & Target MCU didn't match => See AUTO for details
+  // 5 - Wrong Target MCU model => Make sure Conf/Program file is correct and Target MCU resembles expected MCU model
+  // 6 - Corrupted Program file => Fix it or upload new
+  // 7 - VERIFY: Program file & Target MCU didn't match => See AUTO for details (press and hold BACKUP button)
   // 7-1 - Program EEPROM differs => See OK led for a segment where difference starts
   // 7-2 - Flash EEPROM differs => See OK led for a segment where difference starts
   // 7-3 - Fuse/Lock bits differs => See OK led for which byte differs
   // 8 - Target MCU communication failure => Make sure cable is not too long, etc
-  // A - General System Failure => Logging required
+  // A - General System Failure => See AUTO for mode details (press and hold BACKUP button)
   // A-1 - Manual Program selector failure
           // ERR(0x68)
   // A-2 - ProgramFile routines error
@@ -198,7 +217,7 @@ void setup_prod() {
   boolean autoSelected;
   TargetProgramDetector::getProgId(progIdBuf, autoSelected, statusRes);
   if (statusRes > 0) {
-    logError("getProgId");
+    logErrorB("getProgId",statusRes);
     byte mainErrCode, subErrCode, okCode;
     TargetProgramDetector::__translateErrorsToDisplayErrorCode(statusRes, mainErrCode, subErrCode, okCode);
     displayError(mainErrCode, subErrCode, okCode);
@@ -238,80 +257,42 @@ void setup_prod() {
     logInfo("Success backing-up!");
     
   } else if (btn == HWInterface::BTN_VERIFY) {
+    
+  } else if (btn == HWInterface::BTN_UPLOAD) {
     char mcuModelBuf[UtilsAVR::MCU_MODEL_BUFFER_SIZE];
     char filePath[Utils::FILE_PATH_BUFFER_SIZE];
     byte signBytes[3];
     AVRProgrammer::readSignatureBytes(signBytes, statusRes);
     if (statusRes != 0) {
+      logErrorB("readSignError:", statusRes);
       // FIXME displayError! Display correct one!!!!
       displayError(0xA, 0, 0);
     }
-    byte mcuModelId = UtilsAVR::getAVRModelAndConf(signBytes, progMemPageSize, progMemPagesCount, eepromMemPageSize, eepromMemPagesCount, statusRes);
+    byte mcuModelId = UtilsAVR::getAVRModelIdBySignature(signBytes, statusRes);
     if (statusRes != 0) {
+      logErrorB("getModelIdBySign:", statusRes);
       // FIXME displayError! Display correct one!!!!
       displayError(0xA, 0, 0); return;
     }
     logInfoD("AVR MCU ModelId: ", mcuModelId);
+    if (!ConfFile::openConfFile("CONFIG.TXT")) {
+      logError("No CONFIG.TXT found!");
+    }
     boolean detected = ConfFile::getFilePathByProgIdAndMcuModel(progIdBuf, mcuModelId, mcuModelBuf, filePath, statusRes);
+    ConfFile::closeConfFile();
     if (statusRes != 0) {
+      logErrorB("getProgramFile:", statusRes);
       // FIXME displayError! Display correct one!!!!
       displayError(0xA, 0, 0); return;
     }
     if (!detected) {
+      logError("No MCU ProgramFile found!");
       displayError(0x4,0,0); return;
     }
     logInfoS("ProgramFile: ", filePath);
-    // Now run verification process
-    
-  } else if (btn == HWInterface::BTN_UPLOAD) {
+    // Now run Upload process
+    ProgramFile::uploadMcuDataFromFile(filePath, mcuModelId, statusRes);
   }
-
-#if 0
-  byte signBytes[3];
-  #if 1
-  // make sure it is ATmega328P
-  AVRProgrammer::readSignatureBytes(signBytes,statusRes);
-  if (statusRes > 0) {
-    logError("signature error!");
-    return;
-  }
-  delay(2000);
-  #endif
-
-  #if 1
-  logInfo("Uploading...");
-  ProgramFile::uploadMcuDataFromFile("TEST01", signBytes,
-          AVR_MEM_PAGES_COUNT_256, AVR_MEM_PAGE_SIZE_64, 
-          AVR_MEM_PAGES_COUNT_256, AVR_MEM_PAGE_SIZE_4, statusRes);
-  if (statusRes > 0) {
-    logError("Error uploading!");
-    return;
-  }
-  logInfo("Success uploading!");
-  delay(2000);
-  #endif
-
-  #if 1
-  // test example of programming
-  ProgramFile_Test::_testProgramming(statusRes);
-  if (statusRes > 0) { logErrorB("Failed!", statusRes); return; }
-  logInfo("Success testing!");
-  delay(2000);
-  #endif
-  
-  #if 0
-  logInfo("Reading...");
-  ProgramFile::backupMcuDataToFile("RND" + String(analogRead(pinRandomRead),HEX), 
-          AVR_MEM_PAGES_COUNT_256, AVR_MEM_PAGE_SIZE_64, 
-          AVR_MEM_PAGES_COUNT_256, AVR_MEM_PAGE_SIZE_4, statusRes);
-  if (statusRes > 0) {
-    logError("Error reading!");
-    return;
-  }
-  logInfo("Success reading!");
-  delay(2000);
-  #endif
-#endif
 
   // now shutdown Target MCU
   AVRProgrammer::shutdownTargetMcu();

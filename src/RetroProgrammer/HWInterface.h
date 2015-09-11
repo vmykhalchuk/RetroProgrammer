@@ -10,11 +10,11 @@
   #include "LoggerA.h"
   #include "AVRConstants.h"
 
-  class HWInterface_Test;
+  class HWInterface_TestStub;
 
   class HWInterface {
     public:
-    friend HWInterface_Test;
+    friend HWInterface_TestStub;
     
     static void __translateErrorsToDisplayErrorCode(byte err, byte& mainErrCode, byte& subErrCode, byte& okCode);
     
@@ -59,7 +59,7 @@
     static boolean __LED_OK;
   };
 
-  class HWInterface_Test {
+  class HWInterface_TestStub {
     public:
     static void debugWhatLedsAreOn();
   };

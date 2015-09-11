@@ -9,6 +9,7 @@
   #include "AVRProgrammer.h"
   #include "TargetProgramDetector.h"
   #include "ConfFile.h"
+  #include "ProgramFile.h"
   #include "HWInterface.h"
 
   /**
@@ -27,6 +28,8 @@
   class Tests_AVRProgrammer {
     public:
     static void testAVRSignatureRead();
+    // Carefull with this method, it will upload page to MCU!
+    static void testUploadProgramTestPage(int targetMcuModelId, int pageNo, byte* pageToUpload);
   };
 
   /**
@@ -83,5 +86,7 @@
   void __testGetAVRModelAndConf();
   void __testGetAVRModelNameById();
   void __testGetAVRModelIdByName();
+
+  void someOldTests();
 
 #endif

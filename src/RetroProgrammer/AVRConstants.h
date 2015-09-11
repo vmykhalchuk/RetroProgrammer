@@ -15,7 +15,7 @@ const byte AVR_MEM_PAGES_COUNT_128 = 7;
 const byte AVR_MEM_PAGES_COUNT_256 = 8;
 
 
-// AVR MCU Models
+// AVR MCU Model IDs
 const byte MCU_AVR_ATmega48A   = 1;
 const byte MCU_AVR_ATmega48PA  = 2;
 const byte MCU_AVR_ATmega88A   = 3;

@@ -101,7 +101,7 @@ void HWInterface::runLeds(byte times) {
 ////////////////////////////////////////////////
 ////////////////////////////////////////////////
 
-void HWInterface_Test::debugWhatLedsAreOn() {
+void HWInterface_TestStub::debugWhatLedsAreOn() {
   logDebug("debugWhatLedsAreOn");
   if (HWInterface::__LED_RDY) {
     logDebug("__LED_RDY");

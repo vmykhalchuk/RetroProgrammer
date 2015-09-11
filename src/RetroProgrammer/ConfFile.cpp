@@ -245,7 +245,7 @@ void ConfFile::readRootConfFile(const char* progId, char* mcuModel, char* filePa
       }
       logDebug("avail");
       c = readCharSafe(eol, statusRes); checkStatus();
-      logDebugB("readChar",c);
+      logDebugC("readChar",c);
       if (eol) {
         logDebug("readRootConfFile:unexp EOF");
         returnStatus(ERR(0x22)); // unexpected EOL
@@ -329,18 +329,18 @@ void ConfFile::readRootConfFile(const char* progId, char* mcuModel, char* filePa
   // Test hooks (used by Tests.h)
   ////////////////////////////////////////////////
   
-boolean ConfFile_Test::_test_confFileOpen() {
+boolean ConfFile_TestStub::_test_confFileOpen() {
   if (ConfFile::_confFile) {
     return true;
   } else {
     return false;
   }
 }
-boolean ConfFile_Test::_test_confFileAvailable() {
+boolean ConfFile_TestStub::_test_confFileAvailable() {
   return ConfFile::_confFile.available();
 }
 
-char ConfFile_Test::_test_confFileReadChar() {
+char ConfFile_TestStub::_test_confFileReadChar() {
   return ConfFile::_confFile.read();
 }
 

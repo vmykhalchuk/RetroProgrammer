@@ -134,6 +134,45 @@ void Tests_AVRProgrammer::testAVRSignatureRead() {
   AVRProgrammer::shutdownTargetMcu();
 }
 
+void Tests_AVRProgrammer::testUploadProgramTestPage(int targetMcuModelId, int pageNo, byte* pageToUpload) {
+  byte statusRes;
+  AVRProgrammer::startupTargetMcuProgramming(statusRes);// Prepare Target MCU for Programming
+  if (statusRes != 0) {
+    logErrorB("ProgEn failed!", statusRes);
+    AVRProgrammer::shutdownTargetMcu();
+    goto _shutdown;
+  } else {
+    logInfo("Started prog!");
+  }
+  byte signBytes[3];
+  byte modelId;
+  // make sure it is ATmega328P
+  AVRProgrammer::readSignatureBytes(signBytes,statusRes);
+  if (statusRes != 0) {
+    logErrorB("signature error!", statusRes);
+    goto _shutdown;
+  }
+  modelId = UtilsAVR::getAVRModelIdBySignature(signBytes, statusRes);
+  if (statusRes != 0) {
+    logErrorB("mcuModelIdErr:", statusRes);
+    goto _shutdown;
+  }
+  if (targetMcuModelId != modelId) {
+    logErrorD("wrong mcu:", modelId);
+    goto _shutdown;
+  }
+
+  AVRProgrammer::loadAndWriteProgramMemoryPage(pageToUpload, pageNo, modelId, statusRes);
+  if (statusRes != 0) {
+    logErrorB("programming failed:", statusRes);
+    goto _shutdown;
+  }
+
+  logInfo("success!");
+  
+  _shutdown: AVRProgrammer::shutdownTargetMcu();
+}
+
 /////////////////////////////////////////////
 /////////////////////////////////////////////
 /////////////////////////////////////////////
@@ -231,40 +270,40 @@ void Tests_ConfFile::testSkipToValidData() {
   }
 
   // Skip to row#5, to R1_E token
-  av = ConfFile_Test::skipToValidData(statusRes);
+  av = ConfFile_TestStub::skipToValidData(statusRes);
   assertOKOrGoto(av, "#0", av, _close);
   assertStatusOKOrGoto(statusRes, "#1", _close);
-  assertOKOrGoto(ConfFile_Test::_test_confFileOpen(), "#2", 0, _close);
-  assertOKOrGoto(ConfFile_Test::_test_confFileAvailable(), "#3", 0, _close);
+  assertOKOrGoto(ConfFile_TestStub::_test_confFileOpen(), "#2", 0, _close);
+  assertOKOrGoto(ConfFile_TestStub::_test_confFileAvailable(), "#3", 0, _close);
   // now read "R1_E"
-  c = ConfFile_Test::_test_confFileReadChar(); // R
+  c = ConfFile_TestStub::_test_confFileReadChar(); // R
   assertStatusOKOrGoto(statusRes, "#4", _close);
   assertOKOrGoto(c == 'R', "#5", c, _close);
-  c = ConfFile_Test::_test_confFileReadChar(); // 1
+  c = ConfFile_TestStub::_test_confFileReadChar(); // 1
   assertStatusOKOrGoto(statusRes, "#6", _close);
-  c = ConfFile_Test::_test_confFileReadChar(); // _
+  c = ConfFile_TestStub::_test_confFileReadChar(); // _
   assertStatusOKOrGoto(statusRes, "#7", _close);
-  c = ConfFile_Test::_test_confFileReadChar(); // E
+  c = ConfFile_TestStub::_test_confFileReadChar(); // E
   assertStatusOKOrGoto(statusRes, "#8", _close);
   assertOKOrGoto(c == 'E', "#9", c, _close);
 
   // Skip to AVR@002
-  ConfFile_Test::skipToValidData(statusRes);
+  ConfFile_TestStub::skipToValidData(statusRes);
   assertStatusOKOrGoto(statusRes, "#10", _close);
   // now read "AVR@002 "
-  c = ConfFile_Test::_test_confFileReadChar(); // R
+  c = ConfFile_TestStub::_test_confFileReadChar(); // R
   assertStatusOKOrGoto(statusRes, "#11", _close);
   assertOKOrGoto(c == 'A', "#12", c, _close);
   for (byte i = 0; i < 6; i++) {
-    c = ConfFile_Test::_test_confFileReadChar(); // [VR@002]
+    c = ConfFile_TestStub::_test_confFileReadChar(); // [VR@002]
     assertStatusOKOrGoto(statusRes, "#13", _close);
   }
-  c = ConfFile_Test::_test_confFileReadChar(); // ' '
+  c = ConfFile_TestStub::_test_confFileReadChar(); // ' '
   assertStatusOKOrGoto(statusRes, "#14", _close);
   assertOKOrGoto(c == ' ', "#15", c, _close);
   
   // Skip to HJKHJH
-  ConfFile_Test::skipToValidData(statusRes);
+  ConfFile_TestStub::skipToValidData(statusRes);
   assertStatusOKOrGoto(statusRes, "#16", _close);
 
   _close:
@@ -638,5 +677,41 @@ void __testGetAVRModelIdByName() {
     logErrorD("#avrm_id4:", res);
   }
   logInfo("- END");
+}
+
+
+void someOldTests() {
+  byte statusRes;
+  byte signBytes[3];
+  #if 1
+  // make sure it is ATmega328P
+  AVRProgrammer::readSignatureBytes(signBytes,statusRes);
+  if (statusRes > 0) {
+    logError("signature error!");
+    return;
+  }
+  delay(2000);
+  #endif
+
+  #if 1
+  // test example of programming
+  ProgramFile_TestStub::_testProgramming(statusRes);
+  if (statusRes > 0) { logErrorB("Failed!", statusRes); return; }
+  logInfo("Success testing!");
+  delay(2000);
+  #endif
+  
+  #if 0
+  logInfo("Reading...");
+  ProgramFile::backupMcuDataToFile("RND" + String(analogRead(pinRandomRead),HEX), 
+          AVR_MEM_PAGES_COUNT_256, AVR_MEM_PAGE_SIZE_64, 
+          AVR_MEM_PAGES_COUNT_256, AVR_MEM_PAGE_SIZE_4, statusRes);
+  if (statusRes > 0) {
+    logError("Error reading!");
+    return;
+  }
+  logInfo("Success reading!");
+  delay(2000);
+  #endif
 }
 

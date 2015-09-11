@@ -19,12 +19,12 @@
   #include <SPI.h>
   #include <SD.h>
 
-class ConfFile_Test;
+class ConfFile_TestStub;
 
 class ConfFile {
 
   public:
-  friend ConfFile_Test;
+  friend ConfFile_TestStub;
   static void __translateErrorsToDisplayErrorCode(byte err, byte& mainErrCode, byte& subErrCode, byte& okCode);
   
   ////////////////////////////////////////////////
@@ -95,7 +95,7 @@ class ConfFile {
   
 };
 
-class ConfFile_Test {
+class ConfFile_TestStub {
   public:
   ////////////////////////////////////////////////
   // Test hooks (used by Tests.h)

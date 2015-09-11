@@ -2,6 +2,9 @@
 # PROG_ID	MCU_MODEL	FILE_PATH
 # -------   	---------	---------
 
+MN_A1C3		AVR[1E950F]	MYTEST01.HRP
+
+
 # Bootloaders for easy programming
 MN_A1C3		AVR@001		BOOTLOAD.ERS/AVR_001.HRP
 MN_A1C3		AVR@002		BOOTLOAD.ERS/AVR_002.HRP

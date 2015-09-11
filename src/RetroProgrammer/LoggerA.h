@@ -18,7 +18,7 @@
 #define LoggerA_h
 
 
-  #define LOGGER_LEVEL 4
+  #define LOGGER_LEVEL 3
 
   #include <Arduino.h>
 
@@ -57,6 +57,7 @@
   
   #define logDebug(str) ;
   #define logDebugB(str,b) ;
+  #define logDebugC(str,c) ;
   #define logDebugD(str,d) ;
   #define logDebugS(str,s) ;
   #define logInfo(str) ;
@@ -79,6 +80,7 @@
 
   #define _logAbstract(type, str)     { Serial.print(LOGGER_F(type)); delayLog(); Serial.println(LOGGER_F(str)); delayLog(); }
   #define _logAbstractB(type, str, b) { Serial.print(LOGGER_F(type)); delayLog(); Serial.print(LOGGER_F(str)); delayLog(); Serial.print(LOGGER_F("0x")); delayLog(); Serial.println(b, HEX); delayLog(); }
+  #define _logAbstractC(type, str, c) { Serial.print(LOGGER_F(type)); delayLog(); Serial.print(LOGGER_F(str)); delayLog(); Serial.println((char)c); delayLog(); }
   #define _logAbstractD(type, str, d) { Serial.print(LOGGER_F(type)); delayLog(); Serial.print(LOGGER_F(str)); delayLog(); Serial.println(d, DEC); delayLog(); }
   #define _logAbstractS(type, str, s) { Serial.print(LOGGER_F(type)); delayLog(); Serial.print(LOGGER_F(str)); delayLog(); Serial.println(s); delayLog(); }
 
@@ -104,6 +106,7 @@
   #if LOGGER_LEVEL >= 4
     #define logDebug(str)     _logAbstract("D: ", str);
     #define logDebugB(str,b)  _logAbstractB("D: ", str, b);
+    #define logDebugC(str,c)  _logAbstractC("D: ", str, c);
     #define logDebugD(str,d)  _logAbstractD("D: ", str, d);
     #define logDebugS(str,s)  _logAbstractS("D: ", str, s);
   #endif

@@ -89,7 +89,7 @@ void TargetProgramDetector::getProgId(char* progId, boolean& autoSelected, byte&
     if (id[1] != 127) {
       progId[1] = '1';
     } else {
-      progId[1] = '2';
+      progId[1] = '3';
       progIdLength += 2;
       progId[4] = '1' + id[1];
       progId[5] = '1' + id[2];
@@ -127,7 +127,7 @@ void TargetProgramDetector::readTargetMcuId(byte* data, byte& idType, byte& stat
     data[0] = readResistiveDividerValue(_pinW0, statusRes);
     checkOverrideStatus(ERR(0x6A));
     if (data[0] == 127) {
-      returnStatus(ERR(0x60)); // failure reading TargetID - _pinW0 wrong value
+      returnStatus(ERR(0x69)); // failure reading TargetID - _pinW0 wrong value
     }
     data[1] = readResistiveDividerValue(_pinW1, statusRes);
     checkOverrideStatus(ERR(0x6B));

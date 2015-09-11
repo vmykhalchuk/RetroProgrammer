@@ -44,7 +44,7 @@
        *  Returns:
        *  ID_HHHHHHHHHHHH - 6 bytes of ID
        *  R1_T            - Resistive ID v1 (only pin W0 active) (e.g. R1_H1, R1_H2, R1_H1
-       *  R2_TUV          - Resistive ID v2 (all pin W0-W2 active)
+       *  R3_TUV          - Resistive ID v3 (all pin W0-W2 active)
        *  MN_MNOP         - Manual Program selected (e.g. A1C3, B2D4, etc)
        *
        *                         Where:

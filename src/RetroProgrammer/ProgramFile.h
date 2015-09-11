@@ -16,12 +16,12 @@
   #include <SPI.h>
   #include <SD.h>
 
-  class ProgramFile_Test;
+  class ProgramFile_TestStub;
 
   class ProgramFile {
     public:
 
-      friend ProgramFile_Test;
+      friend ProgramFile_TestStub;
 
       static void __translateErrorsToDisplayErrorCode(byte err, byte& mainErrCode, byte& subErrCode, byte& okCode);
 
@@ -31,10 +31,10 @@
        */
       static void backupMcuData(String filePref, const char* programId, byte& statusRes);
   
-      static void uploadMcuDataFromFile(String fileName, byte* targetMcuSign, byte progMemPagesCount, byte progMemPageSize,
-                        byte eepromMemPagesCount, byte eepromMemPageSize, byte& statusRes);
+      /*static void uploadMcuDataFromFile(String fileName, byte* targetMcuSign, byte progMemPagesCount, byte progMemPageSize,
+                        byte eepromMemPagesCount, byte eepromMemPageSize, byte& statusRes);*/
   
-      static void uploadMcuDataFromFile(String fileName, byte targetMcuModel, byte& statusRes);
+      static void uploadMcuDataFromFile(String fileName, byte targetMcuModelId, byte& statusRes);
 
     private:  // Constants For parsing the file
       static const byte LINE_TYPE_COMMENT = 0x01; // Comment
@@ -64,18 +64,16 @@
       static File backupFile;
       static void findAndOpenNextFileBackupFile(String filePref, byte& statusRes);
 
-      static void uploadMcuDataFromFile_internal(boolean progMode, String fileName, byte targetMcuModel, byte& statusRes);
-      static void uploadMcuDataFromFile_internal(boolean progMode, String fileName, byte* targetMcuSign,
+      static void uploadMcuDataFromFile_internal(boolean progMode, String fileName, byte targetMcuModelId, byte& statusRes);
+      static void uploadMcuDataFromFile_internal(boolean progMode, String fileName, byte targetMcuModelId, byte* targetMcuSign,
                               byte progMemPagesCount, byte progMemPageSize,
                               byte eepromMemPagesCount, byte eepromMemPageSize, byte& statusRes);
       static void readLine(File& f, byte& lineType, byte* buffer, int& resSize, int& pageNo, byte& statusRes);
-      static void uploadProgramMemoryPage(byte* buf, int pageNo, 
-                              byte progMemPagesCount, byte progMemPageSize, byte& statusRes);
       
   };
 
 
-  class ProgramFile_Test {
+  class ProgramFile_TestStub {
     public:
       static void _testProgramming(byte& statusRes);
   };
