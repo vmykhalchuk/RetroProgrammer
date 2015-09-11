@@ -1,4 +1,4 @@
-Ever wondered what happens when my DIY MCU based device:
+### Ever wondered what happens when my DIY MCU based device:
 * after a years of fruitfull work, something bad happens to MCU?
 * or this device gets into hands of other DIY electrician for repairing?
 - How then shell I find the binary of firmware used in this particular device?
@@ -85,6 +85,7 @@ As a solution, I have designed and developed this Handheld programmer shield for
 ## To be implemented
 * Add autocalibration routine to calibrate position of DIP switches
  * add same for LEDs and buttons (in case position of buttons was changed)
+* Refactor to support Intel HEX files: https://en.wikipedia.org/wiki/Intel_HEX
 * CRC every HRP file before programming/verifying it!
  * CRC every conf file
 * Auto detection of programming speed
@@ -118,6 +119,13 @@ As a solution, I have designed and developed this Handheld programmer shield for
  * pin A4 must be swapped with A6 (Arduino Micro has no A6 nor A7, so we will have limited Manual programs selection)
 
 ## Board improvements / fixes
+* Redesign Controls circuits:
+  * Put leds on digital pins instead of analogue
+  * Put all buttons on single analogue pin
+  * this way we still will use three ports, however:
+    # there will be no artifact when led slightly lights when button pressed
+    # it will be possible to maintain group of leds ON by using PWM, the brightness will stay same
+    # or it will be possible to maintain single led on, however it will light brighter
 * Swap UPLOAD <=> BACKUP!!!! This is critical, when ERR led is lit - it reads as UPLOAD button is pressed!
   * Check what happens if other combination of LEDs is lit, which button is then assumed as pressed!
 * Add jumper to block Manual program selector - when blocked - only Auto TID is expected to work, otherwise failure!
