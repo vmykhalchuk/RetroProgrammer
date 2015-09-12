@@ -15031,15 +15031,17 @@
 <text x="5.3594" y="4.9784" size="0.6096" layer="25" font="vector" ratio="16" distance="20" rot="SR270">D12</text>
 <text x="5.3848" y="40.386" size="0.6096" layer="25" font="vector" ratio="16" distance="20" rot="SR270">TX1</text>
 <text x="13.208" y="28.7274" size="0.6096" layer="25" font="vector" ratio="16" distance="20">v0.2</text>
-<text x="8.6868" y="21.463" size="1.778" layer="26" rot="MR0">1</text>
-<text x="11.303" y="21.5392" size="1.778" layer="26" rot="MR0">2</text>
-<text x="6.9088" y="16.51" size="1.778" layer="26" rot="MR0">3</text>
-<text x="6.9596" y="14.0208" size="1.778" layer="26" rot="MR0">5</text>
-<text x="14.7066" y="11.4808" size="1.27" layer="26" rot="MR0">T2</text>
-<text x="13.5382" y="14.3764" size="1.778" layer="26" rot="MR0">6</text>
-<text x="14.605" y="8.9916" size="1.27" layer="26" rot="MR0">T4</text>
-<text x="6.8326" y="8.7376" size="1.27" layer="26" rot="MR0">T3</text>
-<text x="6.7056" y="10.9982" size="1.27" layer="26" rot="MR0">T1</text>
+<text x="8.9662" y="22.4028" size="1.778" layer="26" rot="MR0">1</text>
+<text x="11.7094" y="22.3774" size="1.778" layer="26" rot="MR0">2</text>
+<text x="6.5024" y="16.5608" size="1.778" layer="26" rot="MR0">3</text>
+<text x="6.5278" y="13.97" size="1.778" layer="26" rot="MR0">5</text>
+<text x="12.9794" y="12.7254" size="1.27" layer="26" rot="MR180">W0</text>
+<text x="14.7828" y="13.8938" size="1.778" layer="26" rot="MR0">6</text>
+<text x="15.5956" y="8.8392" size="1.27" layer="26" rot="MR0">W2</text>
+<text x="6.4516" y="11.1252" size="1.27" layer="26" rot="MR270">W1</text>
+<wire x1="13.2842" y1="14.8336" x2="11.8872" y2="14.8336" width="0.15" layer="26"/>
+<wire x1="8.2042" y1="22.1996" x2="8.2296" y2="20.7772" width="0.15" layer="26"/>
+<wire x1="10.9728" y1="22.1234" x2="10.922" y2="20.6756" width="0.15" layer="26"/>
 </plain>
 <libraries>
 <library name="rcl">
