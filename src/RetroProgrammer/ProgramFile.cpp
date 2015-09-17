@@ -360,7 +360,7 @@ void ProgramFile::uploadMcuDataFromFile_internal(boolean progMode, String fileNa
       if (!isSignValid) { logDebug("!isSignValid_1"); returnStatus(ERR(0x54)); }
       if (progMode && (pageNo < 5)) {//FIXME something wrong here, it must work for all pages
         logInfoD("PRM Page!",pageNo);
-        AVRProgrammer::loadAndWriteProgramMemoryPage(buf, pageNo, targetMcuModelId, statusRes);
+        AVRProgrammer::loadAndWriteProgramMemoryPage(buf, resSize, pageNo, targetMcuModelId, statusRes);
         checkStatus();
       }
     } else if (lineType == LINE_TYPE_ERM) {

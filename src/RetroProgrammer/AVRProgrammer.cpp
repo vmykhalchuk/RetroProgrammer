@@ -168,11 +168,13 @@ void AVRProgrammer::readProgramMemoryPage(byte* pageBuffer, byte pageNumber, byt
   byte addrHigh = pageNumber >> (8 - pageSize);
   byte addrLowPage = pageNumber << pageSize;
   byte maxPageAddr = 1 << pageSize;
-  for (byte i = 0; i < maxPageAddr; i++) {
+  for (int i = 0; i < maxPageAddr; i++) {
     byte addrLow = addrLowPage | i;
-    pageBuffer[i * 2] = readProgramMemoryByte(true, addrHigh, addrLow, statusRes);
+    logDebugB("addrHigh:", addrHigh);
+    logDebugB("addrLow:", addrLow);
+    pageBuffer[i * 2] = readProgramMemoryByte(false, addrHigh, addrLow, statusRes);
     checkStatus();
-    pageBuffer[i * 2 + 1] = readProgramMemoryByte(false, addrHigh, addrLow, statusRes);
+    pageBuffer[i * 2 + 1] = readProgramMemoryByte(true, addrHigh, addrLow, statusRes);
     checkStatus();
   }
 }
@@ -185,7 +187,7 @@ void AVRProgrammer::readEepromMemoryPage(byte* pageBuffer, byte pageNumber, byte
   byte addrHigh = pageNumber >> (8 - pageSize);
   byte addrLowPage = pageNumber << pageSize;
   byte maxPageAddr = 1 << pageSize;
-  for (byte i = 0; i < maxPageAddr; i++) {
+  for (int i = 0; i < maxPageAddr; i++) {
     byte addrLow = addrLowPage | i;
     pageBuffer[i] = readEepromMemoryByte(addrHigh, addrLow, statusRes);
     checkStatus();
@@ -235,7 +237,7 @@ byte AVRProgrammer::sendReadByte(byte byteToSend) {
   return resByte;
 }
 
-void AVRProgrammer::loadAndWriteProgramMemoryPage(byte* buf, int pageNo, byte mcuModelId, byte& statusRes) {
+void AVRProgrammer::loadAndWriteProgramMemoryPage(byte* buf, int bufSize, int pageNo, byte mcuModelId, byte& statusRes) {
   if (pageNo < 0) {
     logErrorD("wrongPageNo:", pageNo);
     returnStatus(ERR(0x10));
@@ -244,32 +246,40 @@ void AVRProgrammer::loadAndWriteProgramMemoryPage(byte* buf, int pageNo, byte mc
     logErrorD("wrongMcuModelId:", mcuModelId);
     returnStatus(ERR(0x10));
   }
+
   byte progMemPageSize   = MCU_AVR_DATA[mcuModelId-1][0];
   byte progMemPagesCount = MCU_AVR_DATA[mcuModelId-1][1];
   byte expectedBufSize = (1 << (progMemPageSize + 1));
-  if (sizeof(buf) != expectedBufSize) {
-    logErrorD("!bufSize:", sizeof(buf));
+  if (bufSize != expectedBufSize) {
+    logErrorD("!bufSize:", bufSize);
     logInfoD("expected:", expectedBufSize);
     returnStatus(ERR(0x10));
   }
+
+  /* (should only run when Full erase was performed before!)
+  // Check is all FF, then no need to program this buffer
+  boolean allFF = true;
+  for (int i = 0; i < expectedBufSize; i++) {
+    if (buf[i] != 0xFF) { allFF = false; break; }
+  }
+  if (allFF) return; // nothing to programm, all FF
+  */
   
   int addr = pageNo << progMemPageSize;
   byte addrMsb = addr >> 8;
   byte addrLsb = addr & 0xFF;
-  
-  boolean allFF = true;
-  for (byte i = 0; i < expectedBufSize; i++) {
-    if (buf[i] != 0xFF) { allFF = false; break; }
-  }
-  if (allFF) return; // nothing to programm, all FF
+  //logDebugD("addr:",addr);
+  //logDebugD("addrMsb:",addrMsb);
+  //logDebugD("addrLsb:",addrLsb);
   
   // load into buffer
   waitForTargetMCU(statusRes); checkStatus();
-  for (byte i = 0; i < (1 << progMemPageSize); i++) {
-  //for (byte i = (1 << progMemPageSize) - 1; i >= 0; i--) {
-    //logDebug("i="+String(i)+":"+String(buf[i * 2],HEX)+":"+String(buf[i * 2 + 1],HEX));
-    loadProgramMemoryPageByte(true, i, buf[i * 2], statusRes); checkStatus();
-    loadProgramMemoryPageByte(false, i, buf[i * 2 + 1], statusRes); checkStatus();
+  for (int i = 0; i < (1 << progMemPageSize); i++) {
+    byte addrLow = addrLsb | i;
+    //logDebugB("i:", i);
+    //logDebugB("addrLow:", addrLow);
+    loadProgramMemoryPageByte(false, i, buf[i * 2], statusRes); checkStatus();
+    loadProgramMemoryPageByte(true, i, buf[i * 2 + 1], statusRes); checkStatus();
   }
   // programm
   writeProgramMemoryPage(addrMsb, addrLsb, statusRes); checkStatus();

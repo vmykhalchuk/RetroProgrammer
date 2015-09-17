@@ -29,7 +29,7 @@
     public:
     static void testAVRSignatureRead();
     // Carefull with this method, it will upload page to MCU!
-    static void testUploadProgramTestPage(int targetMcuModelId, int pageNo, byte* pageToUpload);
+    static void testUploadProgramTestPage(int targetMcuModelId, int pageNo, byte* pageToUpload, int pageSize);
   };
 
   /**

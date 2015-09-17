@@ -134,7 +134,7 @@ void Tests_AVRProgrammer::testAVRSignatureRead() {
   AVRProgrammer::shutdownTargetMcu();
 }
 
-void Tests_AVRProgrammer::testUploadProgramTestPage(int targetMcuModelId, int pageNo, byte* pageToUpload) {
+void Tests_AVRProgrammer::testUploadProgramTestPage(int targetMcuModelId, int pageNo, byte* pageToUpload, int pageSize) {
   byte statusRes;
   AVRProgrammer::startupTargetMcuProgramming(statusRes);// Prepare Target MCU for Programming
   if (statusRes != 0) {
@@ -162,7 +162,13 @@ void Tests_AVRProgrammer::testUploadProgramTestPage(int targetMcuModelId, int pa
     goto _shutdown;
   }
 
-  AVRProgrammer::loadAndWriteProgramMemoryPage(pageToUpload, pageNo, modelId, statusRes);
+  AVRProgrammer::chipErase(statusRes);
+  if (statusRes != 0) {
+    logErrorB("chipErase:", statusRes);
+    goto _shutdown;
+  }
+
+  AVRProgrammer::loadAndWriteProgramMemoryPage(pageToUpload, pageSize, pageNo, modelId, statusRes);
   if (statusRes != 0) {
     logErrorB("programming failed:", statusRes);
     goto _shutdown;

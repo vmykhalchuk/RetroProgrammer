@@ -27,6 +27,10 @@
     
     static void startupTargetMcuProgramming(byte& statusRes);
     static void shutdownTargetMcu();
+    /**
+     * Chip Erase (Program Memory / EEPROM)
+     */
+    inline static void chipErase(byte& statusRes) { issueByteReadCmd2(0xAC,0x80,statusRes); }
     static boolean isTargetMcuBusy(byte& statusRes);
     static void waitForTargetMCU(byte& statusRes);
 
@@ -46,7 +50,7 @@
     //boolean loadProgramMemoryPageWord(byte adrLSB, int w);
     inline static void loadProgramMemoryPageByte(byte highB, byte addrLsb, byte b, byte& statusRes) { issueByteWriteCmd((highB ? 0x48 : 0x40), 0x00, addrLsb, b, statusRes); }
     inline static void writeProgramMemoryPage(byte addrMsb, byte addrLsb, byte& statusRes) { issueByteWriteCmd(0x4C, addrMsb, addrLsb, 0x00, statusRes); }
-    static void loadAndWriteProgramMemoryPage(byte* buf, int pageNo, byte mcuModelId, byte& statusRes);
+    static void loadAndWriteProgramMemoryPage(byte* buf, int bufSize, int pageNo, byte mcuModelId, byte& statusRes);
     
     /**
       addr - 0..3
