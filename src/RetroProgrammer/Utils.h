@@ -116,6 +116,15 @@ class UtilsSD {
   // remember to check isEOL before statusRes!!! When EOL, statusRes is also an error!
   static byte readHexByteOrEOL(File& f, boolean& isEOL, byte& statusRes);
   static boolean readChar(File& f, byte& c);
+
+  static byte IS_CHAR;
+  static byte IS_F_EOL;
+  static byte IS_F_EOF;
+  /**
+   * eolOrEof - IS_CHAR or IS_F_EOL or IS_F_EOF
+   */
+  static void readCharOrEolOrEof(File& f, byte& c, byte& eolOrEof, byte& statusRes);
+
   static int readToTheEOL(File& f, byte& statusRes);
   
 };

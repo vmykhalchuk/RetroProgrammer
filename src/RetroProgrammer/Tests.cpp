@@ -364,6 +364,77 @@ void Tests_ConfFile::testReadRootConfFile() {
 /////////////////////////////////////////////
 /////////////////////////////////////////////
 /////////////////////////////////////////////
+///    HEX FILE
+///    HEX FILE
+///    HEX FILE
+///    HEX FILE
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+
+void Tests_HEXFile::testHEXFile05() {
+  logInfo(">> HEXFile");
+  byte statusRes = 0;
+  unsigned int testMatrix[][3] = {
+   // expect|
+   // length|addr|data[resSize - 2] (before last byte in data)
+     {16,    256, 0x19},
+     {16,    272, 0x01},
+     {16,   3872, 0xB2},
+     { 2,  29072, 0xEF},
+     {14, 0x7232, 0x34}
+  };
+  logFreeRam();
+
+  File hexF;
+  HEXFile::openFile(hexF, "TEST-05.HEX", FILE_READ, statusRes);
+  if (statusRes != 0) {
+  	logErrorB("testHex_open:", statusRes);
+  }
+  byte data[16];
+  byte lineType, resSize;
+  unsigned int address;
+  for (byte i = 0; i < (sizeof(testMatrix) / 6); i++) {
+    logDebugD("readL:",i);
+    HEXFile::readLine(hexF, lineType, data, 16, resSize, address, statusRes);
+    if (statusRes != 0) {
+      logErrorB("err:", statusRes);
+    }
+    if (resSize != testMatrix[i][0]) {
+      logErrorD("resSize:",resSize);
+    }
+    if (lineType != HEXFile::LINE_TYPE_DATA) {
+      logErrorD("type:",lineType);
+    }
+    if (address != testMatrix[i][1]) {
+      logErrorD("address:",address);
+    }
+    if (data[resSize - 2] != testMatrix[i][2]) {
+      logErrorD("data:",data[resSize - 2]);
+    }
+  }
+
+  logDebug("read EOF line");
+  HEXFile::readLine(hexF, lineType, data, 16, resSize, address, statusRes);
+  if (statusRes != 0) {
+  	logErrorB("err:", statusRes);
+  }
+  if (lineType != HEXFile::LINE_TYPE_EOF) {
+    logErrorD("type:",lineType);
+  }
+
+  logInfo("-- END");
+  return;
+}
+
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
 ///    HWInterface
 ///    HWInterface
 ///    HWInterface

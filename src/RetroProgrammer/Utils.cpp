@@ -11,8 +11,9 @@
 // 0x87 - AVR model name is wrong - signBytes[1] data wrong (AVR[hhzzhh] zz is wrong)
 // 0x88 - AVR model name is wrong - signBytes[2] data wrong (AVR[hhhhzz] zz is wrong)
 // 0x89 - SD file read - 3digit read failed
-// 0x8A - SD file read - hed byte(s) read failure
+// 0x8A - SD file read - hex byte(s) read failure
 // 0x8B - SD file read - failure reading to EOL
+// 0x8C - SD file read - corrupted EOL
 
 void Utils::__translateErrorsToDisplayErrorCode(byte err, byte& mainErrCode, byte& subErrCode, byte& okCode) {
   mainErrCode = 0;
@@ -20,7 +21,7 @@ void Utils::__translateErrorsToDisplayErrorCode(byte err, byte& mainErrCode, byt
   okCode = 0;
   if (err >= 0x80 && err <= 0x88) {
     mainErrCode = 0xA; subErrCode = 0x4;
-  } else if (err >= 0x89 && err <= 0x8B) {
+  } else if (err >= 0x89 && err <= 0x8C) {
     mainErrCode = 0x2; subErrCode = 0xA;
   } else {
     mainErrCode = 0xA; subErrCode = 0x0;
@@ -318,6 +319,7 @@ byte UtilsSD::readHexByteOrEOL(File& f, boolean& isEOL, byte& statusRes) {
 }
 
 boolean UtilsSD::readChar(File& f, byte& c) {
+  // FIXME refactor - to take statusRes and return void!
   if (f.available()) {
     c = f.read();
     return true;
@@ -326,6 +328,37 @@ boolean UtilsSD::readChar(File& f, byte& c) {
   }
 }
 
+byte UtilsSD::IS_CHAR = 0;
+byte UtilsSD::IS_F_EOL = 1;
+byte UtilsSD::IS_F_EOF = 2;
+void UtilsSD::readCharOrEolOrEof(File& f, byte& c, byte& eolOrEof, byte& statusRes) {
+  eolOrEof = IS_CHAR;
+  statusRes = 0;
+  if (!f.available()) {
+    eolOrEof = IS_F_EOF;
+    returnStatusOK();
+  }
+  c = f.read();
+  if (c == 0x0A) {
+    eolOrEof = IS_F_EOL;
+    returnStatusOK();
+  }
+  if (c == 0x0D) {
+    if (!f.available()) {
+      logDebug("no 0A!");
+      returnStatus(ERR(0x8C));
+    }
+    c = f.read();
+    if (c != 0x0A) {
+      logDebugB("not 0A:",c); returnStatus(ERR(0x8C));
+    }
+    eolOrEof = IS_F_EOL;
+    returnStatusOK();
+  }
+  returnStatusOK();
+}
+
+// it expects that some characters left before the EOL!!!
 int UtilsSD::readToTheEOL(File& f, byte& statusRes) {
   int readChars = 0;
   while (f.available()) {

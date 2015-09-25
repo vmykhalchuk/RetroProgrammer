@@ -4,6 +4,7 @@
 #include "AVRConstants.h"
 #include "AVRProgrammer.h"
 #include "ConfFile.h"
+#include "HEXFile.h"
 #include "ProgramFile.h"
 #include "TargetProgramDetector.h"
 #include "HWInterface.h"
@@ -60,7 +61,7 @@ void setup_test() {//Used for testing
     Tests_AVRProgrammer::testAVRSignatureRead();
   #endif
 
-  #if 1 // Test programming second page of 1blink
+  #if 0 // Test programming second page of 1blink
                            // Word N Byte Hight | Low:
                            //  W0H   W0L   W1H   W1L   W2H   W2L   W3H   W3L   W4H   W4L   W5H   W5L   W6H   W6L   W7H   W7L
     byte pageToUpload[128] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 
@@ -72,6 +73,10 @@ void setup_test() {//Used for testing
                               0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F,
                               0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D, 0x3E, 0x3F};
     Tests_AVRProgrammer::testUploadProgramTestPage(MCU_AVR_ATmega328P, 2, pageToUpload, sizeof(pageToUpload));
+  #endif
+
+  #if 1 // Test reading Intel HEX file
+    Tests_HEXFile::testHEXFile05();
   #endif
   
   #if 0

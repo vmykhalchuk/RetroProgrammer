@@ -18,7 +18,7 @@
 #define LoggerA_h
 
 
-  #define LOGGER_LEVEL 3
+  #define LOGGER_LEVEL 4
 
   #include <Arduino.h>
 
@@ -54,7 +54,8 @@
 
   //////////////////////////////////
   // Define stubs (empty methods)
-  
+
+  // FIXME logXxxxB => logXxxxH
   #define logDebug(str) ;
   #define logDebugB(str,b) ;
   #define logDebugC(str,c) ;

@@ -9,6 +9,7 @@
   #include "AVRProgrammer.h"
   #include "TargetProgramDetector.h"
   #include "ConfFile.h"
+  #include "HEXFile.h"
   #include "ProgramFile.h"
   #include "HWInterface.h"
 
@@ -48,6 +49,14 @@
       static void testReadRootConfFile();
       // doesn't support strings longer then 125 characters!
       //static boolean _testStringMatches(const char* str1, const char* str2, boolean debugMode);
+  };
+
+  /**
+   * Same requirements as for Tests_ConfFile
+   */
+  class Tests_HEXFile {
+    public:
+      static void testHEXFile05();
   };
 
   /**

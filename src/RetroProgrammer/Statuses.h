@@ -12,5 +12,7 @@
   #define checkOverrideStatusV(err, v) if (statusRes != 0) { logDebugB("@pr@",statusRes); statusRes = err; return v; }
   #define returnStatus(err) { statusRes = err; return; }
   #define returnStatusV(err, v) { statusRes = err; return v; }
+  #define returnStatusOK() { statusRes = 0; return; }
+  #define returnStatusOKV(v) { statusRes = 0; return v; }
 
 #endif

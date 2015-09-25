@@ -59,7 +59,7 @@
       static const byte line_types[11][4];
       static byte programBuffer[];
 
-      static void __openFile(File& f, String fileName, int mode, byte& statusRes);
+      //static void __openFile(File& f, String fileName, int mode, byte& statusRes);
       static void openFile2(File& f, String fileName, int mode, byte& statusRes);
       static File backupFile;
       static void findAndOpenNextFileBackupFile(String filePref, byte& statusRes);
