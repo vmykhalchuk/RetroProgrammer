@@ -86,6 +86,8 @@ As a solution, I have designed and developed this Handheld programmer shield for
 * Add autocalibration routine to calibrate position of DIP switches
  * add same for LEDs and buttons (in case position of buttons was changed)
 * Refactor to support Intel HEX files: https://en.wikipedia.org/wiki/Intel_HEX
+* Implement preserving of EEPROM memory when requested in HRP file (otherwise it is erased together with Program memory)
+* Implement support of Arduino Bootloader (to avoid erasing whole device)
 * CRC every HRP file before programming/verifying it!
  * CRC every conf file
 * Auto detection of programming speed
@@ -119,6 +121,7 @@ As a solution, I have designed and developed this Handheld programmer shield for
  * pin A4 must be swapped with A6 (Arduino Micro has no A6 nor A7, so we will have limited Manual programs selection)
 
 ## Board improvements / fixes
+* Add Atmega directly instead of Arduino Board
 * Redesign Controls circuits:
   * Put leds on digital pins instead of analogue
   * Put all buttons on single analogue pin
