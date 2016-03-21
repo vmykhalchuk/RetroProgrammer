@@ -162,11 +162,13 @@ void Tests_AVRProgrammer::testUploadProgramTestPage(int targetMcuModelId, int pa
     goto _shutdown;
   }
 
+  /*
+  logWarn("Erasing chip!");
   AVRProgrammer::chipErase(statusRes);
   if (statusRes != 0) {
     logErrorB("chipErase:", statusRes);
     goto _shutdown;
-  }
+  }*/
 
   AVRProgrammer::loadAndWriteProgramMemoryPage(pageToUpload, pageSize, pageNo, modelId, statusRes);
   if (statusRes != 0) {

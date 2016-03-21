@@ -35,7 +35,7 @@
       // LL - Length of Data
       // AAAA - Address
       // TT - Line Type (0x00 - Data; 0x01 - End Of File; ...)
-      // NOTE: buffer must be around 16 bytes for average Intel HEX file, however could be up to 255. bufSize should be provided to tell what maximum line length could be used!
+      // NOTE: buffer must be around 16 bytes for average Intel HEX file, however could be up to 255. bufSize should be provided to tell what maximum line length could be loaded!
       static void readLine(File& f, byte& lineType, byte* buf, byte bufSize, byte& resSize, unsigned int& address, byte& statusRes);
       
       static void closeFile(File& f);

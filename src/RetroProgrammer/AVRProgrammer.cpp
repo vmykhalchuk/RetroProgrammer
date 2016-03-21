@@ -170,8 +170,6 @@ void AVRProgrammer::readProgramMemoryPage(byte* pageBuffer, byte pageNumber, byt
   byte maxPageAddr = 1 << pageSize;
   for (int i = 0; i < maxPageAddr; i++) {
     byte addrLow = addrLowPage | i;
-    logDebugB("addrHigh:", addrHigh);
-    logDebugB("addrLow:", addrLow);
     pageBuffer[i * 2] = readProgramMemoryByte(false, addrHigh, addrLow, statusRes);
     checkStatus();
     pageBuffer[i * 2 + 1] = readProgramMemoryByte(true, addrHigh, addrLow, statusRes);
@@ -193,18 +191,6 @@ void AVRProgrammer::readEepromMemoryPage(byte* pageBuffer, byte pageNumber, byte
     checkStatus();
   }
 }
-
-/*boolean loadProgramMemoryPageWord(byte adrLSB, int w) {
-  int lowB = w & 0xFF;
-  int highB = (w & 0xFF00) >> 8;
-  if (!loadProgramMemoryPageByte(false, adrLSB, lowB)) {
-    return false;
-  }
-  if (!loadProgramMemoryPageByte(true, adrLSB, highB)) {
-    return false;
-  }
-  return true;
-}*/
 
 byte AVRProgrammer::sendReadByte(byte byteToSend) {
   byte resByte = 0;
@@ -256,7 +242,7 @@ void AVRProgrammer::loadAndWriteProgramMemoryPage(byte* buf, int bufSize, int pa
     returnStatus(ERR(0x10));
   }
 
-  /* (should only run when Full erase was performed before!)
+  /* FIXME (should only run when Full erase was performed before!)
   // Check is all FF, then no need to program this buffer
   boolean allFF = true;
   for (int i = 0; i < expectedBufSize; i++) {
@@ -268,16 +254,11 @@ void AVRProgrammer::loadAndWriteProgramMemoryPage(byte* buf, int bufSize, int pa
   int addr = pageNo << progMemPageSize;
   byte addrMsb = addr >> 8;
   byte addrLsb = addr & 0xFF;
-  //logDebugD("addr:",addr);
-  //logDebugD("addrMsb:",addrMsb);
-  //logDebugD("addrLsb:",addrLsb);
   
   // load into buffer
   waitForTargetMCU(statusRes); checkStatus();
   for (int i = 0; i < (1 << progMemPageSize); i++) {
     byte addrLow = addrLsb | i;
-    //logDebugB("i:", i);
-    //logDebugB("addrLow:", addrLow);
     loadProgramMemoryPageByte(false, i, buf[i * 2], statusRes); checkStatus();
     loadProgramMemoryPageByte(true, i, buf[i * 2 + 1], statusRes); checkStatus();
   }

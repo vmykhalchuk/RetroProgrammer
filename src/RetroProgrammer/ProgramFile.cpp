@@ -312,7 +312,6 @@ void ProgramFile::uploadMcuDataFromFile_internal(boolean progMode, String fileNa
   File f;
   openFile2(f, fileName, FILE_READ, statusRes);
   checkOverrideStatus(ERR(0x51));
-
   
   byte lkb,fsb,fhb,efb;
   boolean isSign=false,isLkb=false,isFsb=false,isFhb=false,isEfb=false; // flag represents if any of this value is already loaded from ProgramFile

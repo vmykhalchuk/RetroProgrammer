@@ -12,7 +12,7 @@ void HEXFile::__translateErrorsToDisplayErrorCode(byte err, byte& mainErrCode, b
   subErrCode = 0;
   okCode = 0;
   
-  // FIXME Implement
+  // FIXME Implement this
   if (err == 0x90) {
     mainErrCode = 0xA; subErrCode = 0x2;
   } else if (err == 0x91) {
